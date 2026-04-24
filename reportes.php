@@ -6,11 +6,11 @@ requerir_autenticacion();
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Reportes</title>
+    <title>AlmacÃ©n Croram - Reportes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Reportes operativos del almacén" name="description" />
+    <meta content="Reportes operativos del almacÃ©n" name="description" />
     <meta content="HoppingJet Studio." name="author" />
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -52,24 +52,24 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
 
     <div class="page-container">
         <div class="row g-3 mb-3">
-            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Artículos</small><h3 class="mb-0"><?= count($articulos) ?></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">ArtÃ­culos</small><h3 class="mb-0"><?= count($articulos) ?></h3></div></div></div>
             <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Proveedores</small><h3 class="mb-0"><?= count($proveedores) ?></h3></div></div></div>
-            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Órdenes de entrada</small><h3 class="mb-0"><?= count($ordenesEntrada) ?></h3></div></div></div>
-            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Órdenes de salida</small><h3 class="mb-0"><?= count($ordenesSalida) ?></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Ã“rdenes de entrada</small><h3 class="mb-0"><?= count($ordenesEntrada) ?></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Ã“rdenes de salida</small><h3 class="mb-0"><?= count($ordenesSalida) ?></h3></div></div></div>
         </div>
 
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="header-title mb-1">Inventario detallado</h4>
-                    <p class="text-muted mb-0">Catálogo completo con familia, subfamilia y existencias.</p>
+                    <p class="text-muted mb-0">CatÃ¡logo completo con familia, subfamilia y existencias.</p>
                 </div>
                 <button class="btn btn-success btn-sm" onclick="exportTableToExcel('tablaInventario', 'reporte_inventario')">Exportar Excel</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="tablaInventario" class="table table-striped dt-responsive nowrap w-100 report-table">
-                        <thead><tr><th>ID</th><th>SKU</th><th>Artículo</th><th>Familia</th><th>Subfamilia</th><th>Descripción</th><th>Unidad</th><th>Existencia</th><th>Estado</th></tr></thead>
+                        <thead><tr><th>ID</th><th>SKU</th><th>ArtÃ­culo</th><th>Familia</th><th>Subfamilia</th><th>DescripciÃ³n</th><th>Unidad</th><th>Existencia</th><th>Estado</th></tr></thead>
                         <tbody>
                         <?php foreach ($articulos as $articulo): ?>
                             <tr>
@@ -94,7 +94,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="header-title mb-1">Proveedores</h4>
-                    <p class="text-muted mb-0">Directorio de proveedores y condiciones de crédito.</p>
+                    <p class="text-muted mb-0">Directorio de proveedores y condiciones de crÃ©dito.</p>
                 </div>
                 <button class="btn btn-success btn-sm" onclick="exportTableToExcel('tablaProveedores', 'reporte_proveedores')">Exportar Excel</button>
             </div>
@@ -110,7 +110,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
                                 <td><?= htmlspecialchars($proveedor['contacto'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($proveedor['mail'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($proveedor['rfc'] ?? '') ?></td>
-                                <td><?= ((int)($proveedor['credito'] ?? 0) === 1) ? 'Sí' : 'No' ?></td>
+                                <td><?= ((int)($proveedor['credito'] ?? 0) === 1) ? 'SÃ­' : 'No' ?></td>
                                 <td><?= (int)($proveedor['plazo_credito'] ?? 0) ?></td>
                                 <td><?= ((int)($proveedor['activo'] ?? 0) === 1) ? 'Activo' : 'Inactivo' ?></td>
                             </tr>
@@ -126,7 +126,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="header-title mb-1">Órdenes de entrada</h4>
+                            <h4 class="header-title mb-1">Ã“rdenes de entrada</h4>
                             <p class="text-muted mb-0">Seguimiento de compras registradas.</p>
                         </div>
                         <button class="btn btn-success btn-sm" onclick="exportTableToExcel('tablaEntradas', 'reporte_ordenes_entrada')">Exportar Excel</button>
@@ -134,7 +134,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="tablaEntradas" class="table table-striped dt-responsive nowrap w-100 report-table">
-                                <thead><tr><th>ID</th><th>Folio</th><th>Proveedor</th><th>Fecha</th><th>Estatus</th><th>Solicitó</th></tr></thead>
+                                <thead><tr><th>ID</th><th>Folio</th><th>Proveedor</th><th>Fecha</th><th>Estatus</th><th>SolicitÃ³</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($ordenesEntrada as $orden): ?>
                                     <tr>
@@ -157,7 +157,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="header-title mb-1">Órdenes de salida</h4>
+                            <h4 class="header-title mb-1">Ã“rdenes de salida</h4>
                             <p class="text-muted mb-0">Seguimiento de movimientos de salida.</p>
                         </div>
                         <button class="btn btn-success btn-sm" onclick="exportTableToExcel('tablaSalidas', 'reporte_ordenes_salida')">Exportar Excel</button>
@@ -165,7 +165,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(), true) ?: [];
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="tablaSalidas" class="table table-striped dt-responsive nowrap w-100 report-table">
-                                <thead><tr><th>ID</th><th>Folio</th><th>Fecha</th><th>Tipo</th><th>Estatus</th><th>Solicitó</th></tr></thead>
+                                <thead><tr><th>ID</th><th>Folio</th><th>Fecha</th><th>Tipo</th><th>Estatus</th><th>SolicitÃ³</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($ordenesSalida as $orden): ?>
                                     <tr>

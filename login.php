@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $errorLogin = 'Credenciales inválidas';
+        $errorLogin = 'Credenciales invÃ¡lidas';
         $correoRecordado = $recordar ? $email : '';
     }
 }
@@ -37,11 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Iniciar sesión</title>
+    <title>AlmacÃ©n Croram - Iniciar sesiÃ³n</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="assets/images/logo_almacen.png" alt="Logo">
         </div>
         <div class="text-center mb-4">
-            <div class="login-title">Iniciar sesión</div>
-            <div class="login-subtitle">Accede para usar el sistema de almacén</div>
+            <div class="login-title">Iniciar sesiÃ³n</div>
+            <div class="login-subtitle">Accede para usar el sistema de almacÃ©n</div>
         </div>
         <form id="formLogin" method="post" autocomplete="off">
             <div class="mb-3">

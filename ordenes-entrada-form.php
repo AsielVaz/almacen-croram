@@ -10,7 +10,7 @@ requerir_autenticacion();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -86,6 +86,10 @@ $usuarioActualId = usuario_id_actual();
                     <option value="<?= (int)$p->id ?>"><?= htmlspecialchars($p->nombre) ?></option>
                 <?php endforeach; ?>
             </select>
+        </div>
+        <div class="col-12">
+            <label><i class="ri-sticky-note-line me-1"></i>Notas de entrada</label>
+            <textarea id="notaEntrada" class="form-control" rows="3" placeholder="Escriba observaciones para esta orden de entrada..."></textarea>
         </div>
     </div>
 </div>
@@ -350,6 +354,7 @@ async function enviarOrden(proveedor) {
     formData.append('accion', 'altaOrdenCompra');
     formData.append('proveedor', proveedor);
     formData.append('id_usuario', USUARIO_ACTUAL_ID);
+    formData.append('nota', document.getElementById('notaEntrada').value.trim());
     formData.append('orden', JSON.stringify(orden));
 
     const response = await fetch('api/apiOrdenes.php', { method: 'POST', body: formData });

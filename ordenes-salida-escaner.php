@@ -7,13 +7,13 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Escanear Orden</title>
+    <title>AlmacÃ©n Croram - Escanear Orden</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <!-- Vendor css -->
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
@@ -115,9 +115,9 @@ requerir_autenticacion();
                                     <i class="ri-qr-scan-2-line"></i>
                                 </div>
 
-                                <h5 class="mb-1">Escanear código QR</h5>
+                                <h5 class="mb-1">Escanear cÃ³digo QR</h5>
                                 <p class="text-muted mb-4">
-                                    Escanea el código QR de la orden de salida o ingresa el número manualmente.
+                                    Escanea el cÃ³digo QR de la orden de salida o ingresa el nÃºmero manualmente.
                                 </p>
 
                                 <div class="mb-2">
@@ -125,7 +125,7 @@ requerir_autenticacion();
                                         type="text"
                                         id="qr-input"
                                         class="form-control scan-input"
-                placeholder="—"
+                placeholder="â€”"
                                         autocomplete="off"
                                         inputmode="numeric"
                                     />
@@ -133,13 +133,13 @@ requerir_autenticacion();
 
                                 <p class="scan-hint">
                                     <i class="ri-information-line me-1"></i>
-                                    Presiona <kbd>Enter</kbd> después de escanear para continuar
+                                    Presiona <kbd>Enter</kbd> despuÃ©s de escanear para continuar
                                 </p>
 
                                 <!-- Mensaje de error (oculto por defecto) -->
                                 <div id="scan-error" class="alert alert-danger mt-3 d-none" role="alert">
                                     <i class="ri-error-warning-line me-1"></i>
-                                    Ingresa un número de orden válido.
+                                    Ingresa un nÃºmero de orden vÃ¡lido.
                                 </div>
 
                             </div>
@@ -176,29 +176,29 @@ requerir_autenticacion();
             const input    = document.getElementById('qr-input');
             const errorMsg = document.getElementById('scan-error');
 
-            // â”€â”€ Auto-focus al cargar â”€â”€
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Auto-focus al cargar Ã¢â€â‚¬Ã¢â€â‚¬
             input.focus();
 
-            // â”€â”€ Re-focus si el usuario hace clic fuera â”€â”€
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Re-focus si el usuario hace clic fuera Ã¢â€â‚¬Ã¢â€â‚¬
             document.addEventListener('click', function () {
                 input.focus();
             });
 
-            // â”€â”€ Re-focus al cambiar de pestaÃ±a y volver â”€â”€
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Re-focus al cambiar de pestaÃƒÂ±a y volver Ã¢â€â‚¬Ã¢â€â‚¬
             document.addEventListener('visibilitychange', function () {
                 if (!document.hidden) {
                     input.focus();
                 }
             });
 
-            // â”€â”€ Manejar Enter â”€â”€
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Manejar Enter Ã¢â€â‚¬Ã¢â€â‚¬
             input.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
 
                     const valor = input.value.trim();
 
-                    // Validar que sea un número entero positivo
+                    // Validar que sea un nÃºmero entero positivo
                     if (/^\d+$/.test(valor) && parseInt(valor) > 0) {
                         errorMsg.classList.add('d-none');
                         // Redirigir al detalle de la orden

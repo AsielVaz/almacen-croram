@@ -7,13 +7,13 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram</title>
+    <title>AlmacÃ©n Croram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <!-- Vendor css -->
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />

@@ -7,13 +7,13 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Orden de Salida</title>
+    <title>AlmacÃ©n Croram - Orden de Salida</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <!-- Vendor css -->
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
@@ -300,8 +300,8 @@ requerir_autenticacion();
                     </div>
                     <div class="text-end">
                         <ol class="breadcrumb m-0 py-0 fs-13">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
-                        <li class="breadcrumb-item active">Órdenes de salida</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
+                        <li class="breadcrumb-item active">Ã“rdenes de salida</li>
                         </ol>
                     </div>
                 </div>
@@ -351,6 +351,13 @@ requerir_autenticacion();
                             </div>
 
                             <div class="card-body p-4">
+                                <?php if (!empty($ordenes[0]->nota ?? '')): ?>
+                                    <div class="alert alert-light border mb-4">
+                                        <div class="fw-bold mb-2"><i class="ri-sticky-note-line me-2"></i>Notas de salida</div>
+                                        <div class="text-muted"><?= nl2br(htmlspecialchars($ordenes[0]->nota)) ?></div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <h5 class="mb-4 fw-bold">
                                     <i class="ri-shopping-cart-line me-2"></i>Productos de la Orden
                                 </h5>
@@ -399,7 +406,7 @@ requerir_autenticacion();
                                     </table>
                                 </div>
 
-                                <!-- Botones de acción -->
+                                <!-- Botones de acciÃ³n -->
                                 <div class="action-buttons">
                                     <button type="button" class="btn btn-modern btn-approve" id="btnAprobar">
                                         <i class="ri-check-line me-2"></i>Aprobar Orden
@@ -491,12 +498,12 @@ requerir_autenticacion();
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
                     
-                    // Confirmación
+                    // ConfirmaciÃ³n
                     Swal.fire({
                         title: '¿Aprobar orden de salida?',
                         html: `
-                            <p>Esta acción confirmará la salida de los productos del inventario.</p>
-                        <p class="text-danger"><strong>Esta acción no se puede deshacer</strong></p>
+                            <p>Esta acciÃ³n confirmarÃ¡ la salida de los productos del inventario.</p>
+                        <p class="text-danger"><strong>Esta acciÃ³n no se puede deshacer</strong></p>
                         `,
                         icon: 'warning',
                         showCancelButton: true,
@@ -541,11 +548,11 @@ requerir_autenticacion();
                 if (data.success || data.status === 'success') {
                     Swal.fire({
                         icon: 'success',
-                        title: '¡Orden aprobada!',
+                        title: 'Â¡Orden aprobada!',
                         text: data.message || 'La orden de salida ha sido aprobada correctamente',
                         confirmButtonColor: '#28a745'
                     }).then(() => {
-                        // Recargar página o redirigir
+                        // Recargar pÃ¡gina o redirigir
                         location.reload();
                     });
                 } else {
@@ -563,7 +570,7 @@ requerir_autenticacion();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al procesar la solicitud',
+                    text: 'OcurriÃ³ un error al procesar la solicitud',
                     confirmButtonColor: '#6c757d'
                 });
             });

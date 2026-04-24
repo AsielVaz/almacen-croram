@@ -3,17 +3,18 @@ include_once 'conector.php';
 
 class AdministradorOrdenes extends Con
 {
-    public function agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario)
+    public function agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario, $nota = '')
     {
         $folio = $this->limpiar($folio);
         $id_proveedor = (int)$id_proveedor;
         $fecha_orden = $this->limpiar($fecha_orden);
         $estatus = $this->limpiar($estatus);
         $id_usuario = (int)$id_usuario;
+        $nota = $this->limpiar($nota);
 
         $sql = "
-            INSERT INTO ordenes_compra (folio, id_proveedor, fecha_orden, estatus, id_usuario)
-            VALUES ('$folio', $id_proveedor, '$fecha_orden', '$estatus', $id_usuario)
+            INSERT INTO ordenes_compra (folio, id_proveedor, fecha_orden, estatus, id_usuario, nota)
+            VALUES ('$folio', $id_proveedor, '$fecha_orden', '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
         ";
 
         return $this->ejecutar($sql);
@@ -110,17 +111,18 @@ class AdministradorOrdenes extends Con
 
 
     //SELECT `id`, `folio`, `fecha_salida`, `tipo`, `estatus`, `id_usuario`, `created_at` FROM `ordenes_salida` WHERE 1
-    public function agregarOrdenSalida( $folio, $fecha_salida, $tipo, $estatus, $id_usuario)
+    public function agregarOrdenSalida( $folio, $fecha_salida, $tipo, $estatus, $id_usuario, $nota = '')
     {
         $folio = $this->limpiar($folio);
         $fecha_salida = $this->limpiar($fecha_salida);
         $tipo = $this->limpiar($tipo);
         $estatus = $this->limpiar($estatus);
         $id_usuario = (int)$id_usuario;
+        $nota = $this->limpiar($nota);
 
         $sql = "
-            INSERT INTO ordenes_salida (folio, fecha_salida, tipo, estatus, id_usuario)
-            VALUES ('$folio', '$fecha_salida', '$tipo', '$estatus', $id_usuario)
+            INSERT INTO ordenes_salida (folio, fecha_salida, tipo, estatus, id_usuario, nota)
+            VALUES ('$folio', '$fecha_salida', '$tipo', '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
         ";
 
         return $this->ejecutar($sql);

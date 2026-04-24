@@ -7,13 +7,13 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Ordenes</title>
+    <title>AlmacÃ©n Croram - Ordenes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <!-- Vendor css -->
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
@@ -92,7 +92,7 @@ requerir_autenticacion();
 
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
 
                         <li class="breadcrumb-item active">Ordenes</li>
                     </ol>
@@ -223,17 +223,17 @@ requerir_autenticacion();
     <script>
         function eliminarFamilia(id) {
             Swal.fire({
-                    title: '¿Estás seguro?',
-                text: "Esta acción no se puede deshacer.",
+                    title: 'Â¿EstÃ¡s seguro?',
+                text: "Esta acciÃ³n no se puede deshacer.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
+                confirmButtonText: 'SÃ­, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Aquí iría la lógica para eliminar la familia, por ejemplo, una llamada AJAX al servidor.
+                    // AquÃ­ irÃ­a la lÃ³gica para eliminar la familia, por ejemplo, una llamada AJAX al servidor.
                     var formData = new FormData();
                     formData.append('accion', 'eliminarFamilia');
                     formData.append('id', id);

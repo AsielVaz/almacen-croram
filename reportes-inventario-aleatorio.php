@@ -7,12 +7,12 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Conciliación de Inventario</title>
+    <title>AlmacÃ©n Croram - ConciliaciÃ³n de Inventario</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Conciliación física de inventario" name="description" />
+    <meta content="ConciliaciÃ³n fÃ­sica de inventario" name="description" />
     <meta content="HoppingJet Studio." name="author" />
 
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -186,10 +186,10 @@ $adminArticulos = new AdministradorArticulos();
 $articulos = json_decode($adminArticulos->listarArticulos(false), true);
 $totalArticulos = count($articulos);
 
-// Verificar si hay parámetro de artículos
+// Verificar si hay parÃ¡metro de artÃ­culos
 $cantidadMostrar = isset($_GET['articulos']) ? intval($_GET['articulos']) : 0;
 
-// Si hay cantidad, cargar artículos con cantidades
+// Si hay cantidad, cargar artÃ­culos con cantidades
 $articulosConciliacion = [];
 if ($cantidadMostrar > 0) {
     // Mezclar aleatoriamente
@@ -210,13 +210,13 @@ if ($cantidadMostrar > 0) {
         <div>
             <h4 class="fs-18 fw-bold mb-0">
                 <i class="ri-file-list-check-line me-2"></i>
-                Conciliación de Inventario
+                ConciliaciÃ³n de Inventario
             </h4>
         </div>
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0 fs-13">
                 <li class="breadcrumb-item">Inventario</li>
-                <li class="breadcrumb-item active">Conciliación</li>
+                <li class="breadcrumb-item active">ConciliaciÃ³n</li>
             </ol>
         </div>
     </div>
@@ -225,11 +225,11 @@ if ($cantidadMostrar > 0) {
 <div class="page-container">
 
 <?php if ($cantidadMostrar === 0): ?>
-<!-- Sección de Configuración (cuando NO hay parámetro) -->
+<!-- SecciÃ³n de ConfiguraciÃ³n (cuando NO hay parÃ¡metro) -->
 <div class="config-card">
     <h5 class="fw-bold mb-4">
         <i class="ri-settings-3-line me-2"></i>
-        Configuración de Conciliación
+        ConfiguraciÃ³n de ConciliaciÃ³n
     </h5>
     
     <form method="GET" action="">
@@ -237,7 +237,7 @@ if ($cantidadMostrar > 0) {
             <div class="col-md-6">
                 <label class="config-label">
                     <i class="ri-box-3-line me-1"></i>
-                    Cantidad de Artículos a Conciliar
+                    Cantidad de ArtÃ­culos a Conciliar
                 </label>
                 <input 
                     type="number" 
@@ -251,19 +251,19 @@ if ($cantidadMostrar > 0) {
                     required
                 >
                 <small class="text-muted mt-1 d-block">
-                    Se seleccionarán artículos de forma aleatoria
+                    Se seleccionarÃ¡n artÃ­culos de forma aleatoria
                 </small>
             </div>
             <div class="col-md-3">
                 <div class="info-badge">
                     <strong>Total disponible:</strong><br>
-                    <?php echo $totalArticulos; ?> artículos
+                    <?php echo $totalArticulos; ?> artÃ­culos
                 </div>
             </div>
             <div class="col-md-3 text-end">
                 <button type="submit" class="btn btn-modern btn-load w-100">
                     <i class="ri-refresh-line me-2"></i>
-                    Cargar Conciliación
+                    Cargar ConciliaciÃ³n
                 </button>
             </div>
         </div>
@@ -271,14 +271,14 @@ if ($cantidadMostrar > 0) {
 </div>
 
 <?php else: ?>
-<!-- Sección de Conciliación (cuando SÃ hay parámetro) -->
+<!-- SecciÃ³n de ConciliaciÃ³n (cuando SÃƒÂ hay parÃ¡metro) -->
 <div class="alert alert-info d-flex align-items-center mb-3">
     <i class="ri-information-line fs-20 me-2"></i>
     <div class="flex-grow-1">
-        Se están mostrando <strong><?php echo count($articulosConciliacion); ?> artículos</strong> seleccionados aleatoriamente
+        Se estÃ¡n mostrando <strong><?php echo count($articulosConciliacion); ?> artÃ­culos</strong> seleccionados aleatoriamente
     </div>
     <a href="?" class="btn btn-sm btn-secondary">
-        <i class="ri-arrow-left-line me-1"></i>Nueva Conciliación
+        <i class="ri-arrow-left-line me-1"></i>Nueva ConciliaciÃ³n
     </a>
 </div>
 
@@ -291,7 +291,7 @@ if ($cantidadMostrar > 0) {
         </h5>
         <button class="btn btn-modern btn-finish" id="btnTerminar">
             <i class="ri-check-line me-2"></i>
-            Terminar Conciliación
+            Terminar ConciliaciÃ³n
         </button>
     </div>
 
@@ -300,7 +300,7 @@ if ($cantidadMostrar > 0) {
             <thead>
                 <tr>
                     <th width="8%">ID</th>
-                    <th width="35%">Artículo</th>
+                    <th width="35%">ArtÃ­culo</th>
                     <th width="15%">SKU</th>
                     <th width="12%" class="text-center">Sistema</th>
                     <th width="15%" class="text-center">Real</th>
@@ -361,12 +361,12 @@ $(document).ready(function() {
         }
     });
     
-    // Event listeners para cálculo de diferencias
+    // Event listeners para cÃ¡lculo de diferencias
     document.querySelectorAll('.cantidad-real').forEach(input => {
         input.addEventListener('input', calcularDiferencia);
     });
     
-    // Botón terminar
+    // BotÃ³n terminar
     document.getElementById('btnTerminar').addEventListener('click', terminarConciliacion);
 });
 
@@ -382,7 +382,7 @@ function calcularDiferencia(e) {
     const diferenciaCell = row.querySelector('.diferencia');
     diferenciaCell.textContent = diferencia;
     
-    // Aplicar estilos según diferencia
+    // Aplicar estilos segÃºn diferencia
     diferenciaCell.classList.remove('diferencia-positiva', 'diferencia-negativa', 'diferencia-cero');
     
     if (diferencia > 0) {
@@ -396,7 +396,7 @@ function calcularDiferencia(e) {
 }
 
 /* =============================
-TERMINAR CONCILIACIÓN
+TERMINAR CONCILIACIÃ“N
 ============================= */
 function terminarConciliacion() {
     // Recopilar datos
@@ -416,18 +416,18 @@ function terminarConciliacion() {
         });
     });
     
-    // Confirmación
+    // ConfirmaciÃ³n
     Swal.fire({
-            title: '¿Terminar conciliación?',
+            title: 'Â¿Terminar conciliaciÃ³n?',
         html: `
-            <p>Se generará el reporte de conciliación con:</p>
-            <p><strong>${conciliacion.length}</strong> artículos revisados</p>
+            <p>Se generarÃ¡ el reporte de conciliaciÃ³n con:</p>
+            <p><strong>${conciliacion.length}</strong> artÃ­culos revisados</p>
         `,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, generar reporte',
+        confirmButtonText: 'SÃ­, generar reporte',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -475,8 +475,8 @@ function enviarConciliacion(conciliacion) {
         
         Swal.fire({
             icon: 'success',
-            title: '¡Reporte generado!',
-            text: 'La conciliación se ha completado correctamente',
+            title: 'Â¡Reporte generado!',
+            text: 'La conciliaciÃ³n se ha completado correctamente',
             confirmButtonColor: '#495057'
         }).then(() => {
             window.location.href = '?';
@@ -487,7 +487,7 @@ function enviarConciliacion(conciliacion) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Ocurrió un error al generar el reporte',
+            text: 'OcurriÃ³ un error al generar el reporte',
             confirmButtonColor: '#6c757d'
         });
     });

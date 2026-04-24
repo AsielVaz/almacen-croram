@@ -97,8 +97,6 @@ $usuarioSesion = usuario_actual();
 
                   <li class="side-nav-title">Reportes</li>
                   <li class="side-nav-item"><a href="reportes.php" class="side-nav-link"><span class="menu-icon"><i data-lucide="table-properties"></i></span><span class="menu-text">Reportes generales</span></a></li>
-                  <li class="side-nav-item"><a href="reportes-bajo-stock.php?limite=5" class="side-nav-link"><span class="menu-icon"><i data-lucide="triangle-alert"></i></span><span class="menu-text">Items con bajo stock</span></a></li>
-                  <li class="side-nav-item"><a href="reportes-bajo-stock.php?limite=0" class="side-nav-link"><span class="menu-icon"><i data-lucide="badge-alert"></i></span><span class="menu-text">Items sin stock</span></a></li>
                   <li class="side-nav-item"><a href="reportes-inventario-aleatorio.php" class="side-nav-link"><span class="menu-icon"><i data-lucide="file-bar-chart"></i></span><span class="menu-text">Rep. Artículos</span></a></li>
 
                   <li class="side-nav-title">Administración</li>

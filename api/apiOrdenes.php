@@ -20,11 +20,12 @@ try {
             $fecha_orden = date('Y-m-d');
             $estatus = 'PENDIENTE';
             $id_usuario = $_POST['id_usuario'] ?? 0;
+            $nota = $_POST['nota'] ?? '';
             $orden = $_POST['orden'] ?? [];
             $ordenDecode = json_decode($orden, true) ?: [];
 
             $admin->iniciarTransaccion();
-            $admin->agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario);
+            $admin->agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario, $nota);
             $ultimo_id = $admin->dameUltimoIdOrdenCompra();
 
             foreach ($ordenDecode as $item) {
@@ -52,9 +53,10 @@ try {
             $fecha_orden = date('Y-m-d');
             $estatus = 'BORRADOR';
             $id_usuario = $_POST['id_usuario'] ?? 0;
+            $nota = $_POST['nota'] ?? '';
 
             $admin->iniciarTransaccion();
-            $admin->agregarOrdenSalida($folio, $fecha_orden, 'CONSUMO_INTERNO', $estatus, $id_usuario);
+            $admin->agregarOrdenSalida($folio, $fecha_orden, 'CONSUMO_INTERNO', $estatus, $id_usuario, $nota);
             $ultimo_id = $admin->dameUltimoIdOrdenSalida();
 
             foreach ($salidaDecode as $item) {

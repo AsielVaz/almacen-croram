@@ -7,13 +7,13 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>Almacén Croram - Órdenes</title>
+    <title>AlmacÃ©n Croram - Ã“rdenes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <!-- Vendor css -->
     <link href="assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
@@ -373,7 +373,7 @@ requerir_autenticacion();
                             </table>
                         </div>
 
-                        <!-- Área de notas -->
+                        <!-- Ãrea de notas -->
                         <div class="mt-4">
                             <label for="notasOrden" class="form-label fw-bold">
                                 <i class="ri-file-text-line me-2"></i>Notas de la Orden
@@ -386,7 +386,7 @@ requerir_autenticacion();
                                 style="border: 2px solid #dee2e6; border-radius: 0.375rem;"
                             ></textarea>
                             <small class="text-muted">
-                                <i class="ri-information-line"></i> Estas notas se guardarán junto con la orden de entrada
+                                <i class="ri-information-line"></i> Estas notas se guardarÃ¡n junto con la orden de entrada
                             </small>
                         </div>
 
@@ -426,14 +426,14 @@ requerir_autenticacion();
             <div class="page-title-head d-flex align-items-center gap-2 mb-4">
                 <div class="flex-grow-1">
                     <h4 class="fs-18 fw-bold mb-0">
-                        <i class="ri-file-list-3-line me-2"></i>Órdenes de compra
+                        <i class="ri-file-list-3-line me-2"></i>Ã“rdenes de compra
                     </h4>
                 </div>
 
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
-                        <li class="breadcrumb-item active">Órdenes</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
+                        <li class="breadcrumb-item active">Ã“rdenes</li>
                     </ol>
                 </div>
             </div>
@@ -484,6 +484,13 @@ requerir_autenticacion();
                             </div>
 
                             <div class="card-body p-4">
+                                <?php if (!empty($ordenes[0]->nota ?? '')): ?>
+                                    <div class="alert alert-light border mb-4">
+                                        <div class="fw-bold mb-2"><i class="ri-sticky-note-line me-2"></i>Notas de entrada</div>
+                                        <div class="text-muted"><?= nl2br(htmlspecialchars($ordenes[0]->nota)) ?></div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <h5 class="mb-4 fw-bold">
                                     <i class="ri-shopping-cart-line me-2"></i>Detalles de Productos
                                 </h5>
@@ -532,7 +539,7 @@ requerir_autenticacion();
                                     </div>
                                 </div>
 
-                                <!-- Botón Ingresar Orden -->
+                                <!-- BotÃ³n Ingresar Orden -->
                                 <div class="row mt-4">
                                     <div class="col-12 text-center">
                                         <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden">
@@ -614,7 +621,7 @@ requerir_autenticacion();
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Botón Guardar Orden de Entrada
+            // BotÃ³n Guardar Orden de Entrada
             const btnGuardarOrden = document.getElementById('btnGuardarOrdenEntrada');
             
             if (btnGuardarOrden) {
@@ -674,7 +681,7 @@ requerir_autenticacion();
                         if (data.success || data.status === 'success') {
                             Swal.fire({
                                 icon: 'success',
-                                title: '¡Éxito!',
+                                title: 'Â¡Ã‰xito!',
                                 text: data.message || 'Orden de entrada guardada correctamente',
                                 confirmButtonColor: '#495057'
                             }).then(() => {
@@ -685,7 +692,7 @@ requerir_autenticacion();
                                 }
                                 // Limpiar el campo de notas
                                 document.getElementById('notasOrden').value = '';
-                                // Recargar página
+                                // Recargar pÃ¡gina
                                 location.reload();
                             });
                         } else {
@@ -703,14 +710,14 @@ requerir_autenticacion();
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Ocurrió un error al procesar la solicitud',
+                            text: 'OcurriÃ³ un error al procesar la solicitud',
                             confirmButtonColor: '#6c757d'
                         });
                     });
                 });
             }
 
-            // Validación en tiempo real de los inputs de precio
+            // ValidaciÃ³n en tiempo real de los inputs de precio
             const preciosInputs = document.querySelectorAll('.precio-real');
             preciosInputs.forEach(input => {
                 input.addEventListener('input', function() {
