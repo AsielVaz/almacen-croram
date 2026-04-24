@@ -20,9 +20,10 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
-    public function listarOrdenesCompra($limit = null)
+    public function listarOrdenesCompra($limit = null, $fechaInicio = '', $fechaFin = '')
     {
         $limitSql = $limit !== null ? " LIMIT " . max(1, (int)$limit) : "";
+        $whereSql = $this->construirFiltroFecha('oc.fecha_orden', $fechaInicio, $fechaFin);
 
         $sql = "
             SELECT
@@ -38,6 +39,7 @@ class AdministradorOrdenes extends Con
             FROM ordenes_compra oc
             INNER JOIN proveedores p ON p.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
+            $whereSql
             ORDER BY oc.created_at DESC
             $limitSql
         ";
@@ -177,9 +179,10 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
-    public function listarOrdenesSalida($limit = null)
+    public function listarOrdenesSalida($limit = null, $fechaInicio = '', $fechaFin = '')
     {
         $limitSql = $limit !== null ? " LIMIT " . max(1, (int)$limit) : "";
+        $whereSql = $this->construirFiltroFecha('os.fecha_salida', $fechaInicio, $fechaFin);
 
         $sql = "
             SELECT
@@ -193,6 +196,7 @@ class AdministradorOrdenes extends Con
                 COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario
             FROM ordenes_salida os
             LEFT JOIN usuarios u ON u.id = os.id_usuario
+            $whereSql
             ORDER BY os.created_at DESC
             $limitSql
         ";
@@ -333,5 +337,33 @@ class AdministradorOrdenes extends Con
     private function limpiar($valor)
     {
         return htmlspecialchars(trim($valor), ENT_QUOTES, 'UTF-8');
+    }
+
+    private function construirFiltroFecha($campo, $fechaInicio = '', $fechaFin = '')
+    {
+        $condiciones = [];
+        $fechaInicio = $this->normalizarFecha($fechaInicio);
+        $fechaFin = $this->normalizarFecha($fechaFin);
+
+        if ($fechaInicio !== '') {
+            $condiciones[] = "$campo >= '$fechaInicio'";
+        }
+
+        if ($fechaFin !== '') {
+            $condiciones[] = "$campo <= '$fechaFin'";
+        }
+
+        return count($condiciones) ? 'WHERE ' . implode(' AND ', $condiciones) : '';
+    }
+
+    private function normalizarFecha($fecha)
+    {
+        $fecha = trim((string)$fecha);
+
+        if ($fecha === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            return '';
+        }
+
+        return $this->limpiar($fecha);
     }
 }

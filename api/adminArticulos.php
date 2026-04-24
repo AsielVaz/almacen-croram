@@ -16,7 +16,9 @@ class AdministradorArticulos extends Con {
         $unidad_medida = '',
         $descripcion = '',
         $activo = 1,
-        $costo_reposicon = 0
+        $costo_reposicon = 0,
+        $consumo_diario = 0,
+        $tiempo_reposicion = 0
     ) {
 
         $sku = $this->limpiar($sku);
@@ -26,11 +28,13 @@ class AdministradorArticulos extends Con {
         $unidad_medida = $this->limpiar($unidad_medida);
         $descripcion = $this->limpiar($descripcion);
         $costo_reposicon = (float)$costo_reposicon;
+        $consumo_diario = max(0, (float)$consumo_diario);
+        $tiempo_reposicion = max(0, (int)$tiempo_reposicion);
         $activo = (int)$activo;
 
         $sql = "
             INSERT INTO productos
-            (sku, nombre, id_familia, id_subfamilia, unidad_medida, descripcion, activo, costo_reposicion)
+            (sku, nombre, id_familia, id_subfamilia, unidad_medida, descripcion, activo, costo_reposicion, consumo_diario, tiempo_reposicion)
             VALUES (
                 " . ($sku !== '' ? "'$sku'" : "NULL") . ",
                 '$nombre',
@@ -39,7 +43,9 @@ class AdministradorArticulos extends Con {
                 '$unidad_medida',
                 '$descripcion',
                 $activo,
-                $costo_reposicon
+                $costo_reposicon,
+                $consumo_diario,
+                $tiempo_reposicion
             )
         ";
 
@@ -93,6 +99,72 @@ class AdministradorArticulos extends Con {
         $where = $soloActivos ? "WHERE p.activo = 1" : "";
 
         return $this->ejecutar($this->consultaBaseArticulos($where, "ORDER BY p.nombre"));
+    }
+
+    public function listarArticulosReporteGeneral($soloActivos = false, $idFamilia = 0, $idSubfamilia = 0) {
+        $condiciones = [];
+
+        if ($soloActivos) {
+            $condiciones[] = "p.activo = 1";
+        }
+
+        $idFamilia = (int)$idFamilia;
+        $idSubfamilia = (int)$idSubfamilia;
+
+        if ($idFamilia > 0) {
+            $condiciones[] = "p.id_familia = $idFamilia";
+        }
+
+        if ($idSubfamilia > 0) {
+            $condiciones[] = "p.id_subfamilia = $idSubfamilia";
+        }
+
+        $where = count($condiciones) ? "WHERE " . implode(" AND ", $condiciones) : "";
+
+        $sql = "
+            SELECT
+                p.id,
+                p.sku,
+                p.nombre,
+                p.unidad_medida,
+                p.activo,
+                p.descripcion,
+                COALESCE(inv.stock, 0) AS cantidad,
+                f.nombre AS familia,
+                s.nombre AS subfamilia,
+                COALESCE(entradas.total_entradas, 0) AS total_entradas,
+                COALESCE(salidas.total_salidas, 0) AS total_salidas,
+                COALESCE(entradas.total_movimientos_entrada, 0) + COALESCE(salidas.total_movimientos_salida, 0) AS total_movimientos,
+                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS precio_promedio_compra
+            FROM productos p
+            JOIN familias f ON f.id = p.id_familia
+            LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    SUM(ocd.cantidad) AS total_entradas,
+                    COUNT(DISTINCT ocd.id_orden_compra) AS total_movimientos_entrada,
+                    CASE
+                        WHEN SUM(ocd.cantidad) > 0 THEN SUM(ocd.subtotal) / SUM(ocd.cantidad)
+                        ELSE 0
+                    END AS precio_promedio_compra
+                FROM orden_compra_detalle ocd
+                GROUP BY ocd.id_producto
+            ) entradas ON entradas.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    osd.id_producto,
+                    SUM(osd.cantidad) AS total_salidas,
+                    COUNT(DISTINCT osd.id_orden_salida) AS total_movimientos_salida
+                FROM orden_salida_detalle osd
+                GROUP BY osd.id_producto
+            ) salidas ON salidas.id_producto = p.id
+            $where
+            ORDER BY p.nombre
+        ";
+
+        return $this->ejecutar($sql);
     }
 
     public function listarArticulosPaginados($filtros = []) {
@@ -182,6 +254,90 @@ class AdministradorArticulos extends Con {
         return $this->ejecutar($this->consultaBaseArticulos($whereSql, "ORDER BY cantidad ASC, p.nombre ASC"));
     }
 
+    public function listarComprasSugeridas($dias = 30) {
+        $dias = max(1, (int)$dias);
+
+        $sql = "
+            SELECT
+                p.id,
+                p.sku,
+                p.nombre,
+                p.unidad_medida,
+                p.descripcion,
+                p.costo_reposicion,
+                p.consumo_diario,
+                p.tiempo_reposicion,
+                COALESCE(inv.stock, 0) AS cantidad,
+                f.nombre AS familia,
+                s.nombre AS subfamilia,
+                CASE
+                    WHEN p.consumo_diario > 0 THEN ROUND(COALESCE(inv.stock, 0) / p.consumo_diario, 2)
+                    ELSE NULL
+                END AS dias_restantes
+            FROM productos p
+            JOIN familias f ON f.id = p.id_familia
+            LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            WHERE p.activo = 1
+              AND p.consumo_diario > 0
+              AND (COALESCE(inv.stock, 0) / p.consumo_diario) <= $dias
+            ORDER BY p.tiempo_reposicion DESC, dias_restantes ASC, p.nombre ASC
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
+    public function obtenerHistorialEntradas($idArticulo) {
+        $idArticulo = (int)$idArticulo;
+
+        $sql = "
+            SELECT
+                ocd.id_orden_compra,
+                oc.folio,
+                oc.fecha_orden,
+                oc.estatus,
+                oc.created_at,
+                ocd.cantidad,
+                ocd.precio_unitario,
+                ocd.subtotal,
+                p.nombre AS proveedor,
+                COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS usuario
+            FROM orden_compra_detalle ocd
+            INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+            INNER JOIN proveedores p ON p.id = oc.id_proveedor
+            LEFT JOIN usuarios u ON u.id = oc.id_usuario
+            WHERE ocd.id_producto = $idArticulo
+            ORDER BY oc.fecha_orden DESC, oc.id DESC
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
+    public function obtenerHistorialSalidas($idArticulo) {
+        $idArticulo = (int)$idArticulo;
+
+        $sql = "
+            SELECT
+                osd.id_orden_salida,
+                os.folio,
+                os.fecha_salida,
+                os.tipo,
+                os.estatus,
+                os.created_at,
+                osd.cantidad,
+                osd.costo_unitario,
+                osd.subtotal,
+                COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS usuario
+            FROM orden_salida_detalle osd
+            INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+            LEFT JOIN usuarios u ON u.id = os.id_usuario
+            WHERE osd.id_producto = $idArticulo
+            ORDER BY os.fecha_salida DESC, os.id DESC
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
     public function obtenerResumenDashboard() {
         $sql = "
             SELECT
@@ -214,7 +370,10 @@ class AdministradorArticulos extends Con {
                 id_subfamilia,
                 unidad_medida,
                 descripcion,
-                activo
+                activo,
+                costo_reposicion,
+                consumo_diario,
+                tiempo_reposicion
             FROM productos
             WHERE id = $id
             LIMIT 1
@@ -232,7 +391,10 @@ class AdministradorArticulos extends Con {
         $id_subfamilia = null,
         $unidad_medida = '',
         $descripcion = '',
-        $activo = 1
+        $activo = 1,
+        $costo_reposicion = 0,
+        $consumo_diario = 0,
+        $tiempo_reposicion = 0
     ) {
 
         $id = (int)$id;
@@ -242,6 +404,9 @@ class AdministradorArticulos extends Con {
         $id_subfamilia = $id_subfamilia !== null ? (int)$id_subfamilia : 'NULL';
         $unidad_medida = $this->limpiar($unidad_medida);
         $descripcion = $this->limpiar($descripcion);
+        $costo_reposicion = (float)$costo_reposicion;
+        $consumo_diario = max(0, (float)$consumo_diario);
+        $tiempo_reposicion = max(0, (int)$tiempo_reposicion);
         $activo = (int)$activo;
 
         $sql = "
@@ -253,6 +418,9 @@ class AdministradorArticulos extends Con {
                 id_subfamilia = $id_subfamilia,
                 unidad_medida = '$unidad_medida',
                 descripcion = '$descripcion',
+                costo_reposicion = $costo_reposicion,
+                consumo_diario = $consumo_diario,
+                tiempo_reposicion = $tiempo_reposicion,
                 activo = $activo
             WHERE id = $id
         ";
@@ -297,6 +465,8 @@ class AdministradorArticulos extends Con {
                 p.id_subfamilia,
                 p.descripcion,
                 p.costo_reposicion,
+                p.consumo_diario,
+                p.tiempo_reposicion,
                 COALESCE(inv.stock, 0) AS cantidad,
                 f.nombre AS familia,
                 s.nombre AS subfamilia
@@ -322,7 +492,10 @@ class AdministradorArticulos extends Con {
                 id_subfamilia,
                 unidad_medida,
                 descripcion,
-                activo
+                activo,
+                costo_reposicion,
+                consumo_diario,
+                tiempo_reposicion
             FROM productos
             WHERE id = $id
             LIMIT 1

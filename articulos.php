@@ -234,6 +234,21 @@ requerir_autenticacion();
             box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
         }
 
+        .btn-history {
+            background: #198754;
+        }
+
+        .btn-history:hover {
+            background: #157347;
+        }
+
+        .action-stack {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .card-body-custom {
             padding: 1.5rem;
         }
@@ -445,9 +460,14 @@ requerir_autenticacion();
                                                         <span class="family-text"><?= htmlspecialchars($articulo->descripcion) ?></span>
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="articulos-form.php?id=<?= $articulo->id ?>" class="btn btn-action">
-                                                            <i class="ri-edit-line me-1"></i> Editar
-                                                        </a>
+                                                        <div class="action-stack">
+                                                            <a href="articulos-form.php?id=<?= $articulo->id ?>" class="btn btn-action">
+                                                                <i class="ri-edit-line me-1"></i> Editar
+                                                            </a>
+                                                            <a href="articulo-historial.php?id=<?= $articulo->id ?>" class="btn btn-action btn-history">
+                                                                <i class="ri-time-line me-1"></i> Historial
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>

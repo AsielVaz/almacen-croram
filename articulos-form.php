@@ -531,6 +531,36 @@ requerir_autenticacion();
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="cr-grid-2">
+                                            <div class="cr-field">
+                                                <label class="cr-label" for="consumo_diario">Consumo diario</label>
+                                                <input
+                                                    type="number"
+                                                    id="consumo_diario"
+                                                    name="consumo_diario"
+                                                    class="cr-input"
+                                                    placeholder="0"
+                                                    step="0.01"
+                                                    min="0"
+                                                    value="<?= $esEdicion && isset($articulo[0]->consumo_diario) ? $articulo[0]->consumo_diario : '' ?>">
+                                                <p class="cr-hint">Cantidad promedio consumida por día.</p>
+                                            </div>
+
+                                            <div class="cr-field">
+                                                <label class="cr-label" for="tiempo_reposicion">Tiempo de reposición</label>
+                                                <input
+                                                    type="number"
+                                                    id="tiempo_reposicion"
+                                                    name="tiempo_reposicion"
+                                                    class="cr-input"
+                                                    placeholder="0"
+                                                    step="1"
+                                                    min="0"
+                                                    value="<?= $esEdicion && isset($articulo[0]->tiempo_reposicion) ? (int)$articulo[0]->tiempo_reposicion : '' ?>">
+                                                <p class="cr-hint">Días estimados para reabastecer el artículo.</p>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Acciones Ã¢â€â‚¬Ã¢â€â‚¬ -->
