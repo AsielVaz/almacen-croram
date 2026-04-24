@@ -3,7 +3,7 @@ require_once __DIR__ . '/auth.php';
 requerir_autenticacion();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <title>Almacen Croram - Inicio</title>
@@ -58,7 +58,7 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
     <div class="page-container">
         <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1">
             <div class="col">
-                <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">ArtÃ­culos activos</h5><h3 class="mt-2 mb-1 fw-bold"><?= $totalArticulos ?></h3><p class="mb-0 text-muted"><span class="text-nowrap">CatÃ¡logo disponible para operaciones</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-primary-subtle text-primary rounded fs-28"><i class="ri-box-3-line"></i></span></div></div></div></div>
+                <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">Art&iacute;culos activos</h5><h3 class="mt-2 mb-1 fw-bold"><?= $totalArticulos ?></h3><p class="mb-0 text-muted"><span class="text-nowrap">Cat&aacute;logo disponible para operaciones</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-primary-subtle text-primary rounded fs-28"><i class="ri-box-3-line"></i></span></div></div></div></div>
             </div>
             <div class="col">
                 <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">Unidades en stock</h5><h3 class="mt-2 mb-1 fw-bold"><?= number_format($totalStock, 0) ?></h3><p class="mb-0 text-muted"><span class="text-nowrap">Suma de inventario actual</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-success-subtle text-success rounded fs-28"><i class="ri-database-2-line"></i></span></div></div></div></div>
@@ -67,7 +67,7 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
                 <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">Proveedores activos</h5><h3 class="mt-2 mb-1 fw-bold"><?= $totalProveedores ?></h3><p class="mb-0 text-muted"><span class="text-nowrap">Disponibles para compra</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-info-subtle text-info rounded fs-28"><i class="ri-building-line"></i></span></div></div></div></div>
             </div>
             <div class="col">
-                <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">Ã“rdenes pendientes</h5><h3 class="mt-2 mb-1 fw-bold"><?= $pendientesEntrada + $pendientesSalida ?></h3><p class="mb-0 text-muted"><span class="text-nowrap"><?= $pendientesEntrada ?> entradas y <?= $pendientesSalida ?> salidas</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-warning-subtle text-warning rounded fs-28"><i class="ri-file-list-3-line"></i></span></div></div></div></div>
+                <div class="card"><div class="card-body"><div class="d-flex align-items-start gap-2 justify-content-between"><div><h5 class="text-muted fs-13 fw-bold text-uppercase">&Oacute;rdenes pendientes</h5><h3 class="mt-2 mb-1 fw-bold"><?= $pendientesEntrada + $pendientesSalida ?></h3><p class="mb-0 text-muted"><span class="text-nowrap"><?= $pendientesEntrada ?> entradas y <?= $pendientesSalida ?> salidas</span></p></div><div class="avatar-lg flex-shrink-0"><span class="avatar-title bg-warning-subtle text-warning rounded fs-28"><i class="ri-file-list-3-line"></i></span></div></div></div></div>
             </div>
         </div>
 
@@ -75,7 +75,7 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
             <div class="col-xl-8">
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="header-title mb-0">Ãšltimas Ã³rdenes de entrada</h4>
+                        <h4 class="header-title mb-0">&Uacute;ltimas &oacute;rdenes de entrada</h4>
                         <a href="ordenes-entrada.php" class="btn btn-sm btn-outline-primary">Ver todas</a>
                     </div>
                     <div class="card-body">
@@ -84,7 +84,7 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
                                 <thead><tr><th>Folio</th><th>Proveedor</th><th>Fecha</th><th>Estatus</th></tr></thead>
                                 <tbody>
                                 <?php if (count($ultimasEntradas) === 0): ?>
-                                    <tr><td colspan="4" class="text-muted">No hay Ã³rdenes de entrada registradas.</td></tr>
+                                    <tr><td colspan="4" class="text-muted">No hay &oacute;rdenes de entrada registradas.</td></tr>
                                 <?php else: ?>
                                     <?php foreach ($ultimasEntradas as $orden): ?>
                                         <tr>
@@ -103,16 +103,16 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
 
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="header-title mb-0">Ãšltimas Ã³rdenes de salida</h4>
+                        <h4 class="header-title mb-0">&Uacute;ltimas &oacute;rdenes de salida</h4>
                         <a href="ordenes-salida.php" class="btn btn-sm btn-outline-danger">Ver todas</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped align-middle mb-0">
-                                <thead><tr><th>Folio</th><th>SolicitÃ³</th><th>Fecha</th><th>Estatus</th></tr></thead>
+                                <thead><tr><th>Folio</th><th>Solicit&oacute;</th><th>Fecha</th><th>Estatus</th></tr></thead>
                                 <tbody>
                                 <?php if (count($ultimasSalidas) === 0): ?>
-                                    <tr><td colspan="4" class="text-muted">No hay Ã³rdenes de salida registradas.</td></tr>
+                                    <tr><td colspan="4" class="text-muted">No hay &oacute;rdenes de salida registradas.</td></tr>
                                 <?php else: ?>
                                     <?php foreach ($ultimasSalidas as $orden): ?>
                                         <tr>
@@ -132,10 +132,10 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
 
             <div class="col-xl-4">
                 <div class="card mb-3">
-                    <div class="card-header"><h4 class="header-title mb-0">AtenciÃ³n inmediata</h4></div>
+                    <div class="card-header"><h4 class="header-title mb-0">Atenci&oacute;n inmediata</h4></div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted">ArtÃ­culos sin stock</span>
+                            <span class="text-muted">Art&iacute;culos sin stock</span>
                             <span class="badge bg-danger-subtle text-danger"><?= $sinStock ?></span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
@@ -147,12 +147,12 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
 
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="header-title mb-0">ArtÃ­culos con menor stock</h4>
-                        <a href="articulos.php" class="btn btn-sm btn-outline-secondary">Ver catÃ¡logo</a>
+                        <h4 class="header-title mb-0">Art&iacute;culos con menor stock</h4>
+                        <a href="articulos.php" class="btn btn-sm btn-outline-secondary">Ver cat&aacute;logo</a>
                     </div>
                     <div class="card-body">
                         <?php if (count($articulosCriticos) === 0): ?>
-                            <p class="text-muted mb-0">No hay artÃ­culos para mostrar.</p>
+                            <p class="text-muted mb-0">No hay art&iacute;culos para mostrar.</p>
                         <?php else: ?>
                             <?php foreach ($articulosCriticos as $articulo): ?>
                                 <div class="d-flex justify-content-between align-items-start py-2 border-bottom">
@@ -181,4 +181,3 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
 <script src="assets/js/app.js"></script>
 </body>
 </html>
-

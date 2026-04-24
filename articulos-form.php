@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram</title>
+    <title>Almacén Croram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -55,14 +55,14 @@ requerir_autenticacion();
             --cr-transition: 160ms cubic-bezier(.4,0,.2,1);
         }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Global overrides Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Global overrides �????,?�????,? */
         body { background: var(--cr-bg) !important; font-family: var(--cr-font-body) !important; color: var(--cr-text) !important; }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Page title Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Page title �????,?�????,? */
         .page-title-head { margin-bottom: 28px; }
         .page-title-head h4 { font-family: var(--cr-font-head); font-size: 22px !important; letter-spacing: -.3px; color: var(--cr-text); }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Main card Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Main card �????,?�????,? */
         .cr-card {
             background: var(--cr-surface);
             border: 1px solid var(--cr-border);
@@ -112,7 +112,7 @@ requerir_autenticacion();
 
         .cr-card-body { padding: 28px; }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Section dividers Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Section dividers �????,?�????,? */
         .cr-section {
             margin-bottom: 28px;
             padding-bottom: 24px;
@@ -129,7 +129,7 @@ requerir_autenticacion();
             margin-bottom: 18px;
         }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Form fields Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Form fields �????,?�????,? */
         .cr-field { margin-bottom: 20px; }
 
         .cr-label {
@@ -219,14 +219,14 @@ requerir_autenticacion();
         .cr-status-opt input[type="radio"]#activo_1:checked + label { border-color: var(--cr-success); background: #edfaf4; color: var(--cr-success); }
         .cr-status-opt input[type="radio"]#activo_0:checked + label { border-color: var(--cr-danger); background: #fef0f2; color: var(--cr-danger); }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Grid layout Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Grid layout �????,?�????,? */
         .cr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
         .cr-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 24px; }
         @media (max-width: 768px) {
             .cr-grid-2, .cr-grid-3 { grid-template-columns: 1fr; }
         }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Buttons Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Buttons �????,?�????,? */
         .cr-actions {
             display: flex; justify-content: space-between; align-items: center;
             padding-top: 24px;
@@ -260,7 +260,7 @@ requerir_autenticacion();
         }
         .cr-btn-ghost:hover { border-color: var(--cr-accent); color: var(--cr-accent); background: var(--cr-accent-lt); }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Next ID chip Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Next ID chip �????,?�????,? */
         .cr-next-id {
             display: inline-flex; align-items: center; gap: 6px;
             background: #f0f2f9; border-radius: 20px;
@@ -270,7 +270,7 @@ requerir_autenticacion();
         }
         .cr-next-id span { color: var(--cr-accent); font-weight: 700; }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Spinner on submit Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Spinner on submit �????,?�????,? */
         .cr-spinner {
             display: none;
             width: 16px; height: 16px;
@@ -282,7 +282,7 @@ requerir_autenticacion();
         .cr-btn.loading .cr-spinner { display: block; }
         .cr-btn.loading .cr-btn-label { display: none; }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Animations Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Animations �????,?�????,? */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(18px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -339,7 +339,7 @@ requerir_autenticacion();
             <div class="page-title-head d-flex align-items-center gap-2">
                 <div class="flex-grow-1" style="display:flex;align-items:center;gap:8px;">
                     <h4 class="fs-18 fw-bold mb-0">
-                        <?= $esEdicion ? 'Editar artÃ­culo' : 'Nuevo artÃ­culo' ?>
+                        <?= $esEdicion ? 'Editar artículo' : 'Nuevo artículo' ?>
                     </h4>
                     <?php if (!$esEdicion): ?>
                         <span class="cr-next-id">Siguiente ID <span><?= $ultimoId ?></span></span>
@@ -347,8 +347,8 @@ requerir_autenticacion();
                 </div>
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">AlmacÃ©n</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">ArtÃ­culos</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Almacén</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Artículos</a></li>
                         <li class="breadcrumb-item active"><?= $esEdicion ? 'Editar' : 'Nuevo' ?></li>
                     </ol>
                 </div>
@@ -366,9 +366,9 @@ requerir_autenticacion();
                                     <i class="<?= $esEdicion ? 'ri-edit-2-line' : 'ri-add-line' ?>"></i>
                                 </div>
                                 <div>
-                                    <h4><?= $esEdicion ? 'Editar artÃ­culo' : 'Registrar artÃ­culo' ?></h4>
+                                    <h4><?= $esEdicion ? 'Editar artículo' : 'Registrar artículo' ?></h4>
                                     <p style="margin:0;font-size:12px;color:var(--cr-muted);">
-                                        <?= $esEdicion ? 'Modifica los datos del artÃ­culo seleccionado' : 'Completa la informaciÃ³n del nuevo artÃ­culo' ?>
+                                        <?= $esEdicion ? 'Modifica los datos del artículo seleccionado' : 'Completa la información del nuevo artículo' ?>
                                     </p>
                                 </div>
                                 <span class="cr-badge <?= $esEdicion ? 'cr-badge-edit' : 'cr-badge-new' ?>">
@@ -380,20 +380,20 @@ requerir_autenticacion();
                             <div class="cr-card-body">
                                 <form id="formArticulo" autocomplete="off">
 
-                                    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ IdentificaciÃ³n Ã¢â€â‚¬Ã¢â€â‚¬ -->
+                                    <!-- �????,?�????,? Identificaci�n �????,?�????,? -->
                                     <div class="cr-section">
-                                        <p class="cr-section-label">IdentificaciÃ³n</p>
+                                        <p class="cr-section-label">Identificación</p>
 
                                         <div class="cr-field">
                                             <label class="cr-label" for="nombre_articulo">
-                                                Nombre del artÃ­culo <span class="req">*</span>
+                                                Nombre del artículo <span class="req">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 id="nombre_articulo"
                                                 name="nombre"
                                                 class="cr-input"
-                                                placeholder="DescripciÃ³n del artÃ­culo"
+                                                placeholder="Descripción del artículo"
                                                 value="<?= $esEdicion ? htmlspecialchars($articulo[0]->nombre) : '' ?>"
                                                 required>
                                         </div>
@@ -437,13 +437,13 @@ requerir_autenticacion();
                                         </div>
 
                                         <div class="cr-field">
-                                            <label class="cr-label" for="sku_articulo">SKU / CÃ³digo interno</label>
+                                            <label class="cr-label" for="sku_articulo">SKU / Código interno</label>
                                             <input
                                                 type="text"
                                                 id="sku_articulo"
                                                 name="sku"
                                                 class="cr-input"
-                                                placeholder="CÃ³digo interno / SKU"
+                                                placeholder="Código interno / SKU"
                                                 value="<?= $esEdicion ? htmlspecialchars($articulo[0]->sku) : '' ?>">
                                             <span id="sku_preview" class="hidden">
                                                 <i class="ri-barcode-line" style="font-size:13px;"></i>
@@ -452,17 +452,17 @@ requerir_autenticacion();
                                         </div>
                                     </div>
 
-                                    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Detalles Ã¢â€â‚¬Ã¢â€â‚¬ -->
+                                    <!-- �????,?�????,? Detalles �????,?�????,? -->
                                     <div class="cr-section">
                                         <p class="cr-section-label">Detalles</p>
 
                                         <div class="cr-field">
-                                            <label class="cr-label" for="descripcion_articulo">DescripciÃ³n</label>
+                                            <label class="cr-label" for="descripcion_articulo">Descripción</label>
                                             <textarea
                                                 id="descripcion_articulo"
                                                 name="descripcion"
                                                 class="cr-textarea"
-                                                placeholder="DescripciÃ³n detallada del artÃ­culo"><?= $esEdicion ? htmlspecialchars($articulo[0]->descripcion) : '' ?></textarea>
+                                                placeholder="Descripción detallada del artículo"><?= $esEdicion ? htmlspecialchars($articulo[0]->descripcion) : '' ?></textarea>
                                         </div>
 
                                         <div class="cr-grid-2">
@@ -496,7 +496,7 @@ requerir_autenticacion();
                                         </div>
                                     </div>
 
-                                    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Inventario Ã¢â€â‚¬Ã¢â€â‚¬ -->
+                                    <!-- �????,?�????,? Inventario �????,?�????,? -->
                                     <div class="cr-section">
                                         <p class="cr-section-label">Inventario y costos</p>
 
@@ -516,7 +516,7 @@ requerir_autenticacion();
                                             </div>
 
                                             <div class="cr-field">
-                                                <label class="cr-label" for="costo_reposicion">Costo de reposiciÃ³n promedio</label>
+                                                <label class="cr-label" for="costo_reposicion">Costo de reposición promedio</label>
                                                 <div class="cr-input-group">
                                                     <span class="cr-prefix">$</span>
                                                     <input
@@ -563,7 +563,7 @@ requerir_autenticacion();
                                         </div>
                                     </div>
 
-                                    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Acciones Ã¢â€â‚¬Ã¢â€â‚¬ -->
+                                    <!-- �????,?�????,? Acciones �????,?�????,? -->
                                     <div class="cr-actions">
                                         <button type="reset" class="cr-btn cr-btn-ghost" id="btnReset">
                                             <i class="ri-refresh-line"></i>
@@ -574,7 +574,7 @@ requerir_autenticacion();
                                             <div class="cr-spinner"></div>
                                             <span class="cr-btn-label">
                                                 <i class="<?= $esEdicion ? 'ri-save-line' : 'ri-add-circle-line' ?>"></i>
-                                                <?= $esEdicion ? 'Guardar cambios' : 'Registrar artÃ­culo' ?>
+                                                <?= $esEdicion ? 'Guardar cambios' : 'Registrar artículo' ?>
                                             </span>
                                         </button>
                                     </div>
@@ -604,7 +604,7 @@ requerir_autenticacion();
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Constantes PHP Ã¢â€ â€™ JS Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Constantes PHP �?????T JS �????,?�????,? */
         const ES_EDICION = <?= $esEdicion ? 'true' : 'false' ?>;
         const ULTIMO_ID  = <?= (int)$ultimoId ?>;
         <?php if ($esEdicion): ?>
@@ -612,7 +612,7 @@ requerir_autenticacion();
         const SUBFAMILIA_ID = <?= isset($articulo[0]->id_subfamilia) ? (int)$articulo[0]->id_subfamilia : 1 ?>;
         <?php endif; ?>
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Submit Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Submit �????,?�????,? */
         document.getElementById('formArticulo').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -632,7 +632,7 @@ requerir_autenticacion();
 
                     if (res.status === 'success') {
                         Swal.fire({
-                title: 'Â¡Listo!',
+                title: '¡Listo!',
                             text: res.message,
                             icon: 'success',
                             confirmButtonColor: '#2d3a8c',
@@ -654,7 +654,7 @@ requerir_autenticacion();
                 });
         });
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Cargar subfamilias Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Cargar subfamilias �????,?�????,? */
         function cargarSubFamilias(preselect = null) {
             const idFamilia       = document.getElementById('id_familia_articulo').value;
             const subfamiliaSelect = document.getElementById('id_subfamilia_articulo');
@@ -690,7 +690,7 @@ requerir_autenticacion();
             .catch(err => console.error('Error cargando subfamilias:', err));
         }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Armar SKU Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Armar SKU �????,?�????,? */
         function armarSku() {
             const subfamiliaSelect = document.getElementById('id_subfamilia_articulo');
             const skuInput         = document.getElementById('sku_articulo');
@@ -713,7 +713,7 @@ requerir_autenticacion();
             }
         }
 
-        /* Ã¢â€â‚¬Ã¢â€â‚¬ Precargar subfamilias en ediciÃ³n Ã¢â€â‚¬Ã¢â€â‚¬ */
+        /* �????,?�????,? Precargar subfamilias en edici�n �????,?�????,? */
         <?php if ($esEdicion): ?>
         document.addEventListener('DOMContentLoaded', () => {
             cargarSubFamilias(SUBFAMILIA_ID);

@@ -7,9 +7,9 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - ConciliaciÃ³n Total</title>
+    <title>Almacén Croram - Conciliación Total</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="ConciliaciÃ³n total de inventario" name="description" />
+    <meta content="Conciliación total de inventario" name="description" />
     <meta content="HoppingJet Studio." name="author" />
 
     <link rel="shortcut icon" href="favicon.png">
@@ -37,7 +37,7 @@ include_once 'api/adminArticulos.php';
 $adminArticulos = new AdministradorArticulos();
 
 /* =============================
-   OBTENER TODOS LOS ARTÃƒÂCULOS
+OBTENER TODOS LOS ARTÍCULOS
 ============================= */
 $articulos = json_decode($adminArticulos->listarArticulos(false), true);
 ?>
@@ -46,12 +46,12 @@ $articulos = json_decode($adminArticulos->listarArticulos(false), true);
 
 <div class="page-title-head d-flex align-items-center gap-2">
     <div class="flex-grow-1">
-        <h4 class="fs-18 fw-bold mb-0">ConciliaciÃ³n Total de Inventario</h4>
+        <h4 class="fs-18 fw-bold mb-0">Conciliación Total de Inventario</h4>
     </div>
     <div class="text-end">
         <ol class="breadcrumb m-0 py-0 fs-13">
             <li class="breadcrumb-item">Inventario</li>
-            <li class="breadcrumb-item active">ConciliaciÃ³n Total</li>
+            <li class="breadcrumb-item active">Conciliación Total</li>
         </ol>
     </div>
 </div>
@@ -62,14 +62,14 @@ $articulos = json_decode($adminArticulos->listarArticulos(false), true);
 <div class="card-body">
 
 <h4 class="header-title mb-3">
-    ConciliaciÃ³n del 100 % de los artÃ­culos
+    Conciliación del 100 % de los artículos
 </h4>
 
 <table id="tablaConciliacion" class="table table-striped dt-responsive nowrap w-100">
     <thead>
         <tr>
             <th>ID</th>
-            <th>ArtÃ­culo</th>
+            <th>Artículo</th>
             <th>SKU</th>
             <th>Existencias sistema</th>
             <th>Existencias reales</th>
@@ -99,7 +99,7 @@ $articulos = json_decode($adminArticulos->listarArticulos(false), true);
 
 <div class="text-end mt-3">
     <button class="btn btn-success" id="btnTerminar">
-        <i class="fa fa-check"></i> Terminar conciliaciÃ³n
+        <i class="fa fa-check"></i> Terminar conciliación
     </button>
 </div>
 
@@ -146,7 +146,7 @@ document.querySelectorAll('.cantidad-real').forEach(input => {
 });
 
 /* =============================
-   ENVIAR CONCILIACIÃƒâ€œN
+ENVIAR CONCILIACIÓN
 ============================= */
 document.getElementById('btnTerminar').addEventListener('click', () => {
     const conciliacion = [];
@@ -170,13 +170,12 @@ document.getElementById('btnTerminar').addEventListener('click', () => {
     })
     .then(r => r.json())
     .then(() => {
-        alert('ConciliaciÃ³n total registrada correctamente');
+        alert('Conciliación total registrada correctamente');
         location.reload();
     })
-    .catch(() => alert('Error al guardar conciliaciÃ³n'));
+    .catch(() => alert('Error al guardar conciliación'));
 });
 </script>
 
 </body>
 </html>
-
