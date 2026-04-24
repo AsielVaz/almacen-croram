@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link active" href="reportes.html">Reportes</a>
+                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Consulta</div>
+                <h1>Uso del módulo de reportes</h1>
+                <p class="muted">Los reportes ayudan a revisar existencias, movimientos y artículos críticos, además de exportar información para seguimiento externo.</p>
+            </section>
+
+            <section class="card">
+                <h2>Reportes disponibles</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reporte</th>
+                                <th>Para qué sirve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Reportes generales</td>
+                                <td>Consulta inventario, proveedores y órdenes exportables.</td>
+                            </tr>
+                            <tr>
+                                <td>Items con bajo stock</td>
+                                <td>Detecta productos que requieren reabastecimiento.</td>
+                            </tr>
+                            <tr>
+                                <td>Items sin stock</td>
+                                <td>Localiza productos agotados.</td>
+                            </tr>
+                            <tr>
+                                <td>Reporte de artículos</td>
+                                <td>Revisa inventario desde una vista operativa.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Cómo exportar</h2>
+                <ol class="steps">
+                    <li>Abre el reporte deseado.</li>
+                    <li>Revisa los datos antes de exportar.</li>
+                    <li>Haz clic en el botón de exportación a Excel.</li>
+                    <li>Guarda el archivo en la carpeta que prefieras.</li>
+                </ol>
+            </section>
+
+            <div class="callout ok">
+                <strong>Consejo:</strong> usa el reporte de bajo stock como rutina diaria para anticipar compras y evitar faltantes.
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes - Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link active" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link" href="reportes.html">Reportes</a>
+                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Movimientos</div>
+                <h1>Órdenes de entrada y salida</h1>
+                <p class="muted">Las órdenes controlan el ingreso y egreso de mercancía. Son una parte clave para que el inventario refleje cantidades reales.</p>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <h2>Orden de entrada</h2>
+                    <ol class="steps">
+                        <li>Selecciona proveedor.</li>
+                        <li>Busca artículos por nombre, descripción o SKU.</li>
+                        <li>Agrega cantidades y precio unitario.</li>
+                        <li>Envía la orden.</li>
+                        <li>Cuando la mercancía llegue, confirma la recepción.</li>
+                    </ol>
+                </article>
+
+                <article class="card">
+                    <h2>Orden de salida</h2>
+                    <ol class="steps">
+                        <li>Busca artículos disponibles.</li>
+                        <li>Captura la cantidad a retirar.</li>
+                        <li>Agrega cada artículo a la salida.</li>
+                        <li>Registra la orden.</li>
+                        <li>La existencia del artículo se reducirá.</li>
+                    </ol>
+                </article>
+            </section>
+
+            <div class="callout danger">
+                <strong>Atención:</strong> una salida mal capturada afecta el inventario disponible. Revisa cantidades antes de confirmar.
+            </div>
+
+            <section class="card">
+                <h2>Buenas prácticas para órdenes</h2>
+                <ul class="steps">
+                    <li>Verifica el proveedor antes de enviar una orden de compra.</li>
+                    <li>No dupliques artículos en la misma orden si puedes consolidarlos.</li>
+                    <li>Revisa precios antes de guardar una entrada.</li>
+                    <li>En salidas, nunca excedas el stock disponible.</li>
+                    <li>Consulta los listados de órdenes para dar seguimiento a estatus.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

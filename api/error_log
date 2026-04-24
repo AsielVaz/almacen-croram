@@ -1,0 +1,44 @@
+[24-Mar-2026 13:37:00 America/Mexico_City] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:1) in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 153
+[24-Mar-2026 13:37:10 America/Mexico_City] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:1) in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 153
+[24-Mar-2026 13:37:39 America/Mexico_City] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:1) in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 16
+[24-Mar-2026 13:38:08 America/Mexico_City] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:1) in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 16
+[24-Mar-2026 13:38:17 America/Mexico_City] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:1) in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 16
+[24-Mar-2026 13:48:55 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'NA' for key 'sku' in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:156
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/apiCarga.php(156): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 156
+[24-Mar-2026 13:56:41 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'NA' for key 'sku' in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:179
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/apiCarga.php(179): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 179
+[24-Mar-2026 13:56:46 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'NA' for key 'sku' in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php:179
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/apiCarga.php(179): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/apiCarga.php on line 179
+[27-Mar-2026 10:32:50 America/Mexico_City] PHP Fatal error:  Uncaught TypeError: mysqli_fetch_assoc(): Argument #1 ($result) must be of type mysqli_result, string given in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php:181
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php(181): mysqli_fetch_assoc('[{"total":"1"}]')
+#1 /home3/grupo465/public_html/almacen/dist/api/apiProveedores.php(30): AdministradorProveedores->existeRfc('FEA890909LL1')
+#2 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php on line 181
+[27-Mar-2026 10:32:54 America/Mexico_City] PHP Fatal error:  Uncaught TypeError: mysqli_fetch_assoc(): Argument #1 ($result) must be of type mysqli_result, string given in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php:181
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php(181): mysqli_fetch_assoc('[{"total":"1"}]')
+#1 /home3/grupo465/public_html/almacen/dist/api/apiProveedores.php(30): AdministradorProveedores->existeRfc('FEA890909LL1')
+#2 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php on line 181
+[27-Mar-2026 10:33:11 America/Mexico_City] PHP Fatal error:  Uncaught TypeError: mysqli_fetch_assoc(): Argument #1 ($result) must be of type mysqli_result, string given in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php:181
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php(181): mysqli_fetch_assoc('[{"total":"1"}]')
+#1 /home3/grupo465/public_html/almacen/dist/api/apiProveedores.php(30): AdministradorProveedores->existeRfc('FEA890909LL1')
+#2 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php on line 181
+[27-Mar-2026 10:33:48 America/Mexico_City] PHP Fatal error:  Uncaught TypeError: mysqli_fetch_assoc(): Argument #1 ($result) must be of type mysqli_result, string given in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php:181
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php(181): mysqli_fetch_assoc('[{"total":"1"}]')
+#1 /home3/grupo465/public_html/almacen/dist/api/apiProveedores.php(31): AdministradorProveedores->existeRfc('FEA890909LL1')
+#2 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/adminProveedores.php on line 181

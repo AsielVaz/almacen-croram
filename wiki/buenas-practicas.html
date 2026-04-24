@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buenas Prácticas - Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link" href="reportes.html">Reportes</a>
+                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link active" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Operación diaria</div>
+                <h1>Buenas prácticas de uso</h1>
+                <p class="muted">Estas recomendaciones ayudan a mantener la información limpia, consistente y útil para compras, salidas y reportes.</p>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <h2>Antes de capturar</h2>
+                    <ul class="steps">
+                        <li>Verifica si el artículo ya existe.</li>
+                        <li>Confirma la familia y subfamilia correctas.</li>
+                        <li>Usa nombres claros y uniformes.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h2>Durante la operación</h2>
+                    <ul class="steps">
+                        <li>Evita dejar órdenes a medias si ya no se usarán.</li>
+                        <li>Revisa cantidades antes de confirmar entradas o salidas.</li>
+                        <li>Usa reportes para validar cambios importantes.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <div class="callout warn">
+                <strong>Recomendación:</strong> si detectas una diferencia entre el inventario físico y el sistema, repórtala y corrígela cuanto antes para evitar errores acumulados.
+            </div>
+
+            <section class="card">
+                <h2>Errores comunes a evitar</h2>
+                <ul class="steps">
+                    <li>Registrar dos veces el mismo artículo con nombres parecidos.</li>
+                    <li>Guardar precios equivocados en una orden de entrada.</li>
+                    <li>Capturar salidas mayores al stock disponible.</li>
+                    <li>Dejar usuarios activos cuando ya no usan el sistema.</li>
+                    <li>No revisar reportes de bajo stock a tiempo.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

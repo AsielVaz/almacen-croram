@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki de Uso - Almacen Croram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link active" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link" href="reportes.html">Reportes</a>
+                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Guía del usuario</div>
+                <h1>Cómo usar el sistema de almacén</h1>
+                <p class="muted">Esta wiki explica el uso diario del sistema: acceso, registro de artículos, captura de órdenes, consulta de inventario, reportes y administración de usuarios. Está pensada para personal operativo y administrativo, no para desarrollo técnico.</p>
+                <div class="chips">
+                    <span class="chip">Artículos</span>
+                    <span class="chip">Inventario</span>
+                    <span class="chip">Órdenes</span>
+                    <span class="chip">Reportes</span>
+                    <span class="chip">Usuarios</span>
+                </div>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <h2>Ruta recomendada para empezar</h2>
+                    <ol class="steps">
+                        <li>Inicia sesión con tu correo y contraseña.</li>
+                        <li>Consulta el panel inicial para ver el estado general del almacén.</li>
+                        <li>Verifica artículos, proveedores y órdenes según tu tarea.</li>
+                        <li>Usa reportes para revisar existencias, movimientos y faltantes.</li>
+                    </ol>
+                </article>
+
+                <article class="card">
+                    <h2>Módulos principales</h2>
+                    <ul class="steps">
+                        <li><strong>Artículos:</strong> catálogo general e inventario actual.</li>
+                        <li><strong>Familias y subfamilias:</strong> clasificación de artículos.</li>
+                        <li><strong>Proveedores:</strong> datos para compras.</li>
+                        <li><strong>Órdenes:</strong> entradas y salidas del almacén.</li>
+                        <li><strong>Reportes:</strong> consulta y exportación de información.</li>
+                        <li><strong>Usuarios:</strong> control de accesos al sistema.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <div class="callout ok">
+                <strong>Consejo:</strong> si no encuentras un artículo, primero usa el buscador por nombre, descripción o SKU antes de darlo de alta de nuevo.
+            </div>
+
+            <section class="card">
+                <h2>¿Qué página leer según tu tarea?</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Necesito hacer esto</th>
+                                <th>Consulta esta página</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Entrar al sistema o cerrar sesión</td>
+                                <td><a href="inicio-sesion.html">Acceso al sistema</a></td>
+                            </tr>
+                            <tr>
+                                <td>Registrar, editar o buscar artículos</td>
+                                <td><a href="articulos.html">Artículos e inventario</a></td>
+                            </tr>
+                            <tr>
+                                <td>Capturar compras o salidas de almacén</td>
+                                <td><a href="ordenes.html">Órdenes de entrada y salida</a></td>
+                            </tr>
+                            <tr>
+                                <td>Consultar exportables e indicadores</td>
+                                <td><a href="reportes.html">Reportes</a></td>
+                            </tr>
+                            <tr>
+                                <td>Crear o desactivar accesos</td>
+                                <td><a href="usuarios.html">Administración de usuarios</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <p class="footer-note">Si esta wiki necesita adaptarse a tu operación interna, puedes ampliarla con políticas de captura, responsables por área y reglas de autorización.</p>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link" href="reportes.html">Reportes</a>
+                <a class="nav-link active" href="usuarios.html">Administración de usuarios</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Accesos</div>
+                <h1>Administración de usuarios</h1>
+                <p class="muted">Este módulo sirve para crear accesos, actualizar datos y activar o desactivar usuarios del sistema.</p>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <h2>Datos básicos del usuario</h2>
+                    <ul class="steps">
+                        <li>Nombre</li>
+                        <li>Usuario</li>
+                        <li>Correo</li>
+                        <li>Contraseña</li>
+                        <li>Rol</li>
+                        <li>Estado activo o inactivo</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h2>Estados posibles</h2>
+                    <ul class="steps">
+                        <li><strong>Activo:</strong> puede entrar al sistema.</li>
+                        <li><strong>Inactivo:</strong> no puede iniciar sesión.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="card">
+                <h2>Cómo crear un usuario</h2>
+                <ol class="steps">
+                    <li>Abre <strong>Administrar usuarios</strong>.</li>
+                    <li>Selecciona <strong>Agregar usuario</strong>.</li>
+                    <li>Captura nombre, usuario, correo y contraseña.</li>
+                    <li>Asigna rol si aplica.</li>
+                    <li>Guarda el registro.</li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2>Cuándo desactivar o activar</h2>
+                <ul class="steps">
+                    <li>Desactiva usuarios que ya no deben entrar al sistema.</li>
+                    <li>Activa nuevamente un usuario si debe recuperar acceso.</li>
+                    <li>Antes de desactivar, verifica que no tenga tareas pendientes de captura.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

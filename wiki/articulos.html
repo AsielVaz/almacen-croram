@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artículos e Inventario - Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">Wiki de Uso</div>
+            <div class="brand-sub">Manual para usuarios del sistema</div>
+            <div class="nav-group">
+                <div class="nav-title">Inicio</div>
+                <a class="nav-link" href="index.html">Resumen general</a>
+                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Operación</div>
+                <a class="nav-link active" href="articulos.html">Artículos e inventario</a>
+                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
+                <a class="nav-link" href="reportes.html">Reportes</a>
+                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-title">Apoyo</div>
+                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Inventario</div>
+                <h1>Uso del módulo de artículos</h1>
+                <p class="muted">Este módulo permite consultar, registrar y actualizar los artículos del almacén, así como revisar su clasificación y existencias.</p>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <h2>Información principal de un artículo</h2>
+                    <ul class="steps">
+                        <li>SKU o clave interna</li>
+                        <li>Nombre del artículo</li>
+                        <li>Familia y subfamilia</li>
+                        <li>Unidad de medida</li>
+                        <li>Descripción</li>
+                        <li>Estado activo o inactivo</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h2>Cómo buscar un artículo</h2>
+                    <ol class="steps">
+                        <li>Abre el módulo <strong>Artículos</strong>.</li>
+                        <li>Usa el buscador por nombre, descripción o SKU.</li>
+                        <li>Revisa los resultados paginados.</li>
+                        <li>Abre el registro si necesitas editarlo.</li>
+                    </ol>
+                </article>
+            </section>
+
+            <section class="card">
+                <h2>Cómo dar de alta un artículo</h2>
+                <ol class="steps">
+                    <li>Entra al formulario de artículos.</li>
+                    <li>Captura nombre, familia y demás datos obligatorios.</li>
+                    <li>Registra inventario inicial si corresponde.</li>
+                    <li>Guarda el registro.</li>
+                </ol>
+                <div class="callout ok">
+                    <strong>Consejo:</strong> usa descripciones claras y SKU consistentes para facilitar búsquedas y reportes.
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Cuándo editar un artículo</h2>
+                <ul class="steps">
+                    <li>Cuando cambie su nombre o descripción.</li>
+                    <li>Cuando debas reclasificarlo en otra familia o subfamilia.</li>
+                    <li>Cuando necesites desactivarlo para evitar su uso futuro.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

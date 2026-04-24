@@ -1,0 +1,200 @@
+[24-Mar-2026 14:09:08 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY p.nombre' at line 16 in /home3/grupo465/public_html/almacen/dist/api/conector.php:18
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/conector.php(18): mysqli->query('\r\n            S...')
+#1 /home3/grupo465/public_html/almacen/dist/api/adminArticulos.php(101): Con->ejecutar('\r\n            S...')
+#2 /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php(370): AdministradorArticulos->listarArticulos(false)
+#3 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/conector.php on line 18
+[24-Mar-2026 14:09:11 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY p.nombre' at line 16 in /home3/grupo465/public_html/almacen/dist/api/conector.php:18
+Stack trace:
+#0 /home3/grupo465/public_html/almacen/dist/api/conector.php(18): mysqli->query('\r\n            S...')
+#1 /home3/grupo465/public_html/almacen/dist/api/adminArticulos.php(101): Con->ejecutar('\r\n            S...')
+#2 /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php(370): AdministradorArticulos->listarArticulos(false)
+#3 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/api/conector.php on line 18
+[24-Mar-2026 14:09:20 America/Mexico_City] PHP Fatal error:  Uncaught Error: Class "AdministradorArticulos" not found in /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php:366
+Stack trace:
+#0 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php on line 366
+[24-Mar-2026 14:10:00 America/Mexico_City] PHP Fatal error:  Uncaught Error: Class "AdministradorArticulos" not found in /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php:366
+Stack trace:
+#0 {main}
+  thrown in /home3/grupo465/public_html/almacen/dist/ordenes-salida-form.php on line 366
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:49:44 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:49:56 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Undefined array key "nombre" in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:50:36 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Undefined array key "nombre" in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:50:38 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:50:55 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on string in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:51:37 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:52:00 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 394
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 444
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 462
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 474
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 483
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 488
+[27-Mar-2026 09:53:06 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 527
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 394
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 444
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 462
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 474
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 483
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 488
+[27-Mar-2026 09:53:19 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 527
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 394
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 444
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 462
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 474
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 483
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 488
+[27-Mar-2026 09:53:52 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 527
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 394
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 414
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 444
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 462
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 474
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 483
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 488
+[27-Mar-2026 09:54:03 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 527
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "nombre" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 393
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:54:57 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "id_familia" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 413
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "sku" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 443
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "descripcion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 461
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "unidad_medida" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 473
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 482
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "activo" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 487
+[27-Mar-2026 09:55:34 America/Mexico_City] PHP Warning:  Attempt to read property "costo_reposicion" on array in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:56:31 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:56:50 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 09:57:53 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 10:00:03 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 10:00:25 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 10:01:32 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 10:01:40 America/Mexico_City] PHP Warning:  Undefined property: stdClass::$costo_reposicion in /home3/grupo465/public_html/almacen/dist/articulos-form.php on line 526
+[27-Mar-2026 10:09:05 America/Mexico_City] PHP Warning:  foreach() argument must be of type array|object, string given in /home3/grupo465/public_html/almacen/dist/proveedores-ver.php on line 145
+[27-Mar-2026 10:09:21 America/Mexico_City] PHP Warning:  foreach() argument must be of type array|object, string given in /home3/grupo465/public_html/almacen/dist/proveedores-ver.php on line 145
+[27-Mar-2026 10:09:42 America/Mexico_City] PHP Warning:  foreach() argument must be of type array|object, string given in /home3/grupo465/public_html/almacen/dist/proveedores-ver.php on line 147
+[27-Mar-2026 10:11:06 America/Mexico_City] PHP Warning:  foreach() argument must be of type array|object, string given in /home3/grupo465/public_html/almacen/dist/proveedores-ver.php on line 147
