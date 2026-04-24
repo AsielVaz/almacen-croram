@@ -148,9 +148,12 @@ class AdministradorOrdenes extends Con
         $id_orden_salida = (int)$id_orden_salida;
 
         $sql = "
-            SELECT orden_salida_detalle.*, productos.nombre AS nombre_producto
+            SELECT
+                orden_salida_detalle.*,
+                productos.nombre AS nombre_producto,
+                COALESCE(productos.costo_reposicion, 0) AS costo_promedio
             FROM orden_salida_detalle
-            inner join productos on productos.id = orden_salida_detalle.id_producto
+            INNER JOIN productos ON productos.id = orden_salida_detalle.id_producto
             WHERE id_orden_salida = $id_orden_salida
         ";
 

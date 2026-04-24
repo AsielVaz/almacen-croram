@@ -122,7 +122,8 @@ $items = array();
 foreach ($detallesOrden as $detalle) {
     $items[] = array(
         'producto' => $detalle->nombre_producto,
-            'cantidad' => (int)round((float)$detalle->cantidad),
+        'cantidad' => (int)round((float)$detalle->cantidad),
+        'costo_promedio' => (float)($detalle->costo_promedio ?? 0),
     );
 }
 
@@ -180,8 +181,9 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(15, 9, '#', 1, 0, 'C', true);
-$pdf->Cell(130, 9, utf8_decode('DESCRIPCIÓN'), 1, 0, 'C', true);
-$pdf->Cell(45, 9, 'CANTIDAD', 1, 1, 'C', true);
+$pdf->Cell(100, 9, utf8_decode('DESCRIPCIÓN'), 1, 0, 'C', true);
+$pdf->Cell(30, 9, 'CANTIDAD', 1, 0, 'C', true);
+$pdf->Cell(45, 9, utf8_decode('PRECIO PROM.'), 1, 1, 'C', true);
 
 // Items de la tabla
 $pdf->SetFont('Arial', '', 9);
@@ -203,10 +205,11 @@ foreach ($items as $item) {
     }
     
     $pdf->Cell(15, 8, $i, 'LR', 0, 'C', true);
-    $pdf->Cell(130, 8, utf8_decode($item['producto']), 'LR', 0, 'L', true);
+    $pdf->Cell(100, 8, utf8_decode($item['producto']), 'LR', 0, 'L', true);
     
     $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(45, 8, $item['cantidad'] . ' unidades', 'LR', 1, 'C', true);
+    $pdf->Cell(30, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);
+    $pdf->Cell(45, 8, '$' . number_format($item['costo_promedio'], 2), 'LR', 1, 'R', true);
     
     $pdf->SetFont('Arial', '', 9);
     $fill = !$fill;

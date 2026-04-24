@@ -361,8 +361,9 @@ requerir_autenticacion();
                                         <thead>
                                             <tr>
                                                 <th width="10%">#</th>
-                                                <th width="60%">Producto</th>
-                                                <th width="30%" class="text-center">Cantidad</th>
+                                                <th width="50%">Producto</th>
+                                                <th width="20%" class="text-center">Cantidad</th>
+                                                <th width="20%" class="text-end">Precio promedio</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -378,6 +379,9 @@ requerir_autenticacion();
                                                     </td>
                                                     <td class="text-center">
                                                 <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
+                                                    </td>
+                                                    <td class="text-end fw-bold">
+                                                        $<?= number_format((float)($detalle->costo_promedio ?? 0), 2) ?>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>

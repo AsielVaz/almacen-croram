@@ -123,8 +123,8 @@ $items = array();
 foreach ($detallesOrden as $detalle) {
     $items[] = array(
         'producto' => $detalle->nombre_producto,
-            'cantidad' => (int)round((float)$detalle->cantidad),
-        'precio'   => $detalle->precio_unitario,
+        'cantidad' => (int)round((float)$detalle->cantidad),
+        'precio'   => (float)($detalle->costo_promedio ?? 0),
     );
 }
 
