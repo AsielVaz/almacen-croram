@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - Orden de Salida</title>
+    <title>Almacén Croram - Orden de Salida</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -300,8 +300,8 @@ requerir_autenticacion();
                     </div>
                     <div class="text-end">
                         <ol class="breadcrumb m-0 py-0 fs-13">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
-                            <li class="breadcrumb-item active">Ã“rdenes de Salida</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
+                        <li class="breadcrumb-item active">Órdenes de salida</li>
                         </ol>
                     </div>
                 </div>
@@ -316,7 +316,7 @@ requerir_autenticacion();
                         <div class="alert-warning-custom">
                             <i class="ri-alert-line"></i>
                             <div class="alert-warning-custom-text">
-                                <strong>AtenciÃ³n:</strong> Al aprobar esta orden, los productos serÃ¡n descontados del inventario.
+                                <strong>Atención:</strong> Al aprobar esta orden, los productos serán descontados del inventario.
                             </div>
                         </div>
 
@@ -369,7 +369,7 @@ requerir_autenticacion();
                                             <?php
                                             $total = 0;
                                             foreach ($detallesOrden as $index => $detalle):
-                                                $total += $detalle->cantidad ?? 0;
+                        $total += (int)round((float)($detalle->cantidad ?? 0));
                                             ?>
                                                 <tr>
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
@@ -377,7 +377,7 @@ requerir_autenticacion();
                                                         <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="badge bg-secondary"><?= $detalle->cantidad ?> unidades</span>
+                                                <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -395,7 +395,7 @@ requerir_autenticacion();
                                     </table>
                                 </div>
 
-                                <!-- Botones de acciÃ³n -->
+                                <!-- Botones de acción -->
                                 <div class="action-buttons">
                                     <button type="button" class="btn btn-modern btn-approve" id="btnAprobar">
                                         <i class="ri-check-line me-2"></i>Aprobar Orden
@@ -478,7 +478,7 @@ requerir_autenticacion();
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // BotÃ³n Aprobar Orden
+            // Botón Aprobar Orden
             const btnAprobar = document.getElementById('btnAprobar');
             
             if (btnAprobar) {
@@ -487,18 +487,18 @@ requerir_autenticacion();
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
                     
-                    // ConfirmaciÃ³n
+                    // Confirmación
                     Swal.fire({
-                        title: 'Â¿Aprobar orden de salida?',
+                        title: '¿Aprobar orden de salida?',
                         html: `
-                            <p>Esta acciÃ³n confirmarÃ¡ la salida de los productos del inventario.</p>
-                            <p class="text-danger"><strong>âš ï¸ Esta acciÃ³n no se puede deshacer</strong></p>
+                            <p>Esta acción confirmará la salida de los productos del inventario.</p>
+                        <p class="text-danger"><strong>Esta acción no se puede deshacer</strong></p>
                         `,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#28a745',
                         cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'SÃ­, aprobar',
+                        confirmButtonText: 'Sí, aprobar',
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -537,11 +537,11 @@ requerir_autenticacion();
                 if (data.success || data.status === 'success') {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Â¡Orden aprobada!',
+                        title: '¡Orden aprobada!',
                         text: data.message || 'La orden de salida ha sido aprobada correctamente',
                         confirmButtonColor: '#28a745'
                     }).then(() => {
-                        // Recargar pÃ¡gina o redirigir
+                        // Recargar página o redirigir
                         location.reload();
                     });
                 } else {
@@ -559,7 +559,7 @@ requerir_autenticacion();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'OcurriÃ³ un error al procesar la solicitud',
+                    text: 'Ocurrió un error al procesar la solicitud',
                     confirmButtonColor: '#6c757d'
                 });
             });

@@ -46,14 +46,14 @@ function convertir_numero($valor) {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     responder(array(
         'ok' => false,
-        'mensaje' => 'MÃ©todo no permitido. Usa POST.'
+        'mensaje' => 'Método no permitido. Usa POST.'
     ), 405);
 }
 
 if (!isset($_FILES['archivo'])) {
     responder(array(
         'ok' => false,
-        'mensaje' => 'No se recibiÃ³ el archivo en el campo archivo.'
+        'mensaje' => 'No se recibió el archivo en el campo archivo.'
     ), 400);
 }
 
@@ -70,7 +70,7 @@ $tmpFile = $_FILES['archivo']['tmp_name'];
 if (!is_uploaded_file($tmpFile)) {
     responder(array(
         'ok' => false,
-        'mensaje' => 'El archivo recibido no es vÃ¡lido.'
+        'mensaje' => 'El archivo recibido no es válido.'
     ), 400);
 }
 
@@ -84,7 +84,7 @@ $mysqli = new mysqli(
 if ($mysqli->connect_error) {
     responder(array(
         'ok' => false,
-        'mensaje' => 'Error de conexiÃ³n a la base de datos.',
+        'mensaje' => 'Error de conexión a la base de datos.',
         'error' => $mysqli->connect_error
     ), 500);
 }
@@ -104,7 +104,7 @@ if ($primera_fila === false) {
     fclose($handle);
     responder(array(
         'ok' => false,
-        'mensaje' => 'El archivo CSV estÃ¡ vacÃ­o.'
+        'mensaje' => 'El archivo CSV está vacío.'
     ), 400);
 }
 
@@ -153,7 +153,7 @@ while (($fila = fgetcsv($handle)) !== false) {
     if ($nombre === '') {
         $errores[] = array(
             'fila' => $fila_numero,
-            'mensaje' => 'El nombre estÃ¡ vacÃ­o, no se insertÃ³.'
+            'mensaje' => 'El nombre está vacío, no se insertó.'
         );
         continue;
     }
@@ -204,7 +204,7 @@ while (($fila = fgetcsv($handle)) !== false) {
             'fila' => $fila_numero,
             'nombre' => $nombre,
             'id_producto' => $id_producto,
-            'mensaje' => 'Producto insertado pero fallÃ³ inventario.',
+            'mensaje' => 'Producto insertado pero falló inventario.',
             'error' => $stmt_inventario->error
         );
         continue;

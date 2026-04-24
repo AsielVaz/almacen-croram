@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram</title>
+    <title>Almacén Croram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />

@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram</title>
+    <title>Almacén Croram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -339,7 +339,7 @@ requerir_autenticacion();
             <div class="page-title-head d-flex align-items-center gap-2">
                 <div class="flex-grow-1" style="display:flex;align-items:center;gap:8px;">
                     <h4 class="fs-18 fw-bold mb-0">
-                        <?= $esEdicion ? 'Editar artÃ­culo' : 'Nuevo artÃ­culo' ?>
+                        <?= $esEdicion ? 'Editar artículo' : 'Nuevo artículo' ?>
                     </h4>
                     <?php if (!$esEdicion): ?>
                         <span class="cr-next-id">Siguiente ID <span><?= $ultimoId ?></span></span>
@@ -347,8 +347,8 @@ requerir_autenticacion();
                 </div>
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">AlmacÃ©n</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">ArtÃ­culos</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Almacén</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Artículos</a></li>
                         <li class="breadcrumb-item active"><?= $esEdicion ? 'Editar' : 'Nuevo' ?></li>
                     </ol>
                 </div>
@@ -366,9 +366,9 @@ requerir_autenticacion();
                                     <i class="<?= $esEdicion ? 'ri-edit-2-line' : 'ri-add-line' ?>"></i>
                                 </div>
                                 <div>
-                                    <h4><?= $esEdicion ? 'Editar artÃ­culo' : 'Registrar artÃ­culo' ?></h4>
+                                    <h4><?= $esEdicion ? 'Editar artículo' : 'Registrar artículo' ?></h4>
                                     <p style="margin:0;font-size:12px;color:var(--cr-muted);">
-                                        <?= $esEdicion ? 'Modifica los datos del artÃ­culo seleccionado' : 'Completa la informaciÃ³n del nuevo artÃ­culo' ?>
+                                        <?= $esEdicion ? 'Modifica los datos del artículo seleccionado' : 'Completa la información del nuevo artículo' ?>
                                     </p>
                                 </div>
                                 <span class="cr-badge <?= $esEdicion ? 'cr-badge-edit' : 'cr-badge-new' ?>">
@@ -380,20 +380,20 @@ requerir_autenticacion();
                             <div class="cr-card-body">
                                 <form id="formArticulo" autocomplete="off">
 
-                                    <!-- â”€â”€ IdentificaciÃ³n â”€â”€ -->
+                                    <!-- â”€â”€ Identificación â”€â”€ -->
                                     <div class="cr-section">
-                                        <p class="cr-section-label">IdentificaciÃ³n</p>
+                                        <p class="cr-section-label">Identificación</p>
 
                                         <div class="cr-field">
                                             <label class="cr-label" for="nombre_articulo">
-                                                Nombre del artÃ­culo <span class="req">*</span>
+                                                Nombre del artículo <span class="req">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 id="nombre_articulo"
                                                 name="nombre"
                                                 class="cr-input"
-                                                placeholder="DescripciÃ³n del artÃ­culo"
+                                                placeholder="Descripción del artículo"
                                                 value="<?= $esEdicion ? htmlspecialchars($articulo[0]->nombre) : '' ?>"
                                                 required>
                                         </div>
@@ -430,20 +430,20 @@ requerir_autenticacion();
                                                         name="id_subfamilia"
                                                         class="cr-select"
                                                         onchange="armarSku()">
-                                                        <option value="">Selecciona una subfamilia</option>
+                                                        <option value="1">Sin familia</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="cr-field">
-                                            <label class="cr-label" for="sku_articulo">SKU / CÃ³digo interno</label>
+                                            <label class="cr-label" for="sku_articulo">SKU / Código interno</label>
                                             <input
                                                 type="text"
                                                 id="sku_articulo"
                                                 name="sku"
                                                 class="cr-input"
-                                                placeholder="CÃ³digo interno / SKU"
+                                                placeholder="Código interno / SKU"
                                                 value="<?= $esEdicion ? htmlspecialchars($articulo[0]->sku) : '' ?>">
                                             <span id="sku_preview" class="hidden">
                                                 <i class="ri-barcode-line" style="font-size:13px;"></i>
@@ -457,12 +457,12 @@ requerir_autenticacion();
                                         <p class="cr-section-label">Detalles</p>
 
                                         <div class="cr-field">
-                                            <label class="cr-label" for="descripcion_articulo">DescripciÃ³n</label>
+                                            <label class="cr-label" for="descripcion_articulo">Descripción</label>
                                             <textarea
                                                 id="descripcion_articulo"
                                                 name="descripcion"
                                                 class="cr-textarea"
-                                                placeholder="DescripciÃ³n detallada del artÃ­culo"><?= $esEdicion ? htmlspecialchars($articulo[0]->descripcion) : '' ?></textarea>
+                                                placeholder="Descripción detallada del artículo"><?= $esEdicion ? htmlspecialchars($articulo[0]->descripcion) : '' ?></textarea>
                                         </div>
 
                                         <div class="cr-grid-2">
@@ -484,12 +484,12 @@ requerir_autenticacion();
                                                     <div class="cr-status-opt">
                                                         <input type="radio" name="activo" id="activo_1" value="1"
                                                             <?= (!$esEdicion || $articulo[0]->activo == 1) ? 'checked' : '' ?>>
-                                                        <label for="activo_1">âœ“ Activo</label>
+                                        <label for="activo_1">Activo</label>
                                                     </div>
                                                     <div class="cr-status-opt">
                                                         <input type="radio" name="activo" id="activo_0" value="0"
                                                             <?= ($esEdicion && $articulo[0]->activo == 0) ? 'checked' : '' ?>>
-                                                        <label for="activo_0">âœ• Inactivo</label>
+                                        <label for="activo_0">Inactivo</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -512,11 +512,11 @@ requerir_autenticacion();
                                                     class="cr-input"
                                                     placeholder="0"
                                                     min="0"
-                                                    value="<?= $esEdicion && isset($articulo[0]->inventario_inicial) ? $articulo[0]->inventario_inicial : '' ?>">
+                                       value="<?= $esEdicion && isset($articulo[0]->inventario_inicial) ? (int)round((float)$articulo[0]->inventario_inicial) : '' ?>">
                                             </div>
 
                                             <div class="cr-field">
-                                                <label class="cr-label" for="costo_reposicion">Costo de reposiciÃ³n promedio</label>
+                                                <label class="cr-label" for="costo_reposicion">Costo de reposición promedio</label>
                                                 <div class="cr-input-group">
                                                     <span class="cr-prefix">$</span>
                                                     <input
@@ -544,7 +544,7 @@ requerir_autenticacion();
                                             <div class="cr-spinner"></div>
                                             <span class="cr-btn-label">
                                                 <i class="<?= $esEdicion ? 'ri-save-line' : 'ri-add-circle-line' ?>"></i>
-                                                <?= $esEdicion ? 'Guardar cambios' : 'Registrar artÃ­culo' ?>
+                                                <?= $esEdicion ? 'Guardar cambios' : 'Registrar artículo' ?>
                                             </span>
                                         </button>
                                     </div>
@@ -579,7 +579,7 @@ requerir_autenticacion();
         const ULTIMO_ID  = <?= (int)$ultimoId ?>;
         <?php if ($esEdicion): ?>
         const ARTICULO_ID = <?= (int)$_GET['id'] ?>;
-        const SUBFAMILIA_ID = <?= isset($articulo->id_subfamilia) ? (int)$articulo->id_subfamilia : 0 ?>;
+        const SUBFAMILIA_ID = <?= isset($articulo[0]->id_subfamilia) ? (int)$articulo[0]->id_subfamilia : 1 ?>;
         <?php endif; ?>
 
         /* â”€â”€ Submit â”€â”€ */
@@ -602,7 +602,7 @@ requerir_autenticacion();
 
                     if (res.status === 'success') {
                         Swal.fire({
-                            title: 'Â¡Listo!',
+                title: '¡Listo!',
                             text: res.message,
                             icon: 'success',
                             confirmButtonColor: '#2d3a8c',
@@ -628,10 +628,15 @@ requerir_autenticacion();
         function cargarSubFamilias(preselect = null) {
             const idFamilia       = document.getElementById('id_familia_articulo').value;
             const subfamiliaSelect = document.getElementById('id_subfamilia_articulo');
+            const valorObjetivo = String(preselect ?? subfamiliaSelect.value ?? '1');
 
-            subfamiliaSelect.innerHTML = '<option value="">Selecciona una subfamilia</option>';
+            subfamiliaSelect.innerHTML = '<option value="1">Sin familia</option>';
+            subfamiliaSelect.value = '1';
 
-            if (!idFamilia) return;
+            if (!idFamilia) {
+                armarSku();
+                return;
+            }
 
             fetch('api/apiCatalogos.php', {
                 method: 'POST',
@@ -641,12 +646,15 @@ requerir_autenticacion();
             .then(r => r.json())
             .then(data => {
                 data.forEach(sf => {
+                    if (String(sf.id) === '1') return;
                     const opt = document.createElement('option');
                     opt.value = sf.id;
                     opt.textContent = sf.nombre;
-                    if (preselect && sf.id == preselect) opt.selected = true;
                     subfamiliaSelect.appendChild(opt);
                 });
+                subfamiliaSelect.value = Array.from(subfamiliaSelect.options).some(opt => String(opt.value) === valorObjetivo)
+                    ? valorObjetivo
+                    : '1';
                 armarSku();
             })
             .catch(err => console.error('Error cargando subfamilias:', err));
@@ -662,7 +670,7 @@ requerir_autenticacion();
             const sfTexto = subfamiliaSelect.options[subfamiliaSelect.selectedIndex]?.text || '';
             let sku = '';
 
-            if (sfTexto && sfTexto !== 'Selecciona una subfamilia') {
+            if (sfTexto && sfTexto !== 'Selecciona una subfamilia' && sfTexto !== 'Sin familia') {
                 sku = sfTexto.substring(0, 3).toUpperCase() + '-000' + ULTIMO_ID;
             }
 
@@ -675,7 +683,7 @@ requerir_autenticacion();
             }
         }
 
-        /* â”€â”€ Precargar subfamilias en ediciÃ³n â”€â”€ */
+        /* â”€â”€ Precargar subfamilias en edición â”€â”€ */
         <?php if ($esEdicion): ?>
         document.addEventListener('DOMContentLoaded', () => {
             cargarSubFamilias(SUBFAMILIA_ID);

@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - Importar Inventario</title>
+    <title>Almacén Croram - Importar Inventario</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -67,7 +67,7 @@ requerir_autenticacion();
         #result-section { display: none; }
         #errores-section { display: none; }
 
-        /* â”€â”€ Spinner botÃ³n â”€â”€ */
+        /* â”€â”€ Spinner botón â”€â”€ */
         #btn-importar .spinner-border { width: 1rem; height: 1rem; border-width: 2px; }
 
         /* â”€â”€ Badges de resumen â”€â”€ */
@@ -125,7 +125,7 @@ requerir_autenticacion();
                 </div>
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">AlmacÃ©n</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Almacén</a></li>
                         <li class="breadcrumb-item active">Importar CSV</li>
                     </ol>
                 </div>
@@ -148,7 +148,7 @@ requerir_autenticacion();
                                 <!-- Zona de drop -->
                                 <div id="drop-zone">
                                     <i class="ri-file-text-line drop-icon"></i>
-                                    <p class="mb-1 fw-semibold">Arrastra tu archivo aquÃ­</p>
+                                    <p class="mb-1 fw-semibold">Arrastra tu archivo aquí</p>
                                     <p class="text-muted fs-13 mb-3">o haz clic para seleccionarlo</p>
                                     <button type="button" class="btn btn-outline-primary btn-sm px-4"
                                         onclick="document.getElementById('file-input').click()">
@@ -157,7 +157,7 @@ requerir_autenticacion();
                                     <input type="file" id="file-input" accept=".csv">
                                     <div id="file-label" class="d-none mx-auto">
                                         <i class="ri-file-text-fill"></i>
-                                        <span id="file-name">â€”</span>
+                                    <span id="file-name">—</span>
                                         <i class="ri-close-line" style="cursor:pointer" onclick="resetFile()"></i>
                                     </div>
                                 </div>
@@ -194,7 +194,7 @@ requerir_autenticacion();
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">
                                         <i class="ri-bar-chart-2-line me-2 text-success"></i>
-                                        Resultado de la importaciÃ³n
+                                        Resultado de la importación
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -300,7 +300,7 @@ requerir_autenticacion();
     });
 
     dropZone.addEventListener('click', e => {
-        // evitar doble disparo si el clic viene del botÃ³n o el close
+        // evitar doble disparo si el clic viene del botón o el close
         if (e.target.closest('button') || e.target.classList.contains('ri-close-line')) return;
         fileInput.click();
     });
@@ -325,7 +325,7 @@ requerir_autenticacion();
     function resetFile() {
         archivoSeleccionado = null;
         fileInput.value = '';
-        fileName.textContent = 'â€”';
+            fileName.textContent = '—';
         fileLabel.classList.add('d-none');
         btnImportar.disabled = true;
         resultSection.style.display = 'none';
@@ -389,12 +389,12 @@ requerir_autenticacion();
 
             const tipo = data.insertados > 0 ? 'success' : 'warning';
             showAlert(
-                `<strong>ImportaciÃ³n completada.</strong> ${data.insertados} registro(s) insertados correctamente.`,
+                `<strong>Importación completada.</strong> ${data.insertados} registro(s) insertados correctamente.`,
                 tipo
             );
 
         } catch (err) {
-            showAlert('No se pudo comunicar con el servidor. Verifica tu conexiÃ³n o la ruta del API.');
+            showAlert('No se pudo comunicar con el servidor. Verifica tu conexión o la ruta del API.');
         } finally {
             setBusy(false);
         }

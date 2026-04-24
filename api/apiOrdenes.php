@@ -120,7 +120,7 @@ try {
         default:
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Accion no valida'
+                'message' => 'Acción no válida'
             ]);
             break;
     }

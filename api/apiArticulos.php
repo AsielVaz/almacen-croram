@@ -15,7 +15,7 @@ try {
     switch ($accion) {
 
         /* =========================
-           ARTICULOS
+           ARTÍCULOS
         ========================= */
 
         case 'altaArticulo':
@@ -56,7 +56,7 @@ try {
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Articulo agregado correctamente'
+                'message' => 'Artículo agregado correctamente'
             ]);
             break;
 
@@ -99,7 +99,7 @@ try {
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Articulo actualizado correctamente'
+                'message' => 'Artículo actualizado correctamente'
             ]);
             break;
 
@@ -111,7 +111,7 @@ try {
         default:
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Accion no valida'
+                'message' => 'Acción no válida'
             ]);
             break;
     }

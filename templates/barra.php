@@ -20,7 +20,7 @@ $usuarioSesion = usuario_actual();
 
           <div data-simplebar>
               <ul class="side-nav">
-                  <li class="side-nav-title">Navegacion</li>
+                  <li class="side-nav-title">Navegación</li>
                   <li class="side-nav-item">
                       <a href="index.php" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="layout-dashboard"></i></span>
@@ -32,11 +32,11 @@ $usuarioSesion = usuario_actual();
                   <li class="side-nav-item">
                       <a href="articulos.php" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="package"></i></span>
-                          <span class="menu-text">Articulos</span>
+                          <span class="menu-text">Artículos</span>
                       </a>
                   </li>
 
-                  <li class="side-nav-title">Catalogos</li>
+                  <li class="side-nav-title">Catálogos</li>
                   <li class="side-nav-item">
                       <a data-bs-toggle="collapse" href="#sidebarFamilias" aria-expanded="false" aria-controls="sidebarFamilias" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="layers"></i></span>
@@ -68,13 +68,13 @@ $usuarioSesion = usuario_actual();
                   <li class="side-nav-item">
                       <a data-bs-toggle="collapse" href="#areasSide" aria-expanded="false" aria-controls="areasSide" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="building-2"></i></span>
-                          <span class="menu-text">Areas</span>
+                          <span class="menu-text">Áreas</span>
                           <span class="menu-arrow"></span>
                       </a>
                       <div class="collapse" id="areasSide">
                           <ul class="sub-menu">
-                              <li class="side-nav-item"><a href="areas-alta.php" class="side-nav-link"><span class="menu-text">Alta nueva area</span></a></li>
-                              <li class="side-nav-item"><a href="areas-ver.php" class="side-nav-link"><span class="menu-text">Ver areas</span></a></li>
+                              <li class="side-nav-item"><a href="areas-alta.php" class="side-nav-link"><span class="menu-text">Alta nueva área</span></a></li>
+                              <li class="side-nav-item"><a href="areas-ver.php" class="side-nav-link"><span class="menu-text">Ver áreas</span></a></li>
                           </ul>
                       </div>
                   </li>
@@ -82,15 +82,15 @@ $usuarioSesion = usuario_actual();
                   <li class="side-nav-item">
                       <a data-bs-toggle="collapse" href="#sidebarOrdenes" aria-expanded="false" aria-controls="sidebarOrdenes" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="clipboard-list"></i></span>
-                          <span class="menu-text">Ordenes</span>
+                          <span class="menu-text">Órdenes</span>
                           <span class="menu-arrow"></span>
                       </a>
                       <div class="collapse" id="sidebarOrdenes">
                           <ul class="sub-menu">
-                              <li class="side-nav-item"><a href="ordenes-salida.php" class="side-nav-link"><span class="menu-text">Ordenes salida</span></a></li>
-                              <li class="side-nav-item"><a href="ordenes-entrada.php" class="side-nav-link"><span class="menu-text">Ordenes entrada</span></a></li>
+                              <li class="side-nav-item"><a href="ordenes-salida.php" class="side-nav-link"><span class="menu-text">Órdenes de salida</span></a></li>
+                              <li class="side-nav-item"><a href="ordenes-entrada.php" class="side-nav-link"><span class="menu-text">Órdenes de entrada</span></a></li>
                               <li class="side-nav-item"><a href="ordenes-salida-form-fast.php" class="side-nav-link"><span class="menu-text">Capturador</span></a></li>
-                              <li class="side-nav-item"><a href="ordenes-salida-escaner.php" class="side-nav-link"><span class="menu-text">Capturador ordenes</span></a></li>
+                              <li class="side-nav-item"><a href="ordenes-salida-escaner.php" class="side-nav-link"><span class="menu-text">Capturador órdenes</span></a></li>
                           </ul>
                       </div>
                   </li>
@@ -99,9 +99,9 @@ $usuarioSesion = usuario_actual();
                   <li class="side-nav-item"><a href="reportes.php" class="side-nav-link"><span class="menu-icon"><i data-lucide="table-properties"></i></span><span class="menu-text">Reportes generales</span></a></li>
                   <li class="side-nav-item"><a href="reportes-bajo-stock.php?limite=5" class="side-nav-link"><span class="menu-icon"><i data-lucide="triangle-alert"></i></span><span class="menu-text">Items con bajo stock</span></a></li>
                   <li class="side-nav-item"><a href="reportes-bajo-stock.php?limite=0" class="side-nav-link"><span class="menu-icon"><i data-lucide="badge-alert"></i></span><span class="menu-text">Items sin stock</span></a></li>
-                  <li class="side-nav-item"><a href="reportes-inventario-aleatorio.php" class="side-nav-link"><span class="menu-icon"><i data-lucide="file-bar-chart"></i></span><span class="menu-text">Rep. Articulos</span></a></li>
+                  <li class="side-nav-item"><a href="reportes-inventario-aleatorio.php" class="side-nav-link"><span class="menu-icon"><i data-lucide="file-bar-chart"></i></span><span class="menu-text">Rep. Artículos</span></a></li>
 
-                  <li class="side-nav-title">Administracion</li>
+                  <li class="side-nav-title">Administración</li>
                   <li class="side-nav-item">
                       <a href="usuarios.php" class="side-nav-link">
                           <span class="menu-icon"><i data-lucide="users"></i></span>
@@ -117,14 +117,14 @@ $usuarioSesion = usuario_actual();
                   <li class="side-nav-item">
                       <a href="logout.php" class="side-nav-link text-danger">
                           <span class="menu-icon"><i data-lucide="log-out"></i></span>
-                          <span class="menu-text">Cerrar sesion</span>
+                          <span class="menu-text">Cerrar sesión</span>
                       </a>
                   </li>
               </ul>
 
               <?php if (!empty($usuarioSesion)): ?>
                   <div class="p-3 border-top mt-3">
-                      <div class="small text-muted">Sesion activa</div>
+                      <div class="small text-muted">Sesión activa</div>
                       <div class="fw-semibold"><?= htmlspecialchars($usuarioSesion['nombre'] ?: $usuarioSesion['usuario']) ?></div>
                       <div class="small text-muted"><?= htmlspecialchars($usuarioSesion['rol'] ?: 'Sin rol') ?></div>
                   </div>

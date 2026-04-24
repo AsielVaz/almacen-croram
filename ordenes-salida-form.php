@@ -211,7 +211,7 @@ function renderArticulos(pagination) {
 
     container.innerHTML = '';
     articulosPagina.forEach(p => {
-        const cantidad = Number(p.cantidad || 0);
+        const cantidad = Math.trunc(Number(p.cantidad || 0));
         container.innerHTML += `
             <div class="col">
                 <div class="card product-card h-100">
@@ -274,8 +274,8 @@ function agregar(id) {
     const prod = articulosPagina.find(p => Number(p.id) === Number(id));
     if (!prod) return;
 
-    const qty = parseFloat(document.getElementById(`qty_${id}`).value);
-    const disponible = Number(prod.cantidad || 0);
+    const qty = parseInt(document.getElementById(`qty_${id}`).value, 10);
+    const disponible = Math.trunc(Number(prod.cantidad || 0));
     if (!qty || qty <= 0 || qty > disponible) {
         Swal.fire({ icon: 'warning', title: 'Cantidad invalida', text: 'La cantidad debe ser mayor a 0 y no exceder el stock disponible', confirmButtonColor: '#6c757d' });
         return;
@@ -331,7 +331,7 @@ function remover(id) {
 }
 
 function updateCounts() {
-    const totalItems = salida.reduce((sum, item) => sum + Number(item.cantidad || 0), 0);
+    const totalItems = salida.reduce((sum, item) => sum + Math.trunc(Number(item.cantidad || 0)), 0);
     document.getElementById('countSalida').textContent = salida.length;
     document.getElementById('totalProductos').textContent = totalItems;
 }
@@ -371,7 +371,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
         return;
     }
 
-    const totalItems = salida.reduce((sum, item) => sum + Number(item.cantidad || 0), 0);
+    const totalItems = salida.reduce((sum, item) => sum + Math.trunc(Number(item.cantidad || 0)), 0);
     const confirmacion = await Swal.fire({
         title: 'Registrar salida?',
         html: `<p>Se registrara la salida de <strong>${salida.length}</strong> producto(s)</p><p>Total de unidades: <strong>${totalItems}</strong></p>`,

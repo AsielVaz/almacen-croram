@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - Ordenes</title>
+    <title>Almacén Croram - Órdenes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -342,7 +342,7 @@ requerir_autenticacion();
                                                 <small class="text-muted">ID: <?= $detalle->id_producto ?? 'N/A' ?></small>
                                             </td>
                                             <td class="text-center">
-                                                <span class="badge bg-secondary"><?= $detalle->cantidad ?> unidades</span>
+                                                <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
                                             </td>
                                             <td>
                                                 <div class="fw-bold text-dark">$<?= number_format($detalle->precio_unitario, 2) ?></div>
@@ -360,7 +360,7 @@ requerir_autenticacion();
                                                         data-precio-original="<?= $detalle->precio_unitario ?>"
                                                         data-id-producto="<?= $detalle->id_producto ?? '' ?>"
                                                         data-nombre-producto="<?= htmlspecialchars($detalle->nombre_producto) ?>"
-                                                        data-cantidad="<?= $detalle->cantidad ?>"
+                                                        data-cantidad="<?= (int)round((float)$detalle->cantidad) ?>"
                                                     >
                                                 </div>
                                             </td>
@@ -373,7 +373,7 @@ requerir_autenticacion();
                             </table>
                         </div>
 
-                        <!-- Ãrea de Notas -->
+                        <!-- Área de notas -->
                         <div class="mt-4">
                             <label for="notasOrden" class="form-label fw-bold">
                                 <i class="ri-file-text-line me-2"></i>Notas de la Orden
@@ -386,7 +386,7 @@ requerir_autenticacion();
                                 style="border: 2px solid #dee2e6; border-radius: 0.375rem;"
                             ></textarea>
                             <small class="text-muted">
-                                <i class="ri-information-line"></i> Estas notas se guardarÃ¡n junto con la orden de entrada
+                                <i class="ri-information-line"></i> Estas notas se guardarán junto con la orden de entrada
                             </small>
                         </div>
 
@@ -426,14 +426,14 @@ requerir_autenticacion();
             <div class="page-title-head d-flex align-items-center gap-2 mb-4">
                 <div class="flex-grow-1">
                     <h4 class="fs-18 fw-bold mb-0">
-                        <i class="ri-file-list-3-line me-2"></i>Ã“rdenes de Compra
+                        <i class="ri-file-list-3-line me-2"></i>Órdenes de compra
                     </h4>
                 </div>
 
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
-                        <li class="breadcrumb-item active">Ã“rdenes</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
+                        <li class="breadcrumb-item active">Órdenes</li>
                     </ol>
                 </div>
             </div>
@@ -512,7 +512,7 @@ requerir_autenticacion();
                                                         <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="badge bg-secondary"><?= $detalle->cantidad ?></span>
+                                                        <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?></span>
                                                     </td>
                                                     <td class="text-end fw-bold">$<?= number_format($detalle->precio_unitario, 2) ?></td>
                                                     <td class="text-end fw-bold text-dark">$<?= number_format($detalle->subtotal, 2) ?></td>
@@ -532,7 +532,7 @@ requerir_autenticacion();
                                     </div>
                                 </div>
 
-                                <!-- BotÃ³n Ingresar Orden -->
+                                <!-- Botón Ingresar Orden -->
                                 <div class="row mt-4">
                                     <div class="col-12 text-center">
                                         <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden">
@@ -614,7 +614,7 @@ requerir_autenticacion();
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // BotÃ³n Guardar Orden de Entrada
+            // Botón Guardar Orden de Entrada
             const btnGuardarOrden = document.getElementById('btnGuardarOrdenEntrada');
             
             if (btnGuardarOrden) {
@@ -635,7 +635,7 @@ requerir_autenticacion();
                         const precioReal = parseFloat(input.value) || 0;
                         const idProducto = input.dataset.idProducto;
                         const nombreProducto = input.dataset.nombreProducto;
-                        const cantidad = parseFloat(input.dataset.cantidad);
+                        const cantidad = parseInt(input.dataset.cantidad, 10) || 0;
                         
                         productos.push({
                             id_producto: idProducto,
@@ -674,7 +674,7 @@ requerir_autenticacion();
                         if (data.success || data.status === 'success') {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Â¡Ã‰xito!',
+                                title: '¡Éxito!',
                                 text: data.message || 'Orden de entrada guardada correctamente',
                                 confirmButtonColor: '#495057'
                             }).then(() => {
@@ -685,7 +685,7 @@ requerir_autenticacion();
                                 }
                                 // Limpiar el campo de notas
                                 document.getElementById('notasOrden').value = '';
-                                // Recargar pÃ¡gina
+                                // Recargar página
                                 location.reload();
                             });
                         } else {
@@ -703,14 +703,14 @@ requerir_autenticacion();
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'OcurriÃ³ un error al procesar la solicitud',
+                            text: 'Ocurrió un error al procesar la solicitud',
                             confirmButtonColor: '#6c757d'
                         });
                     });
                 });
             }
 
-            // ValidaciÃ³n en tiempo real de los inputs de precio
+            // Validación en tiempo real de los inputs de precio
             const preciosInputs = document.querySelectorAll('.precio-real');
             preciosInputs.forEach(input => {
                 input.addEventListener('input', function() {

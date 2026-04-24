@@ -140,7 +140,7 @@ try {
         default:
             echo json_encode([
                 'status' => 'error',
-                'message' => 'AcciÃ³n no vÃ¡lida'
+                'message' => 'Acción no válida'
             ]);
             break;
     }

@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - Escanear Orden</title>
+    <title>Almacén Croram - Escanear Orden</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -115,9 +115,9 @@ requerir_autenticacion();
                                     <i class="ri-qr-scan-2-line"></i>
                                 </div>
 
-                                <h5 class="mb-1">Escanear cÃ³digo QR</h5>
+                                <h5 class="mb-1">Escanear código QR</h5>
                                 <p class="text-muted mb-4">
-                                    Escanea el cÃ³digo QR de la orden de salida o ingresa el nÃºmero manualmente.
+                                    Escanea el código QR de la orden de salida o ingresa el número manualmente.
                                 </p>
 
                                 <div class="mb-2">
@@ -125,7 +125,7 @@ requerir_autenticacion();
                                         type="text"
                                         id="qr-input"
                                         class="form-control scan-input"
-                                        placeholder="â€”"
+                placeholder="—"
                                         autocomplete="off"
                                         inputmode="numeric"
                                     />
@@ -133,13 +133,13 @@ requerir_autenticacion();
 
                                 <p class="scan-hint">
                                     <i class="ri-information-line me-1"></i>
-                                    Presiona <kbd>Enter</kbd> despuÃ©s de escanear para continuar
+                                    Presiona <kbd>Enter</kbd> después de escanear para continuar
                                 </p>
 
                                 <!-- Mensaje de error (oculto por defecto) -->
                                 <div id="scan-error" class="alert alert-danger mt-3 d-none" role="alert">
                                     <i class="ri-error-warning-line me-1"></i>
-                                    Ingresa un nÃºmero de orden vÃ¡lido.
+                                    Ingresa un número de orden válido.
                                 </div>
 
                             </div>
@@ -198,7 +198,7 @@ requerir_autenticacion();
 
                     const valor = input.value.trim();
 
-                    // Validar que sea un nÃºmero entero positivo
+                    // Validar que sea un número entero positivo
                     if (/^\d+$/.test(valor) && parseInt(valor) > 0) {
                         errorMsg.classList.add('d-none');
                         // Redirigir al detalle de la orden

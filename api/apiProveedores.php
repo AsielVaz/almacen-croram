@@ -32,7 +32,7 @@ try {
             if ($admin->existeRfc($_POST['rfc'] ?? '')) {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'El RFC ya estÃ¡ registrado'
+                    'message' => 'El RFC ya está registrado'
                 ]);
                 exit;
             }
@@ -72,7 +72,7 @@ try {
             if ($admin->existeRfc($_POST['rfc'] ?? '', $_POST['id'] ?? 0)) {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'El RFC ya estÃ¡ registrado'
+                    'message' => 'El RFC ya está registrado'
                 ]);
                 exit;
             }
@@ -112,7 +112,7 @@ try {
         default:
             echo json_encode([
                 'status' => 'error',
-                'message' => 'AcciÃ³n no vÃ¡lida'
+                'message' => 'Acción no válida'
             ]);
             break;
     }

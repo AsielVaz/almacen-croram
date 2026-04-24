@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - ArtÃ­culos</title>
+    <title>Almacén Croram - Artículos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -340,12 +340,12 @@ requerir_autenticacion();
                     <div>
                         <h4 class="fs-18 fw-bold mb-0">
                             <i class="ri-archive-line me-2"></i>
-                            GestiÃ³n de Inventario
+                            Gestión de Inventario
                         </h4>
                     </div>
                     <div class="text-end">
                         <ol class="breadcrumb m-0 py-0 fs-13">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">ArtÃ­culos</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Artículos</a></li>
                             <li class="breadcrumb-item active">Inventario</li>
                         </ol>
                     </div>
@@ -362,7 +362,7 @@ requerir_autenticacion();
                                     <div>
                                         <h5 class="card-title-main">
                                             <i class="ri-box-3-line"></i>
-                                            CatÃ¡logo de ArtÃ­culos
+                                            Catálogo de Artículos
                                         </h5>
                                         <p class="card-subtitle">
                                             Administre los productos del inventario
@@ -371,12 +371,12 @@ requerir_autenticacion();
 
                                     <div class="toolbar-section">
                                         <a href="articulos-form.php" class="btn btn-modern btn-add">
-                                            <i class="ri-add-circle-line me-1"></i> Agregar ArtÃ­culo
+                                            <i class="ri-add-circle-line me-1"></i> Agregar Artículo
                                         </a>
 
                                         <div class="qr-control-group">
                                             <select id="tipoImpresion" class="select-modern">
-                                                <option value="termica">Impresora TÃ©rmica</option>
+                                                <option value="termica">Impresora Térmica</option>
                                                 <option value="carta">Hoja Carta</option>
                                             </select>
 
@@ -398,19 +398,19 @@ requerir_autenticacion();
                                                     <input type="checkbox" id="checkAll" class="checkbox-custom">
                                                 </th>
                                                 <th>ID</th>
-                                                <th>ARTÃCULO</th>
+                                                <th>ARTÍCULO</th>
                                                 <th>FAMILIA</th>
                                                 <th>SUBFAMILIA</th>
                                                 <th class="text-center">CANTIDAD</th>
                                                 <th>SKU</th>
                                                 <th>Unidad de medida</th>
-                                                <th>DESCRIPCIÃ“N</th>
+                                                <th>DESCRIPCIÓN</th>
                                                 <th class="text-center">ACCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php foreach ($articulos as $articulo) :
-                                                $cantidad = $articulo->cantidad ?? 0;
+                                                $cantidad = (int)round((float)($articulo->cantidad ?? 0));
                                             ?>
                                                 <tr>
                                                     <td>
@@ -520,11 +520,11 @@ requerir_autenticacion();
             });
 
             if (seleccionados.length === 0) {
-                alert('Selecciona al menos un artÃ­culo');
+                alert('Selecciona al menos un artículo');
                 return;
             }
 
-            // Leer tipo de impresiÃ³n desde el select
+            // Leer tipo de impresión desde el select
             let tipo = document.getElementById('tipoImpresion').value;
 
             let url = 'api/generaProductosQrPdf.php';
@@ -532,7 +532,7 @@ requerir_autenticacion();
                 url = 'api/generaProductosQrPdfCarta.php';
             }
 
-            // Crear formulario dinÃ¡mico
+            // Crear formulario dinámico
             let form = document.createElement('form');
             form.method = 'POST';
             form.action = url;

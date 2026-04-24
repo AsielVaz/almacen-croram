@@ -27,17 +27,17 @@ try {
             $usuarioDb = $resultado[0] ?? null;
 
             if (!$usuarioDb) {
-                echo json_encode(['status' => 'error', 'message' => 'Credenciales invalidas']);
+                echo json_encode(['status' => 'error', 'message' => 'Credenciales inválidas']);
                 exit;
             }
 
             iniciar_sesion_usuario($usuarioDb, $recordar);
-            echo json_encode(['status' => 'success', 'message' => 'Sesion iniciada correctamente']);
+            echo json_encode(['status' => 'success', 'message' => 'Sesión iniciada correctamente']);
             break;
 
         case 'logout':
             cerrar_sesion_usuario();
-            echo json_encode(['status' => 'success', 'message' => 'Sesion cerrada']);
+            echo json_encode(['status' => 'success', 'message' => 'Sesión cerrada']);
             break;
 
         case 'listarUsuarios':
@@ -58,12 +58,12 @@ try {
             }
 
             if ($admin->existeUsuario($usuario)) {
-                echo json_encode(['status' => 'error', 'message' => 'El usuario ya esta registrado']);
+                echo json_encode(['status' => 'error', 'message' => 'El usuario ya está registrado']);
                 exit;
             }
 
             if ($admin->existeEmail($email)) {
-                echo json_encode(['status' => 'error', 'message' => 'El correo ya esta registrado']);
+                echo json_encode(['status' => 'error', 'message' => 'El correo ya está registrado']);
                 exit;
             }
 
@@ -90,12 +90,12 @@ try {
             }
 
             if ($admin->existeUsuario($usuario, $id)) {
-                echo json_encode(['status' => 'error', 'message' => 'El usuario ya esta registrado']);
+                echo json_encode(['status' => 'error', 'message' => 'El usuario ya está registrado']);
                 exit;
             }
 
             if ($admin->existeEmail($email, $id)) {
-                echo json_encode(['status' => 'error', 'message' => 'El correo ya esta registrado']);
+                echo json_encode(['status' => 'error', 'message' => 'El correo ya está registrado']);
                 exit;
             }
 
@@ -123,7 +123,7 @@ try {
             break;
 
         default:
-            echo json_encode(['status' => 'error', 'message' => 'Accion no valida']);
+            echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);
             break;
     }
 } catch (Exception $e) {

@@ -226,7 +226,7 @@ function renderArticulos(pagination) {
                         <h6>${p.nombre}</h6>
                         <span class="sku-badge"><i class="ri-barcode-line"></i> ${p.sku || 'Sin SKU'}</span>
                         <div class="mt-2 text-muted small">${p.descripcion || 'Sin descripcion'}</div>
-                        <div class="mt-2 small"><strong>Stock:</strong> ${Number(p.cantidad || 0)}</div>
+                        <div class="mt-2 small"><strong>Stock:</strong> ${Math.trunc(Number(p.cantidad || 0))}</div>
                         <div class="mt-3">
                             <label class="form-label mb-1" style="font-size:.75rem;font-weight:600;color:#6c757d;">Cantidad (${p.unidad_medida || 'pz'})</label>
                             <input type="number" min="1" value="1" class="form-control product-input mb-2" id="qty_${p.id}">
@@ -283,7 +283,7 @@ function agregar(id) {
     const prod = articulosPagina.find(p => Number(p.id) === Number(id));
     if (!prod) return;
 
-    const qty = parseFloat(document.getElementById(`qty_${id}`).value);
+    const qty = parseInt(document.getElementById(`qty_${id}`).value, 10);
     const precio = parseFloat(document.getElementById(`price_${id}`).value);
 
     if (!qty || qty <= 0 || Number.isNaN(precio) || precio < 0) {

@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram â€“ EscÃ¡ner de Salida</title>
+    <title>Almacén Croram - Escáner de salida</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Sistema de inventario de CRORAM." name="description" />
     <meta content="HoppingJet Studio." name="author" />
@@ -394,11 +394,11 @@ $articulos = json_decode($adminArticulos->listarArticulos(false));
 <div class="page-header">
     <h4>
         <i class="ri-qr-scan-line"></i>
-        EscÃ¡ner de Salida
+        Escáner de Salida
     </h4>
     <p class="mb-0 mt-2" style="color: #6c757d; font-size: 0.9rem;">
         <i class="ri-alert-line"></i>
-        Escanee los productos que saldrÃ¡n del inventario
+        Escanee los productos que saldrán del inventario
     </p>
 </div>
 
@@ -421,7 +421,7 @@ $articulos = json_decode($adminArticulos->listarArticulos(false));
     >
     <div class="scanner-help">
         <i class="ri-information-line"></i>
-        Escanee el cÃ³digo del producto o ingrese el ID manualmente
+        Escanee el código del producto o ingrese el ID manualmente
     </div>
 </div>
 
@@ -462,14 +462,14 @@ $articulos = json_decode($adminArticulos->listarArticulos(false));
         <div class="warning-note">
             <i class="ri-information-line"></i>
             <div class="warning-note-text">
-                <strong>Importante:</strong> Los productos escaneados se restarÃ¡n del inventario al finalizar.
+                <strong>Importante:</strong> Los productos escaneados se restarán del inventario al finalizar.
             </div>
         </div>
 
         <div class="summary-card">
             <div class="summary-label">Total de productos</div>
             <div class="summary-value">
-                <span id="totalProductos">0</span> artÃ­culos
+                <span id="totalProductos">0</span> artículos
             </div>
         </div>
 
@@ -534,10 +534,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // BotÃ³n limpiar
+    // Botón limpiar
     document.getElementById('btnClear').addEventListener('click', limpiarTodo);
     
-    // BotÃ³n finalizar
+    // Botón finalizar
     document.getElementById('btnFinalizar').addEventListener('click', finalizarSalida);
 });
 
@@ -557,7 +557,7 @@ function procesarEscaneo() {
         Swal.fire({
             icon: 'error',
             title: 'Producto no encontrado',
-            text: `No existe producto con el cÃ³digo: ${codigo}`,
+            text: `No existe producto con el código: ${codigo}`,
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -570,7 +570,7 @@ function procesarEscaneo() {
         return;
     }
     
-    // Verificar si ya estÃ¡ en la lista
+    // Verificar si ya está en la lista
     const existe = salida.find(s => s.id === producto.id);
     
     if (existe) {
@@ -715,13 +715,13 @@ function actualizarCantidad(index, valor) {
 /* ================= RESUMEN ================= */
 function updateSummary() {
     const totalProductos = salida.length;
-    const totalUnidades = salida.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalUnidades = salida.reduce((sum, item) => sum + Math.trunc(Number(item.cantidad || 0)), 0);
     
     document.getElementById('countProductos').textContent = totalProductos;
     document.getElementById('totalProductos').textContent = totalProductos;
     document.getElementById('totalUnidades').textContent = totalUnidades;
     
-    // Habilitar/deshabilitar botÃ³n
+    // Habilitar/deshabilitar botón
     const btnFinalizar = document.getElementById('btnFinalizar');
     btnFinalizar.disabled = totalProductos === 0;
 }
@@ -731,13 +731,13 @@ function limpiarTodo() {
     if (salida.length === 0) return;
     
     Swal.fire({
-        title: 'Â¿Limpiar todo?',
-        text: 'Se eliminarÃ¡n todos los productos escaneados',
+            title: '¿Limpiar todo?',
+        text: 'Se eliminarán todos los productos escaneados',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'SÃ­, limpiar',
+        confirmButtonText: 'Sí, limpiar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -764,20 +764,20 @@ function limpiarTodo() {
 function finalizarSalida() {
     if (salida.length === 0) return;
     
-    const totalUnidades = salida.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalUnidades = salida.reduce((sum, item) => sum + Math.trunc(Number(item.cantidad || 0)), 0);
     
     Swal.fire({
-        title: 'Â¿Finalizar salida?',
+            title: '¿Finalizar salida?',
         html: `
-            <p>Se registrarÃ¡ la salida de <strong>${salida.length}</strong> producto(s)</p>
+            <p>Se registrará la salida de <strong>${salida.length}</strong> producto(s)</p>
             <p>Total de unidades: <strong>${totalUnidades}</strong></p>
-            <p class="text-danger mb-0">âš ï¸ Esta acciÃ³n reducirÃ¡ el inventario</p>
+                <p class="text-danger mb-0">Esta acción reducirá el inventario</p>
         `,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'SÃ­, finalizar',
+        confirmButtonText: 'Sí, finalizar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -808,7 +808,7 @@ function registrarSalida() {
     .then(() => {
         Swal.fire({
             icon: 'success',
-            title: 'Â¡Salida registrada!',
+            title: '¡Salida registrada!',
             text: 'La orden de salida ha sido registrada correctamente',
             confirmButtonColor: '#495057'
         }).then(() => {
@@ -819,7 +819,7 @@ function registrarSalida() {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'OcurriÃ³ un error al registrar la salida',
+            text: 'Ocurrió un error al registrar la salida',
             confirmButtonColor: '#6c757d'
         });
         scannerInput.focus();

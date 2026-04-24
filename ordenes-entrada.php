@@ -7,7 +7,7 @@ requerir_autenticacion();
 
 <head>
     <meta charset="utf-8" />
-    <title>AlmacÃ©n Croram - Ordenes</title>
+    <title>Almacén Croram - Ordenes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -92,7 +92,7 @@ requerir_autenticacion();
 
                 <div class="text-end">
                     <ol class="breadcrumb m-0 py-0 fs-13">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">CatÃ¡logos</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Catálogos</a></li>
 
                         <li class="breadcrumb-item active">Ordenes</li>
                     </ol>
@@ -223,17 +223,17 @@ requerir_autenticacion();
     <script>
         function eliminarFamilia(id) {
             Swal.fire({
-                title: 'Â¿EstÃ¡s seguro?',
-                text: "Esta acciÃ³n no se puede deshacer.",
+                    title: '¿Estás seguro?',
+                text: "Esta acción no se puede deshacer.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'SÃ­, eliminar',
+                confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // AquÃ­ irÃ­a la lÃ³gica para eliminar la familia, por ejemplo, una llamada AJAX al servidor.
+                    // Aquí iría la lógica para eliminar la familia, por ejemplo, una llamada AJAX al servidor.
                     var formData = new FormData();
                     formData.append('accion', 'eliminarFamilia');
                     formData.append('id', id);
