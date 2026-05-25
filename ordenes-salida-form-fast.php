@@ -382,9 +382,13 @@ include_once 'templates/barra.php';
 include_once 'templates/headder.php';
 
 include_once 'api/adminArticulos.php';
+include_once 'api/adminAreas.php';
 
 $adminArticulos = new AdministradorArticulos();
+$adminAreas = new AdministradorAreas();
 $articulos = json_decode($adminArticulos->listarArticulos(false));
+$areas = json_decode($adminAreas->listarAreas()) ?: [];
+$usuarioActualId = usuario_id_actual();
 ?>
 
 <div class="page-content">
@@ -467,6 +471,16 @@ $articulos = json_decode($adminArticulos->listarArticulos(false));
         </div>
 
         <div class="summary-card">
+            <label class="summary-label" for="areaSalidaRapida">Area de gasto</label>
+            <select id="areaSalidaRapida" class="form-select" required>
+                <option value="">Seleccione un area</option>
+                <?php foreach ($areas as $area): ?>
+                    <option value="<?= (int)$area->id ?>"><?= htmlspecialchars($area->nombre) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="summary-card">
             <div class="summary-label">Total de productos</div>
             <div class="summary-value">
                 <span id="totalProductos">0</span> artÃ­culos
@@ -511,6 +525,7 @@ const productos = [
     },";
 } ?>
 ];
+const USUARIO_ACTUAL_ID = <?= (int)$usuarioActualId ?>;
 
 let salida = [];
 const scannerInput = document.getElementById('scannerInput');
@@ -763,6 +778,15 @@ function limpiarTodo() {
 /* ================= FINALIZAR ================= */
 function finalizarSalida() {
     if (salida.length === 0) return;
+    if (!document.getElementById('areaSalidaRapida').value) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Area requerida',
+            text: 'Seleccione el area donde se registrara el gasto',
+            confirmButtonColor: '#6c757d'
+        });
+        return;
+    }
     
             const totalUnidades = salida.reduce((sum, item) => sum + Math.trunc(Number(item.cantidad || 0)), 0);
     
@@ -789,6 +813,8 @@ function finalizarSalida() {
 function registrarSalida() {
     const formData = new FormData();
     formData.append('accion', 'altaOrdenSalida');
+    formData.append('id_usuario', USUARIO_ACTUAL_ID);
+    formData.append('id_area', document.getElementById('areaSalidaRapida').value);
     formData.append('orden', JSON.stringify(salida));
 
     Swal.fire({
@@ -805,7 +831,10 @@ function registrarSalida() {
         body: formData
     })
     .then(r => r.json())
-    .then(() => {
+    .then(resultado => {
+        if (!resultado || resultado.status !== 'success') {
+            throw new Error(resultado?.message || 'No fue posible registrar la salida');
+        }
         Swal.fire({
             icon: 'success',
             title: 'Â¡Salida registrada!',
@@ -815,11 +844,11 @@ function registrarSalida() {
             window.location.href = 'ordenes-salida.php';
         });
     })
-    .catch(() => {
+    .catch(error => {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'OcurriÃ³ un error al registrar la salida',
+            text: error.message || 'OcurriÃ³ un error al registrar la salida',
             confirmButtonColor: '#6c757d'
         });
         scannerInput.focus();

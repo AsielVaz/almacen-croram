@@ -113,7 +113,7 @@ class AdministradorOrdenes extends Con
 
 
     //SELECT `id`, `folio`, `fecha_salida`, `tipo`, `estatus`, `id_usuario`, `created_at` FROM `ordenes_salida` WHERE 1
-    public function agregarOrdenSalida( $folio, $fecha_salida, $tipo, $estatus, $id_usuario, $nota = '')
+    public function agregarOrdenSalida($folio, $fecha_salida, $tipo, $estatus, $id_usuario, $nota = '', $id_area = 0)
     {
         $folio = $this->limpiar($folio);
         $fecha_salida = $this->limpiar($fecha_salida);
@@ -121,10 +121,11 @@ class AdministradorOrdenes extends Con
         $estatus = $this->limpiar($estatus);
         $id_usuario = (int)$id_usuario;
         $nota = $this->limpiar($nota);
+        $id_area = (int)$id_area;
 
         $sql = "
-            INSERT INTO ordenes_salida (folio, fecha_salida, tipo, estatus, id_usuario, nota)
-            VALUES ('$folio', '$fecha_salida', '$tipo', '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
+            INSERT INTO ordenes_salida (folio, fecha_salida, tipo, id_area, estatus, id_usuario, nota)
+            VALUES ('$folio', '$fecha_salida', '$tipo', " . ($id_area > 0 ? $id_area : 'NULL') . ", '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
         ";
 
         return $this->ejecutar($sql);
@@ -155,7 +156,7 @@ class AdministradorOrdenes extends Con
             SELECT
                 orden_salida_detalle.*,
                 productos.nombre AS nombre_producto,
-                COALESCE(productos.costo_reposicion, 0) AS costo_promedio
+                COALESCE(orden_salida_detalle.costo_peps, orden_salida_detalle.costo_unitario, productos.costo_reposicion, 0) AS costo_promedio
             FROM orden_salida_detalle
             INNER JOIN productos ON productos.id = orden_salida_detalle.id_producto
             WHERE id_orden_salida = $id_orden_salida
@@ -169,9 +170,10 @@ class AdministradorOrdenes extends Con
         $id = (int)$id;
 
         $sql = "
-            SELECT ordenes_salida.*, usuarios.nombre AS nombre_usuario
+            SELECT ordenes_salida.*, usuarios.nombre AS nombre_usuario, areas.nombre AS nombre_area
             FROM ordenes_salida
             inner join usuarios on usuarios.id = ordenes_salida.id_usuario
+            LEFT JOIN areas ON areas.id = ordenes_salida.id_area
             WHERE ordenes_salida.id = $id
             LIMIT 1
         ";
@@ -190,12 +192,15 @@ class AdministradorOrdenes extends Con
                 os.folio,
                 os.fecha_salida,
                 os.tipo,
+                os.id_area,
                 os.estatus,
                 os.id_usuario,
                 os.created_at,
-                COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario
+                COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario,
+                COALESCE(a.nombre, '') AS nombre_area
             FROM ordenes_salida os
             LEFT JOIN usuarios u ON u.id = os.id_usuario
+            LEFT JOIN areas a ON a.id = os.id_area
             $whereSql
             ORDER BY os.created_at DESC
             $limitSql
@@ -281,6 +286,24 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function registrarLoteInventario($idProducto, $idOrdenCompra, $cantidad, $precioUnitario, $fechaEntrada)
+    {
+        $idProducto = (int)$idProducto;
+        $idOrdenCompra = (int)$idOrdenCompra;
+        $cantidad = (float)$cantidad;
+        $precioUnitario = (float)$precioUnitario;
+        $fechaEntrada = $this->limpiar($fechaEntrada);
+
+        $sql = "
+            INSERT INTO inventario_lotes
+                (id_producto, id_orden_compra, fecha_entrada, cantidad_inicial, cantidad_disponible, costo_unitario)
+            VALUES
+                ($idProducto, $idOrdenCompra, '$fechaEntrada', $cantidad, $cantidad, $precioUnitario)
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
     public function registrarSalidaInventario($idProducto, $cantidad)
     {
         $idProducto = (int)$idProducto;
@@ -295,6 +318,92 @@ class AdministradorOrdenes extends Con
         ";
 
         return $this->ejecutar($sql);
+    }
+
+    public function consumirInventarioPeps($idProducto, $cantidad)
+    {
+        $idProducto = (int)$idProducto;
+        $cantidadPendiente = (float)$cantidad;
+        $costoTotal = 0.0;
+        $cantidadOriginal = $cantidadPendiente;
+
+        $stockActual = json_decode($this->ejecutar("
+            SELECT COALESCE(inv.stock, 0) AS stock, COALESCE(p.costo_reposicion, 0) AS costo
+            FROM productos p
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            WHERE p.id = $idProducto
+            LIMIT 1
+        "), true)[0] ?? ['stock' => 0, 'costo' => 0];
+
+        $loteDisponible = json_decode($this->ejecutar("
+            SELECT COALESCE(SUM(cantidad_disponible), 0) AS disponible
+            FROM inventario_lotes
+            WHERE id_producto = $idProducto
+        "), true)[0]['disponible'] ?? 0;
+
+        $stockSinLote = (float)$stockActual['stock'] - (float)$loteDisponible;
+        if ($stockSinLote > 0.0001) {
+            $costoLegacy = (float)$stockActual['costo'];
+            $this->ejecutar("
+                INSERT INTO inventario_lotes
+                    (id_producto, id_orden_compra, fecha_entrada, cantidad_inicial, cantidad_disponible, costo_unitario)
+                VALUES
+                    ($idProducto, NULL, '1970-01-01', $stockSinLote, $stockSinLote, $costoLegacy)
+            ");
+        }
+
+        $lotes = json_decode($this->ejecutar("
+            SELECT id, cantidad_disponible, costo_unitario
+            FROM inventario_lotes
+            WHERE id_producto = $idProducto
+              AND cantidad_disponible > 0
+            ORDER BY fecha_entrada ASC, id ASC
+        "), true) ?: [];
+
+        foreach ($lotes as $lote) {
+            if ($cantidadPendiente <= 0) {
+                break;
+            }
+
+            $disponible = (float)$lote['cantidad_disponible'];
+            $consumir = min($disponible, $cantidadPendiente);
+            $nuevoDisponible = $disponible - $consumir;
+            $idLote = (int)$lote['id'];
+
+            $this->ejecutar("
+                UPDATE inventario_lotes
+                SET cantidad_disponible = $nuevoDisponible
+                WHERE id = $idLote
+            ");
+
+            $costoTotal += $consumir * (float)$lote['costo_unitario'];
+            $cantidadPendiente -= $consumir;
+        }
+
+        if ($cantidadPendiente > 0.0001) {
+            throw new Exception(json_encode([
+                'status' => 'error',
+                'message' => 'No hay inventario PEPS suficiente para el producto #' . $idProducto,
+            ]));
+        }
+
+        return $cantidadOriginal > 0 ? $costoTotal / $cantidadOriginal : 0;
+    }
+
+    public function actualizarCostoDetalleSalida($idOrden, $idProducto, $costoUnitario)
+    {
+        $idOrden = (int)$idOrden;
+        $idProducto = (int)$idProducto;
+        $costoUnitario = (float)$costoUnitario;
+
+        return $this->ejecutar("
+            UPDATE orden_salida_detalle
+            SET costo_unitario = $costoUnitario,
+                costo_peps = $costoUnitario,
+                subtotal = cantidad * $costoUnitario
+            WHERE id_orden_salida = $idOrden
+              AND id_producto = $idProducto
+        ");
     }
 
     public function contarOrdenesCompraPorEstatus(array $estatuses)
@@ -331,6 +440,48 @@ class AdministradorOrdenes extends Con
         $resultado = $this->ejecutar($sql);
         $fila = json_decode($resultado, true)[0] ?? ['total' => 0];
         return (int)$fila['total'];
+    }
+
+    public function listarComprasPorProveedor($fechaInicio = '', $fechaFin = '', $idProveedor = 0)
+    {
+        $condiciones = [];
+        $fechaInicio = $this->normalizarFecha($fechaInicio);
+        $fechaFin = $this->normalizarFecha($fechaFin);
+        $idProveedor = (int)$idProveedor;
+
+        if ($fechaInicio !== '') {
+            $condiciones[] = "oc.fecha_orden >= '$fechaInicio'";
+        }
+
+        if ($fechaFin !== '') {
+            $condiciones[] = "oc.fecha_orden <= '$fechaFin'";
+        }
+
+        if ($idProveedor > 0) {
+            $condiciones[] = "oc.id_proveedor = $idProveedor";
+        }
+
+        $whereSql = count($condiciones) ? 'WHERE ' . implode(' AND ', $condiciones) : '';
+
+        return $this->ejecutar("
+            SELECT
+                oc.id,
+                oc.folio,
+                oc.fecha_orden,
+                oc.estatus,
+                pr.nombre AS proveedor,
+                p.sku,
+                p.nombre AS articulo,
+                ocd.cantidad,
+                ocd.precio_unitario,
+                ocd.subtotal
+            FROM orden_compra_detalle ocd
+            INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            INNER JOIN productos p ON p.id = ocd.id_producto
+            $whereSql
+            ORDER BY pr.nombre ASC, oc.fecha_orden DESC, oc.id DESC
+        ");
     }
 
 

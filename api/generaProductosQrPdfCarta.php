@@ -2,6 +2,11 @@
 require('fpdf/fpdf.php');
 require_once 'phpqrcode/qrlib.php';
 
+function pdf_text($value)
+{
+    return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
+}
+
 /*
 |--------------------------------------------------------------------------
 | RECIBIR PRODUCTOS
@@ -19,6 +24,7 @@ $qrs = array();
 foreach ($productos as $producto) {
     $qrs[] = array(
         'sku'  => $producto['sku'],
+        'nombre' => $producto['nombre'] ?? '',
         'data' => $producto['sku']
     );
 }
@@ -39,7 +45,7 @@ $pdf->AddPage();
 |--------------------------------------------------------------------------
 */
 $qrSize       = 30; // tamaño QR
-$altoTexto    = 6;
+$altoTexto    = 10;
 $paddingY     = 4;
 $paddingBox   = 3; // padding interno del recuadro
 $altoBloque   = $qrSize + $altoTexto + $paddingY + ($paddingBox * 2);
@@ -135,10 +141,13 @@ foreach ($qrs as $index => $qr) {
     // QR
     $pdf->Image($qrFile, $xQR, $yQR, $qrSize);
 
-    // SKU debajo (centrado)
+    // Nombre y SKU debajo (centrado)
     $pdf->SetXY($x, $yQR + $qrSize + 1);
-    $pdf->SetFont('Arial', 'B', 8);
-    $pdf->Cell($anchoBloque, $altoTexto, $qr['sku'], 0, 0, 'C');
+    $pdf->SetFont('Arial', 'B', 6);
+    $pdf->MultiCell($anchoBloque, 3, pdf_text($qr['nombre']), 0, 'C');
+    $pdf->SetX($x);
+    $pdf->SetFont('Arial', 'B', 7);
+    $pdf->Cell($anchoBloque, 4, $qr['sku'], 0, 0, 'C');
 
     @unlink($qrFile);
 
@@ -157,5 +166,8 @@ foreach ($qrs as $index => $qr) {
 | SALIDA
 |--------------------------------------------------------------------------
 */
+if (ob_get_length()) {
+    ob_end_clean();
+}
 $pdf->Output('I', 'qr_carta.pdf');
 exit;

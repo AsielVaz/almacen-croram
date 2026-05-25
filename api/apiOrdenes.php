@@ -24,6 +24,13 @@ try {
             $orden = $_POST['orden'] ?? [];
             $ordenDecode = json_decode($orden, true) ?: [];
 
+            if ((int)$id_proveedor <= 0 || count($ordenDecode) === 0) {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'Proveedor y productos son obligatorios',
+                ]));
+            }
+
             $admin->iniciarTransaccion();
             $admin->agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario, $nota);
             $ultimo_id = $admin->dameUltimoIdOrdenCompra();
@@ -51,12 +58,20 @@ try {
 
             $folio = 'OS-' . date('YmdHis');
             $fecha_orden = date('Y-m-d');
-            $estatus = 'BORRADOR';
+            $estatus = 'CONFIRMADA';
             $id_usuario = $_POST['id_usuario'] ?? 0;
             $nota = $_POST['nota'] ?? '';
+            $id_area = $_POST['id_area'] ?? 0;
+
+            if ((int)$id_area <= 0 || count($salidaDecode) === 0) {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'Área y productos son obligatorios para registrar la salida',
+                ]));
+            }
 
             $admin->iniciarTransaccion();
-            $admin->agregarOrdenSalida($folio, $fecha_orden, 'CONSUMO_INTERNO', $estatus, $id_usuario, $nota);
+            $admin->agregarOrdenSalida($folio, $fecha_orden, 'CONSUMO_INTERNO', $estatus, $id_usuario, $nota, $id_area);
             $ultimo_id = $admin->dameUltimoIdOrdenSalida();
 
             foreach ($salidaDecode as $item) {
@@ -66,6 +81,9 @@ try {
                     $item['cantidad'] ?? 0,
                     $item['precio'] ?? 0
                 );
+                $costoPeps = $admin->consumirInventarioPeps($item['id'] ?? 0, $item['cantidad'] ?? 0);
+                $admin->actualizarCostoDetalleSalida($ultimo_id, $item['id'] ?? 0, $costoPeps);
+                $admin->registrarSalidaInventario($item['id'] ?? 0, $item['cantidad'] ?? 0);
             }
 
             $admin->confirmarTransaccion();
@@ -79,6 +97,14 @@ try {
         case 'guardarOrdenEntrada':
             $idOrden = $_POST['id_orden'] ?? 0;
             $productos = json_decode($_POST['productos'] ?? '[]', true) ?: [];
+            $ordenActual = json_decode($admin->obtenerOrdenCompra($idOrden), true)[0] ?? null;
+
+            if (!$ordenActual || ($ordenActual['estatus'] ?? '') === 'RECIBIDA') {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden de entrada no existe o ya fue recibida',
+                ]));
+            }
 
             $admin->iniciarTransaccion();
 
@@ -89,6 +115,7 @@ try {
 
                 $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
                 $admin->registrarEntradaInventario($idProducto, $cantidad);
+                $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, $ordenActual['fecha_orden'] ?? date('Y-m-d'));
             }
 
             $admin->actualizarEstatusOrdenCompra($idOrden, 'RECIBIDA');
@@ -102,11 +129,20 @@ try {
 
         case 'aprovarSalida':
             $idOrden = $_POST['id'] ?? 0;
+            $ordenActual = json_decode($admin->obtenerOrdenSalida($idOrden), true)[0] ?? null;
+            if (!$ordenActual || ($ordenActual['estatus'] ?? '') === 'CONFIRMADA') {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden de salida no existe o ya fue confirmada',
+                ]));
+            }
             $detalles = json_decode($admin->listarDetallesOrdenSalida($idOrden), true) ?: [];
 
             $admin->iniciarTransaccion();
 
             foreach ($detalles as $detalle) {
+                $costoPeps = $admin->consumirInventarioPeps($detalle['id_producto'] ?? 0, $detalle['cantidad'] ?? 0);
+                $admin->actualizarCostoDetalleSalida($idOrden, $detalle['id_producto'] ?? 0, $costoPeps);
                 $admin->registrarSalidaInventario($detalle['id_producto'] ?? 0, $detalle['cantidad'] ?? 0);
             }
 
@@ -128,6 +164,9 @@ try {
     }
 } catch (Exception $e) {
     $admin->revertirTransaccion();
-    echo $e->getMessage();
+    $payload = json_decode($e->getMessage(), true);
+    echo json_encode($payload ?: [
+        'status' => 'error',
+        'message' => $e->getMessage(),
+    ]);
 }
-

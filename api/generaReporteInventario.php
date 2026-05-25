@@ -1,6 +1,11 @@
 <?php
 require('fpdf/fpdf.php');
 
+function pdf_text($value)
+{
+    return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
+}
+
 class ReporteInventarioPDF extends FPDF
 {
     private $fechaReporte;
@@ -29,11 +34,11 @@ class ReporteInventarioPDF extends FPDF
         $this->SetFont('Arial', 'B', 20);
         $this->SetTextColor(52, 58, 64);
         $this->SetXY(15, 12);
-        $this->Cell(0, 8, utf8_decode('REPORTE DE CONCILIACIÓN'), 0, 1, 'L');
+        $this->Cell(0, 8, pdf_text('REPORTE DE CONCILIACIÓN'), 0, 1, 'L');
         
         $this->SetFont('Arial', '', 11);
         $this->SetXY(15, 21);
-        $this->Cell(0, 5, utf8_decode('Inventario Físico'), 0, 1, 'L');
+        $this->Cell(0, 5, pdf_text('Inventario Físico'), 0, 1, 'L');
         
         // Línea decorativa bajo el título
         $this->SetDrawColor(73, 80, 87);
@@ -71,8 +76,8 @@ class ReporteInventarioPDF extends FPDF
         $this->SetTextColor(108, 117, 125);
         
         // Texto centrado
-        $this->Cell(0, 5, utf8_decode('Almacén Croram | Sistema de Gestión de Inventario'), 0, 1, 'C');
-        $this->Cell(0, 5, utf8_decode('Página ') . $this->PageNo() . ' de {nb}', 0, 0, 'C');
+        $this->Cell(0, 5, pdf_text('Almacén Croram | Sistema de Gestión de Inventario'), 0, 1, 'C');
+        $this->Cell(0, 5, pdf_text('Página ') . $this->PageNo() . ' de {nb}', 0, 0, 'C');
     }
     
     function InfoBox($label, $value, $width, $isLast = false)
@@ -81,13 +86,13 @@ class ReporteInventarioPDF extends FPDF
         $this->SetFont('Arial', 'B', 9);
         $this->SetTextColor(73, 80, 87);
         $this->SetFillColor(248, 249, 250);
-        $this->Cell($width / 2, 7, utf8_decode($label), 1, 0, 'L', true);
+        $this->Cell($width / 2, 7, pdf_text($label), 1, 0, 'L', true);
         
         // Valor
         $this->SetFont('Arial', '', 10);
         $this->SetTextColor(33, 37, 41);
         $this->SetFillColor(255, 255, 255);
-        $this->Cell($width / 2, 7, utf8_decode($value), 1, $isLast ? 1 : 0, 'L', true);
+        $this->Cell($width / 2, 7, pdf_text($value), 1, $isLast ? 1 : 0, 'L', true);
     }
     
     function SectionTitle($title, $icon = '')
@@ -95,7 +100,7 @@ class ReporteInventarioPDF extends FPDF
         $this->SetFont('Arial', 'B', 11);
         $this->SetTextColor(73, 80, 87);
         
-        $this->Cell(0, 8, utf8_decode($icon . ' ' . $title), 0, 1, 'L', false);
+        $this->Cell(0, 8, pdf_text($icon . ' ' . $title), 0, 1, 'L', false);
         
         // Línea decorativa
         $this->SetDrawColor(73, 80, 87);
@@ -185,7 +190,7 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(10, 9, 'ID', 1, 0, 'C', true);
-$pdf->Cell(70, 9, utf8_decode('ARTÍCULO'), 1, 0, 'C', true);
+$pdf->Cell(70, 9, pdf_text('ARTÍCULO'), 1, 0, 'C', true);
 $pdf->Cell(25, 9, 'SKU', 1, 0, 'C', true);
 $pdf->Cell(20, 9, 'SISTEMA', 1, 0, 'C', true);
 $pdf->Cell(20, 9, 'REAL', 1, 0, 'C', true);
@@ -213,7 +218,7 @@ foreach ($conciliacion as $item) {
     if (strlen($item['nombre_articulo']) > 50) {
         $nombreCorto .= '...';
     }
-    $pdf->Cell(70, 8, utf8_decode($nombreCorto), 'LR', 0, 'L', true);
+    $pdf->Cell(70, 8, pdf_text($nombreCorto), 'LR', 0, 'L', true);
     
     $pdf->Cell(25, 8, $item['sku'], 'LR', 0, 'C', true);
     
@@ -295,13 +300,13 @@ $pdf->SetFillColor(255, 243, 205);
 
 $pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(133, 100, 4);
-$pdf->Cell(0, 7, utf8_decode('  OBSERVACIONES'), 1, 1, 'L', true);
+$pdf->Cell(0, 7, pdf_text('  OBSERVACIONES'), 1, 1, 'L', true);
 
 $pdf->SetFont('Arial', '', 8);
 $pdf->SetTextColor(73, 80, 87);
 $pdf->SetFillColor(255, 255, 255);
 $pdf->SetDrawColor(222, 226, 230);
-$pdf->MultiCell(0, 5, utf8_decode('Las diferencias encontradas deben ser verificadas y ajustadas en el sistema. Se recomienda investigar las causas de las discrepancias antes de realizar correcciones masivas.'), 1, 'L', true);
+$pdf->MultiCell(0, 5, pdf_text('Las diferencias encontradas deben ser verificadas y ajustadas en el sistema. Se recomienda investigar las causas de las discrepancias antes de realizar correcciones masivas.'), 1, 'L', true);
 
 $pdf->Ln(10);
 
@@ -320,7 +325,7 @@ $espacio = 20;
 // Título de sección
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->SetTextColor(73, 80, 87);
-$pdf->Cell(0, 6, utf8_decode('VALIDACIÓN'), 0, 1, 'C');
+$pdf->Cell(0, 6, pdf_text('VALIDACIÓN'), 0, 1, 'C');
 $pdf->Ln(5);
 
 // Cajas de firma con borde
@@ -341,10 +346,10 @@ $pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(33, 37, 41);
 
 $pdf->SetX($xInicio);
-$pdf->Cell($anchoFirma, 5, utf8_decode('REALIZÓ CONCILIACIÓN'), 0, 0, 'C');
+$pdf->Cell($anchoFirma, 5, pdf_text('REALIZÓ CONCILIACIÓN'), 0, 0, 'C');
 
 $pdf->SetX($xInicio + $anchoFirma + $espacio);
-$pdf->Cell($anchoFirma, 5, utf8_decode('REVISÓ Y AUTORIZÓ'), 0, 1, 'C');
+$pdf->Cell($anchoFirma, 5, pdf_text('REVISÓ Y AUTORIZÓ'), 0, 1, 'C');
 
 $pdf->Ln(2);
 
@@ -384,5 +389,8 @@ $pdf->Cell($anchoFirma, 4, 'Fecha: ___________________', 0, 1, 'C');
    OUTPUT
 ===================== */
 
+if (ob_get_length()) {
+    ob_end_clean();
+}
 $pdf->Output('I', 'reporte_conciliacion_' . $fechaReporte . '.pdf');
 exit;

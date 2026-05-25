@@ -55,8 +55,11 @@ requerir_autenticacion();
 include_once 'templates/barra.php';
 include_once 'templates/headder.php';
 include_once 'api/adminCatalogos.php';
+include_once 'api/adminAreas.php';
 $adminCatalogos = new AdministradorCatalogos();
+$adminAreas = new AdministradorAreas();
 $familias = json_decode($adminCatalogos->listarFamilias(true)) ?: [];
+$areas = json_decode($adminAreas->listarAreas()) ?: [];
 $usuarioActualId = usuario_id_actual();
 ?>
 <div class="page-content">
@@ -78,6 +81,15 @@ $usuarioActualId = usuario_id_actual();
         <div class="col-md-4">
             <label><i class="ri-search-line me-1"></i>Buscar Producto</label>
             <input type="text" id="filtroTexto" class="form-control" placeholder="Nombre, SKU o descripcion...">
+        </div>
+        <div class="col-md-4">
+            <label><i class="ri-building-2-line me-1"></i>Area de gasto</label>
+            <select id="areaSalida" class="form-select" required>
+                <option value="">Seleccione un area</option>
+                <?php foreach ($areas as $area): ?>
+                    <option value="<?= (int)$area->id ?>"><?= htmlspecialchars($area->nombre) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="col-12">
             <label><i class="ri-sticky-note-line me-1"></i>Notas de salida</label>
@@ -344,6 +356,7 @@ async function registrarSalida() {
     const formData = new FormData();
     formData.append('accion', 'altaOrdenSalida');
     formData.append('id_usuario', USUARIO_ACTUAL_ID);
+    formData.append('id_area', document.getElementById('areaSalida').value);
     formData.append('nota', document.getElementById('notaSalida').value.trim());
     formData.append('orden', JSON.stringify(salida));
     const response = await fetch('api/apiOrdenes.php', { method: 'POST', body: formData });
@@ -373,6 +386,10 @@ filtroSubfamilia.addEventListener('change', () => buscarArticulos(1));
 document.getElementById('btnEnviar').addEventListener('click', async () => {
     if (salida.length === 0) {
         Swal.fire({ icon: 'warning', title: 'Salida vacia', text: 'Agregue al menos un producto a la salida', confirmButtonColor: '#6c757d' });
+        return;
+    }
+    if (!document.getElementById('areaSalida').value) {
+        Swal.fire({ icon: 'warning', title: 'Area requerida', text: 'Seleccione el area donde se registrara el gasto', confirmButtonColor: '#6c757d' });
         return;
     }
 
@@ -407,4 +424,3 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
 </script>
 </body>
 </html>
-

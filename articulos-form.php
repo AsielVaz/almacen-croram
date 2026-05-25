@@ -494,6 +494,16 @@ requerir_autenticacion();
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="cr-field">
+                                            <label class="cr-label" for="tipo_articulo">Condición del artículo</label>
+                                            <div class="cr-select-wrap">
+                                                <select id="tipo_articulo" name="tipo_articulo" class="cr-select">
+                                                    <option value="NUEVO" <?= (!$esEdicion || ($articulo[0]->tipo_articulo ?? 'NUEVO') === 'NUEVO') ? 'selected' : '' ?>>Nuevo</option>
+                                                    <option value="USADO" <?= ($esEdicion && ($articulo[0]->tipo_articulo ?? '') === 'USADO') ? 'selected' : '' ?>>Usado</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- �????,?�????,? Inventario �????,?�????,? -->

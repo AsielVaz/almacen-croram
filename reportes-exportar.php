@@ -14,6 +14,7 @@ $salidaInicio = $_GET['salida_inicio'] ?? '';
 $salidaFin = $_GET['salida_fin'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
+$idProveedor = (int)($_GET['id_proveedor'] ?? 0);
 
 $adminArticulos = new AdministradorArticulos();
 $adminOrdenes = new AdministradorOrdenes();
@@ -79,6 +80,7 @@ switch ($tipo) {
                 $articulo['familia'] ?? '',
                 $articulo['subfamilia'] ?? '',
                 $articulo['descripcion'] ?? '',
+                $articulo['tipo_articulo'] ?? 'NUEVO',
                 $articulo['unidad_medida'] ?? '',
                 number_format((float)($articulo['cantidad'] ?? 0), 0, '.', ''),
                 number_format((float)($articulo['total_entradas'] ?? 0), 0, '.', ''),
@@ -104,13 +106,14 @@ switch ($tipo) {
                 '',
                 '',
                 '',
+                '',
             ]);
         }
 
         exportarExcelHtml(
             'reporte_inventario_' . ($idFamilia ?: 'todas') . '_' . ($idSubfamilia ?: 'todas'),
             'Inventario',
-            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Unidad', 'Existencia', 'Entradas', 'Salidas', 'Movimientos', 'Precio promedio', 'Estado'],
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Existencia', 'Entradas', 'Salidas', 'Movimientos', 'Precio promedio', 'Estado'],
             $filas
         );
         break;
@@ -170,6 +173,7 @@ switch ($tipo) {
                 $orden['folio'] ?? '',
                 $orden['fecha_salida'] ?? '',
                 $orden['tipo'] ?? '',
+                $orden['nombre_area'] ?? '',
                 $orden['estatus'] ?? '',
                 $orden['nombre_usuario'] ?? '',
             ];
@@ -178,7 +182,33 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_ordenes_salida_' . ($salidaInicio ?: 'inicio') . '_' . ($salidaFin ?: 'fin'),
             'Ordenes de salida',
-            ['ID', 'Folio', 'Fecha', 'Tipo', 'Estatus', 'Solicito'],
+            ['ID', 'Folio', 'Fecha', 'Tipo', 'Area', 'Estatus', 'Solicito'],
+            $filas
+        );
+        break;
+
+    case 'compras_proveedor':
+        $compras = json_decode($adminOrdenes->listarComprasPorProveedor($entradaInicio, $entradaFin, $idProveedor), true) ?: [];
+        $filas = [];
+        foreach ($compras as $compra) {
+            $filas[] = [
+                $compra['id'] ?? '',
+                $compra['folio'] ?? '',
+                $compra['fecha_orden'] ?? '',
+                $compra['proveedor'] ?? '',
+                $compra['estatus'] ?? '',
+                $compra['sku'] ?? '',
+                $compra['articulo'] ?? '',
+                number_format((float)($compra['cantidad'] ?? 0), 0, '.', ''),
+                number_format((float)($compra['precio_unitario'] ?? 0), 2, '.', ''),
+                number_format((float)($compra['subtotal'] ?? 0), 2, '.', ''),
+            ];
+        }
+
+        exportarExcelHtml(
+            'compras_por_proveedor_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
+            'Compras por proveedor',
+            ['ID orden', 'Folio', 'Fecha', 'Proveedor', 'Estatus', 'SKU', 'Articulo', 'Cantidad', 'Precio', 'Subtotal'],
             $filas
         );
         break;

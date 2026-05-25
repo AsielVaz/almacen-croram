@@ -542,7 +542,7 @@ requerir_autenticacion();
                                 <!-- Botón Ingresar Orden -->
                                 <div class="row mt-4">
                                     <div class="col-12 text-center">
-                                        <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden">
+                                        <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden" <?= (($ordenes[0]->estatus ?? '') === 'RECIBIDA') ? 'disabled' : '' ?>>
                                             <i class="ri-download-cloud-line me-2"></i>Ingresar Orden
                                         </button>
                                     </div>

@@ -18,7 +18,8 @@ class AdministradorArticulos extends Con {
         $activo = 1,
         $costo_reposicon = 0,
         $consumo_diario = 0,
-        $tiempo_reposicion = 0
+        $tiempo_reposicion = 0,
+        $tipo_articulo = 'NUEVO'
     ) {
 
         $sku = $this->limpiar($sku);
@@ -26,6 +27,7 @@ class AdministradorArticulos extends Con {
         $id_familia = (int)$id_familia;
         $id_subfamilia = $id_subfamilia !== null ? (int)$id_subfamilia : 'NULL';
         $unidad_medida = $this->limpiar($unidad_medida);
+        $tipo_articulo = $this->normalizarTipoArticulo($tipo_articulo);
         $descripcion = $this->limpiar($descripcion);
         $costo_reposicon = (float)$costo_reposicon;
         $consumo_diario = max(0, (float)$consumo_diario);
@@ -34,13 +36,14 @@ class AdministradorArticulos extends Con {
 
         $sql = "
             INSERT INTO productos
-            (sku, nombre, id_familia, id_subfamilia, unidad_medida, descripcion, activo, costo_reposicion, consumo_diario, tiempo_reposicion)
+            (sku, nombre, id_familia, id_subfamilia, unidad_medida, tipo_articulo, descripcion, activo, costo_reposicion, consumo_diario, tiempo_reposicion)
             VALUES (
                 " . ($sku !== '' ? "'$sku'" : "NULL") . ",
                 '$nombre',
                 $id_familia,
                 $id_subfamilia,
                 '$unidad_medida',
+                '$tipo_articulo',
                 '$descripcion',
                 $activo,
                 $costo_reposicon,
@@ -254,8 +257,8 @@ class AdministradorArticulos extends Con {
         return $this->ejecutar($this->consultaBaseArticulos($whereSql, "ORDER BY cantidad ASC, p.nombre ASC"));
     }
 
-    public function listarComprasSugeridas($dias = 30) {
-        $dias = max(1, (int)$dias);
+    public function listarComprasSugeridas($diasStockRequeridos = 15) {
+        $diasStockRequeridos = max(1, (int)$diasStockRequeridos);
 
         $sql = "
             SELECT
@@ -270,18 +273,40 @@ class AdministradorArticulos extends Con {
                 COALESCE(inv.stock, 0) AS cantidad,
                 f.nombre AS familia,
                 s.nombre AS subfamilia,
+                COALESCE(consumos.consumo_12_meses, 0) AS consumo_12_meses,
+                COALESCE(consumos.consumo_12_meses, 0) / 12 AS consumo_mensual_promedio,
+                $diasStockRequeridos AS dias_stock_requeridos,
+                ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) AS stock_objetivo,
+                GREATEST(
+                    ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
+                    0
+                ) AS pedido_sugerido,
                 CASE
-                    WHEN p.consumo_diario > 0 THEN ROUND(COALESCE(inv.stock, 0) / p.consumo_diario, 2)
+                    WHEN (COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) > 0
+                        THEN ROUND(COALESCE(inv.stock, 0) / (COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4), 2)
                     ELSE NULL
                 END AS dias_restantes
             FROM productos p
             JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
             LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    osd.id_producto,
+                    SUM(osd.cantidad) AS consumo_12_meses
+                FROM orden_salida_detalle osd
+                INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+                WHERE os.estatus = 'CONFIRMADA'
+                  AND os.fecha_salida >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                GROUP BY osd.id_producto
+            ) consumos ON consumos.id_producto = p.id
             WHERE p.activo = 1
-              AND p.consumo_diario > 0
-              AND (COALESCE(inv.stock, 0) / p.consumo_diario) <= $dias
-            ORDER BY p.tiempo_reposicion DESC, dias_restantes ASC, p.nombre ASC
+              AND COALESCE(consumos.consumo_12_meses, 0) > 0
+              AND GREATEST(
+                    ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
+                    0
+                  ) > 0
+            ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, p.nombre ASC
         ";
 
         return $this->ejecutar($sql);
@@ -369,6 +394,7 @@ class AdministradorArticulos extends Con {
                 id_familia,
                 id_subfamilia,
                 unidad_medida,
+                tipo_articulo,
                 descripcion,
                 activo,
                 costo_reposicion,
@@ -394,7 +420,8 @@ class AdministradorArticulos extends Con {
         $activo = 1,
         $costo_reposicion = 0,
         $consumo_diario = 0,
-        $tiempo_reposicion = 0
+        $tiempo_reposicion = 0,
+        $tipo_articulo = 'NUEVO'
     ) {
 
         $id = (int)$id;
@@ -403,6 +430,7 @@ class AdministradorArticulos extends Con {
         $id_familia = (int)$id_familia;
         $id_subfamilia = $id_subfamilia !== null ? (int)$id_subfamilia : 'NULL';
         $unidad_medida = $this->limpiar($unidad_medida);
+        $tipo_articulo = $this->normalizarTipoArticulo($tipo_articulo);
         $descripcion = $this->limpiar($descripcion);
         $costo_reposicion = (float)$costo_reposicion;
         $consumo_diario = max(0, (float)$consumo_diario);
@@ -417,6 +445,7 @@ class AdministradorArticulos extends Con {
                 id_familia = $id_familia,
                 id_subfamilia = $id_subfamilia,
                 unidad_medida = '$unidad_medida',
+                tipo_articulo = '$tipo_articulo',
                 descripcion = '$descripcion',
                 costo_reposicion = $costo_reposicion,
                 consumo_diario = $consumo_diario,
@@ -450,6 +479,11 @@ class AdministradorArticulos extends Con {
         return htmlspecialchars(trim($valor), ENT_QUOTES, 'UTF-8');
     }
 
+    private function normalizarTipoArticulo($tipo) {
+        $tipo = strtoupper(trim((string)$tipo));
+        return in_array($tipo, ['NUEVO', 'USADO'], true) ? $tipo : 'NUEVO';
+    }
+
     private function consultaBaseArticulos($whereSql = "", $orderSql = "ORDER BY p.nombre", $limit = null, $offset = null) {
         $limitSql = $limit !== null ? " LIMIT " . max(1, (int)$limit) : "";
         $offsetSql = ($limit !== null && $offset !== null && (int)$offset > 0) ? " OFFSET " . (int)$offset : "";
@@ -460,6 +494,7 @@ class AdministradorArticulos extends Con {
                 p.sku,
                 p.nombre,
                 p.unidad_medida,
+                p.tipo_articulo,
                 p.activo,
                 p.id_familia,
                 p.id_subfamilia,
@@ -491,6 +526,7 @@ class AdministradorArticulos extends Con {
                 id_familia,
                 id_subfamilia,
                 unidad_medida,
+                tipo_articulo,
                 descripcion,
                 activo,
                 costo_reposicion,

@@ -418,6 +418,7 @@ requerir_autenticacion();
                                                 <th>SUBFAMILIA</th>
                                                 <th class="text-center">CANTIDAD</th>
                                                 <th>SKU</th>
+                                                <th>CONDICI&Oacute;N</th>
                                                 <th>Unidad de medida</th>
                                                 <th>DESCRIPCI&Oacute;N</th>
                                                 <th class="text-center">ACCIONES</th>
@@ -452,6 +453,9 @@ requerir_autenticacion();
                                                         <span class="badge-sku">
                                                             <i class="ri-barcode-line"></i> <?= htmlspecialchars($articulo->sku) ?>
                                                         </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="family-text"><?= htmlspecialchars($articulo->tipo_articulo ?? 'NUEVO') ?></span>
                                                     </td>
                                                       <td>
                                                         <span class="family-text"><?= htmlspecialchars($articulo->unidad_medida) ?></span>

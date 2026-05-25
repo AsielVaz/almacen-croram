@@ -90,7 +90,7 @@ $usuarioSesion = usuario_actual();
                               <li class="side-nav-item"><a href="ordenes-salida.php" class="side-nav-link"><span class="menu-text">&Oacute;rdenes de salida</span></a></li>
                               <li class="side-nav-item"><a href="ordenes-entrada.php" class="side-nav-link"><span class="menu-text">&Oacute;rdenes de entrada</span></a></li>
                               <li class="side-nav-item"><a href="ordenes-salida-form-fast.php" class="side-nav-link"><span class="menu-text">Capturador</span></a></li>
-                              <li class="side-nav-item"><a href="ordenes-salida-escaner.php" class="side-nav-link"><span class="menu-text">Capturador &oacute;rdenes</span></a></li>
+                              <li class="side-nav-item"><a href="ordenes-salida-escaner.php" class="side-nav-link"><span class="menu-text">Capturador de ordenes</span></a></li>
                           </ul>
                       </div>
                   </li>

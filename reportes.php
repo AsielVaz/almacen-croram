@@ -39,6 +39,7 @@ $salidaInicio = $_GET['salida_inicio'] ?? '';
 $salidaFin = $_GET['salida_fin'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
+$idProveedor = (int)($_GET['id_proveedor'] ?? 0);
 
 $familias = json_decode($adminCatalogos->listarFamilias(true), true) ?: [];
 $subfamilias = json_decode($adminCatalogos->listarSubfamilias($idFamilia > 0 ? $idFamilia : null, true), true) ?: [];
@@ -57,6 +58,12 @@ $querySalidas = http_build_query([
     'tipo' => 'salidas',
     'salida_inicio' => $salidaInicio,
     'salida_fin' => $salidaFin,
+]);
+$queryComprasProveedor = http_build_query([
+    'tipo' => 'compras_proveedor',
+    'entrada_inicio' => $entradaInicio,
+    'entrada_fin' => $entradaFin,
+    'id_proveedor' => $idProveedor,
 ]);
 
 $articulos = json_decode($adminArticulos->listarArticulosReporteGeneral(false, $idFamilia, $idSubfamilia), true) ?: [];
@@ -111,11 +118,25 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                         <label class="form-label" for="salida_fin">Salida hasta</label>
                         <input type="date" class="form-control" id="salida_fin" name="salida_fin" value="<?= htmlspecialchars($salidaFin) ?>">
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="id_proveedor">Proveedor para compras</label>
+                        <select class="form-select" id="id_proveedor" name="id_proveedor">
+                            <option value="0">Todos los proveedores</option>
+                            <?php foreach ($proveedores as $proveedor): ?>
+                                <option value="<?= (int)$proveedor['id'] ?>" <?= $idProveedor === (int)$proveedor['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($proveedor['nombre'] ?? '') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="col-md-auto">
                         <button type="submit" class="btn btn-primary">Aplicar filtros</button>
                     </div>
                     <div class="col-md-auto">
                         <a href="reportes.php" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                    <div class="col-md-auto">
+                        <a class="btn btn-success" href="reportes-exportar.php?<?= htmlspecialchars($queryComprasProveedor) ?>">Descargar compras por proveedor</a>
                     </div>
                 </form>
             </div>
@@ -135,6 +156,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                     <input type="hidden" name="entrada_fin" value="<?= htmlspecialchars($entradaFin) ?>">
                     <input type="hidden" name="salida_inicio" value="<?= htmlspecialchars($salidaInicio) ?>">
                     <input type="hidden" name="salida_fin" value="<?= htmlspecialchars($salidaFin) ?>">
+                    <input type="hidden" name="id_proveedor" value="<?= $idProveedor ?>">
                     <div class="col-md-4">
                         <label class="form-label" for="id_familia">Familia</label>
                         <select class="form-select" id="id_familia" name="id_familia">
@@ -172,6 +194,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                                 <th>Familia</th>
                                 <th>Subfamilia</th>
                                 <th>Descripción</th>
+                                <th>Condición</th>
                                 <th>Unidad</th>
                                 <th>Existencia</th>
                                 <th>Entradas</th>
@@ -190,6 +213,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                                 <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['tipo_articulo'] ?? 'NUEVO') ?></td>
                                 <td><?= htmlspecialchars($articulo['unidad_medida'] ?? '') ?></td>
                                 <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
                                 <td><?= number_format((float)($articulo['total_entradas'] ?? 0), 0) ?></td>
@@ -280,7 +304,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="tablaSalidas" class="table table-striped dt-responsive nowrap w-100 report-table">
-                                <thead><tr><th>ID</th><th>Folio</th><th>Fecha</th><th>Tipo</th><th>Estatus</th><th>Solicitó</th></tr></thead>
+                                <thead><tr><th>ID</th><th>Folio</th><th>Fecha</th><th>Tipo</th><th>Area</th><th>Estatus</th><th>Solicitó</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($ordenesSalida as $orden): ?>
                                     <tr>
@@ -288,6 +312,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                                         <td><?= htmlspecialchars($orden['folio'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['fecha_salida'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['tipo'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($orden['nombre_area'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['estatus'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['nombre_usuario'] ?? '') ?></td>
                                     </tr>

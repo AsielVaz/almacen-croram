@@ -5,8 +5,8 @@ requerir_autenticacion();
 include_once 'api/adminArticulos.php';
 
 $adminArticulos = new AdministradorArticulos();
-$dias = max(1, (int)($_GET['dias'] ?? 30));
-$articulos = json_decode($adminArticulos->listarComprasSugeridas($dias), true) ?: [];
+$diasStock = max(1, (int)($_GET['dias_stock'] ?? 15));
+$articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), true) ?: [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,17 +48,17 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($dias), true) ?
             <div class="card-body">
                 <form class="row g-3 align-items-end" method="get" action="reportes-compras-sugeridas.php">
                     <div class="col-md-3">
-                        <label for="dias" class="form-label">Días de cobertura</label>
-                        <input type="number" min="1" step="1" class="form-control" id="dias" name="dias" value="<?= $dias ?>">
+                        <label for="dias_stock" class="form-label">Días de stock requeridos</label>
+                        <input type="number" min="1" step="1" class="form-control" id="dias_stock" name="dias_stock" value="<?= $diasStock ?>">
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" class="btn btn-primary">Actualizar reporte</button>
                     </div>
                     <div class="col-md-auto">
-                        <button type="button" class="btn btn-success" onclick="exportTableToExcel('tablaComprasSugeridas', 'compras_sugeridas_<?= $dias ?>_dias')">Exportar Excel</button>
+                        <button type="button" class="btn btn-success" onclick="exportTableToExcel('tablaComprasSugeridas', 'compras_sugeridas_<?= $diasStock ?>_dias_stock')">Exportar Excel</button>
                     </div>
                     <div class="col-12">
-                        <p class="text-muted mb-0">Se muestran los artículos activos cuyo inventario alcanzará para <?= $dias ?> días o menos. La prioridad se ordena por mayor tiempo de reposición y después por menos días restantes.</p>
+                        <p class="text-muted mb-0">Pedido sugerido = redondear((consumo mensual promedio / 30.4) * (días de stock requeridos + tiempo de surtido)) - existencia actual.</p>
                     </div>
                 </form>
             </div>
@@ -80,9 +80,13 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($dias), true) ?
                                 <th>Familia</th>
                                 <th>Subfamilia</th>
                                 <th>Existencia</th>
-                                <th>Consumo diario</th>
-                                <th>Tiempo reposición</th>
+                                <th>Consumo mensual prom.</th>
+                                <th>Días stock req.</th>
+                                <th>Tiempo surtido</th>
                                 <th>Días restantes</th>
+                                <th>Stock objetivo</th>
+                                <th>Pedido sugerido</th>
+                                <th>Pedido confirmado</th>
                                 <th>Costo promedio</th>
                             </tr>
                         </thead>
@@ -95,9 +99,15 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($dias), true) ?
                                 <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? 'Sin familia') ?></td>
                                 <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
-                                <td><?= number_format((float)($articulo['consumo_diario'] ?? 0), 2) ?></td>
+                                <td><?= number_format((float)($articulo['consumo_mensual_promedio'] ?? 0), 2) ?></td>
+                                <td><?= (int)($articulo['dias_stock_requeridos'] ?? $diasStock) ?></td>
                                 <td><?= (int)($articulo['tiempo_reposicion'] ?? 0) ?></td>
                                 <td><?= number_format((float)($articulo['dias_restantes'] ?? 0), 2) ?></td>
+                                <td><?= number_format((float)($articulo['stock_objetivo'] ?? 0), 0) ?></td>
+                                <td><?= number_format((float)($articulo['pedido_sugerido'] ?? 0), 0) ?></td>
+                                <td>
+                                    <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['pedido_sugerido'] ?? 0)) ?>">
+                                </td>
                                 <td>$<?= number_format((float)($articulo['costo_reposicion'] ?? 0), 2) ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -124,7 +134,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($dias), true) ?
         $('#tablaComprasSugeridas').DataTable({
             pageLength: 10,
             responsive: true,
-            order: [[7, 'desc'], [8, 'asc']]
+            order: [[11, 'desc']]
         });
     });
 

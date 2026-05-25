@@ -345,6 +345,10 @@ requerir_autenticacion();
                                             <div class="info-value text-dark">
                                                 <i class="ri-calendar-line me-1"></i><?php echo $ordenes[0]->fecha_salida ?? 'N/A'; ?>
                                             </div>
+                                            <div class="info-label mt-3">Area</div>
+                                            <div class="info-value text-dark">
+                                                <i class="ri-building-2-line me-1"></i><?php echo $ordenes[0]->nombre_area ?? 'N/A'; ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -408,7 +412,7 @@ requerir_autenticacion();
 
                                 <!-- Botones de acción -->
                                 <div class="action-buttons">
-                                    <button type="button" class="btn btn-modern btn-approve" id="btnAprobar">
+                                    <button type="button" class="btn btn-modern btn-approve" id="btnAprobar" <?= (($ordenes[0]->estatus ?? '') === 'CONFIRMADA') ? 'disabled' : '' ?>>
                                         <i class="ri-check-line me-2"></i>Aprobar Orden
                                     </button>
                                     <button type="button" class="btn btn-modern btn-cancel" onclick="history.back()">

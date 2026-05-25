@@ -2,6 +2,11 @@
 require('fpdf/fpdf.php');
 require_once 'phpqrcode/qrlib.php';
 
+function pdf_text($value)
+{
+    return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
+}
+
 class OrdenSalidaPDF extends FPDF
 {
     private $ordenData;
@@ -28,7 +33,7 @@ class OrdenSalidaPDF extends FPDF
         $this->SetFont('Arial', 'B', 22);
         $this->SetTextColor(220, 53, 69); // Rojo para salida
         $this->SetXY(15, 12);
-        $this->Cell(0, 8, utf8_decode('ORDEN DE SALIDA'), 0, 1, 'L');
+        $this->Cell(0, 8, pdf_text('ORDEN DE SALIDA'), 0, 1, 'L');
         
         // Línea decorativa bajo el título (roja)
         $this->SetDrawColor(220, 53, 69);
@@ -66,8 +71,8 @@ class OrdenSalidaPDF extends FPDF
         $this->SetTextColor(108, 117, 125);
         
         // Texto centrado
-        $this->Cell(0, 5, utf8_decode('Almacén Croram | Sistema de Gestión de Inventario'), 0, 1, 'C');
-        $this->Cell(0, 5, utf8_decode('Página ') . $this->PageNo() . ' de {nb}', 0, 0, 'C');
+        $this->Cell(0, 5, pdf_text('Almacén Croram | Sistema de Gestión de Inventario'), 0, 1, 'C');
+        $this->Cell(0, 5, pdf_text('Página ') . $this->PageNo() . ' de {nb}', 0, 0, 'C');
     }
     
     function InfoBox($label, $value, $width, $isLast = false)
@@ -76,13 +81,13 @@ class OrdenSalidaPDF extends FPDF
         $this->SetFont('Arial', 'B', 9);
         $this->SetTextColor(73, 80, 87);
         $this->SetFillColor(248, 249, 250);
-        $this->Cell($width / 2, 7, utf8_decode($label), 1, 0, 'L', true);
+        $this->Cell($width / 2, 7, pdf_text($label), 1, 0, 'L', true);
         
         // Valor
         $this->SetFont('Arial', '', 10);
         $this->SetTextColor(33, 37, 41);
         $this->SetFillColor(255, 255, 255);
-        $this->Cell($width / 2, 7, utf8_decode($value), 1, $isLast ? 1 : 0, 'L', true);
+        $this->Cell($width / 2, 7, pdf_text($value), 1, $isLast ? 1 : 0, 'L', true);
     }
     
     function SectionTitle($title, $icon = '')
@@ -91,7 +96,7 @@ class OrdenSalidaPDF extends FPDF
         $this->SetTextColor(73, 80, 87);
         $this->SetFillColor(248, 249, 250);
         
-        $this->Cell(0, 8, utf8_decode($icon . ' ' . $title), 0, 1, 'L', false);
+        $this->Cell(0, 8, pdf_text($icon . ' ' . $title), 0, 1, 'L', false);
         
         // Línea decorativa
         $this->SetDrawColor(73, 80, 87);
@@ -181,9 +186,9 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(15, 9, '#', 1, 0, 'C', true);
-$pdf->Cell(100, 9, utf8_decode('DESCRIPCIÓN'), 1, 0, 'C', true);
+$pdf->Cell(100, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
 $pdf->Cell(30, 9, 'CANTIDAD', 1, 0, 'C', true);
-$pdf->Cell(45, 9, utf8_decode('PRECIO PROM.'), 1, 1, 'C', true);
+$pdf->Cell(45, 9, pdf_text('PRECIO PROM.'), 1, 1, 'C', true);
 
 // Items de la tabla
 $pdf->SetFont('Arial', '', 9);
@@ -205,7 +210,7 @@ foreach ($items as $item) {
     }
     
     $pdf->Cell(15, 8, $i, 'LR', 0, 'C', true);
-    $pdf->Cell(100, 8, utf8_decode($item['producto']), 'LR', 0, 'L', true);
+    $pdf->Cell(100, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
     
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(30, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);
@@ -267,13 +272,13 @@ $pdf->SetFillColor(255, 243, 245);
 // Caja de nota
 $pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(220, 53, 69);
-$pdf->Cell(0, 7, utf8_decode('  NOTA IMPORTANTE'), 1, 1, 'L', true);
+$pdf->Cell(0, 7, pdf_text('  NOTA IMPORTANTE'), 1, 1, 'L', true);
 
 $pdf->SetFont('Arial', '', 8);
 $pdf->SetTextColor(73, 80, 87);
 $pdf->SetFillColor(255, 255, 255);
 $pdf->SetDrawColor(222, 226, 230);
-$pdf->MultiCell(0, 5, utf8_decode('Los productos listados en esta orden serán descontados del inventario. Verifique las cantidades antes de aprobar la salida.'), 1, 'L', true);
+$pdf->MultiCell(0, 5, pdf_text('Los productos listados en esta orden serán descontados del inventario. Verifique las cantidades antes de aprobar la salida.'), 1, 'L', true);
 
 $pdf->Ln(10);
 
@@ -292,7 +297,7 @@ $espacio = 20;
 // Título de sección
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->SetTextColor(73, 80, 87);
-$pdf->Cell(0, 6, utf8_decode('VALIDACIÓN Y AUTORIZACIÓN'), 0, 1, 'C');
+$pdf->Cell(0, 6, pdf_text('VALIDACIÓN Y AUTORIZACIÓN'), 0, 1, 'C');
 $pdf->Ln(5);
 
 // Cajas de firma con borde
@@ -313,10 +318,10 @@ $pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(33, 37, 41);
 
 $pdf->SetX($xInicio);
-$pdf->Cell($anchoFirma, 5, utf8_decode('AUTORIZA SALIDA'), 0, 0, 'C');
+$pdf->Cell($anchoFirma, 5, pdf_text('AUTORIZA SALIDA'), 0, 0, 'C');
 
 $pdf->SetX($xInicio + $anchoFirma + $espacio);
-$pdf->Cell($anchoFirma, 5, utf8_decode('RECIBE PRODUCTOS'), 0, 1, 'C');
+$pdf->Cell($anchoFirma, 5, pdf_text('RECIBE PRODUCTOS'), 0, 1, 'C');
 
 $pdf->Ln(2);
 
@@ -372,7 +377,7 @@ $pdf->Image($qrFile, $qrX, $qrY, 30);
 $pdf->SetFont('Arial', 'I', 7);
 $pdf->SetTextColor(108, 117, 125);
 $pdf->SetXY($qrX - 5, $qrY + 32);
-$pdf->Cell(40, 3, utf8_decode('Escanea para ver online'), 0, 0, 'C');
+$pdf->Cell(40, 3, pdf_text('Escanea para ver online'), 0, 0, 'C');
 
 @unlink($qrFile);
 
@@ -380,5 +385,8 @@ $pdf->Cell(40, 3, utf8_decode('Escanea para ver online'), 0, 0, 'C');
    OUTPUT
 ===================== */
 
-$pdf->Output('I', 'orden_salida_' . $orden['folio'] . '.pdf');
+    if (ob_get_length()) {
+        ob_end_clean();
+    }
+    $pdf->Output('I', 'orden_salida_' . $orden['folio'] . '.pdf');
 exit;

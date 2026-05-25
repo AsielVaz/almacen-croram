@@ -47,7 +47,8 @@ try {
                 $_POST['activo'] ?? 1,
                 $costo_reposicon ?? 0,
                 $consumoDiario ?? 0,
-                $tiempoReposicion ?? 0
+                $tiempoReposicion ?? 0,
+                $_POST['tipo_articulo'] ?? 'NUEVO'
             );
 
             $admin->agregarInventario(
@@ -101,7 +102,8 @@ try {
                 $_POST['activo'] ?? 1,
                 $_POST['costo_reposicion'] ?? 0,
                 $_POST['consumo_diario'] ?? 0,
-                $_POST['tiempo_reposicion'] ?? 0
+                $_POST['tiempo_reposicion'] ?? 0,
+                $_POST['tipo_articulo'] ?? 'NUEVO'
             );
 
             echo json_encode([
@@ -130,6 +132,9 @@ try {
 
 } catch (Exception $e) {
     $admin->revertirTransaccion();
-    echo $e->getMessage();
+    $payload = json_decode($e->getMessage(), true);
+    echo json_encode($payload ?: [
+        'status' => 'error',
+        'message' => $e->getMessage(),
+    ]);
 }
-

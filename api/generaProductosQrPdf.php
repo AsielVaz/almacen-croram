@@ -2,6 +2,11 @@
 require('fpdf/fpdf.php');
 require_once 'phpqrcode/qrlib.php';
 
+function pdf_text($value)
+{
+    return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
+}
+
 /*
 |--------------------------------------------------------------------------
 | CONFIGURACIÓN IMPRESORA TÉRMICA
@@ -10,7 +15,7 @@ require_once 'phpqrcode/qrlib.php';
 | Alto dinámico (se calcula)
 */
 $anchoMM = 58;
-$altoPorQR = 42; // mm aproximados por QR + texto
+$altoPorQR = 50; // mm aproximados por QR + texto
 $altoDivider = 5; // mm para la línea divisoria punteada
 
 /*
@@ -25,6 +30,7 @@ $productos = json_decode($_POST['productos'] ?? '[]', true);
 foreach ($productos as $producto) {
     $qrs[] = array(
         'sku'  => $producto['sku'],
+        'nombre' => $producto['nombre'] ?? '',
         'data' => $producto['sku'] // aquí puedes meter URL, hash, etc
     );
 }
@@ -76,7 +82,9 @@ foreach ($qrs as $qr) {
 
     $pdf->Ln($qrSize + 2);
 
-    // SKU debajo
+    // Nombre y SKU debajo
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->MultiCell(0, 4, pdf_text($qr['nombre']), 0, 'C');
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(0, 6, $qr['sku'], 0, 1, 'C');
 
@@ -120,5 +128,8 @@ foreach ($qrs as $qr) {
 | SALIDA
 |--------------------------------------------------------------------------
 */
+if (ob_get_length()) {
+    ob_end_clean();
+}
 $pdf->Output('I', 'qr_termico.pdf');
 exit;
