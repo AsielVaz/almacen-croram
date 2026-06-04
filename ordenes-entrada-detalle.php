@@ -620,12 +620,16 @@ requerir_autenticacion();
     <script src="assets/js/components/table-datatable.js"></script>
 
     <script>
+        const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
+
         document.addEventListener('DOMContentLoaded', function() {
             // Botón Guardar Orden de Entrada
             const btnGuardarOrden = document.getElementById('btnGuardarOrdenEntrada');
             
             if (btnGuardarOrden) {
                 btnGuardarOrden.addEventListener('click', function() {
+                    if (btnGuardarOrden.disabled) return;
+                    btnGuardarOrden.disabled = true;
                     // Obtener el ID de la orden
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
@@ -658,6 +662,7 @@ requerir_autenticacion();
                     formData.append('id_orden', idOrden);
                     formData.append('productos', JSON.stringify(productos));
                     formData.append('nota', notas);
+                    formData.append('request_token', REQUEST_TOKEN);
                     
                     // Mostrar loading
                     Swal.fire({
@@ -696,6 +701,7 @@ requerir_autenticacion();
                                 location.reload();
                             });
                         } else {
+                            btnGuardarOrden.disabled = false;
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -705,6 +711,7 @@ requerir_autenticacion();
                         }
                     })
                     .catch(error => {
+                        btnGuardarOrden.disabled = false;
                         Swal.close();
                         console.error('Error:', error);
                         Swal.fire({

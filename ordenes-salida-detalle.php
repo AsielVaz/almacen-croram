@@ -380,8 +380,12 @@ requerir_autenticacion();
                                         <tbody>
                                             <?php
                                             $total = 0;
+                                            $totalCostoPeps = 0;
                                             foreach ($detallesOrden as $index => $detalle):
-                        $total += (int)round((float)($detalle->cantidad ?? 0));
+                                                $cantidadDetalle = (int)round((float)($detalle->cantidad ?? 0));
+                                                $costoDetalle = (float)($detalle->costo_promedio ?? 0);
+                                                $total += $cantidadDetalle;
+                                                $totalCostoPeps += $cantidadDetalle * $costoDetalle;
                                             ?>
                                                 <tr>
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
@@ -405,6 +409,7 @@ requerir_autenticacion();
                                                         <?= $total ?> unidades
                                                     </span>
                                                 </td>
+                                                <td class="text-end fw-bold">$<?= number_format($totalCostoPeps, 2) ?></td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -492,6 +497,8 @@ requerir_autenticacion();
     <script src="assets/js/components/table-datatable.js"></script>
 
     <script>
+        const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
+
         document.addEventListener('DOMContentLoaded', function() {
             // Botón Aprobar Orden
             const btnAprobar = document.getElementById('btnAprobar');
@@ -525,10 +532,15 @@ requerir_autenticacion();
         });
 
         function aprobarOrden(idOrden) {
+            const btnAprobar = document.getElementById('btnAprobar');
+            if (btnAprobar?.disabled) return;
+            if (btnAprobar) btnAprobar.disabled = true;
+
             // Crear FormData
             const formData = new FormData();
             formData.append('accion', 'aprovarSalida');
             formData.append('id', idOrden);
+            formData.append('request_token', REQUEST_TOKEN);
             
             // Mostrar loading
             Swal.fire({
@@ -560,6 +572,7 @@ requerir_autenticacion();
                         location.reload();
                     });
                 } else {
+                    if (btnAprobar) btnAprobar.disabled = false;
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -569,6 +582,7 @@ requerir_autenticacion();
                 }
             })
             .catch(error => {
+                if (btnAprobar) btnAprobar.disabled = false;
                 Swal.close();
                 console.error('Error:', error);
                 Swal.fire({

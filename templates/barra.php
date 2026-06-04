@@ -46,7 +46,6 @@ $usuarioSesion = usuario_actual();
                       <div class="collapse" id="sidebarFamilias">
                           <ul class="sub-menu">
                               <li class="side-nav-item"><a href="catalogos-familias.php" class="side-nav-link"><span class="menu-text">Familias principales</span></a></li>
-                              <li class="side-nav-item"><a href="catalogos-sub-familias.php" class="side-nav-link"><span class="menu-text">Subfamilias</span></a></li>
                           </ul>
                       </div>
                   </li>

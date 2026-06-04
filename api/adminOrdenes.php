@@ -47,6 +47,18 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function bloquearOrdenCompra($id)
+    {
+        $id = (int)$id;
+        return $this->ejecutar("
+            SELECT *
+            FROM ordenes_compra
+            WHERE id = $id
+            LIMIT 1
+            FOR UPDATE
+        ");
+    }
+
     public function dameUltimoIdOrdenCompra()
     {
         $ultimoId = $this->ultimoId();
@@ -108,6 +120,34 @@ class AdministradorOrdenes extends Con
         ";
 
         return $this->ejecutar($sql);
+    }
+
+    public function listarEntradasDetalle($fechaInicio = '', $fechaFin = '')
+    {
+        $whereSql = $this->construirFiltroFecha('oc.fecha_orden', $fechaInicio, $fechaFin);
+
+        return $this->ejecutar("
+            SELECT
+                oc.id,
+                oc.folio,
+                oc.fecha_orden,
+                oc.estatus,
+                pr.nombre AS proveedor,
+                p.sku,
+                p.nombre AS articulo,
+                p.descripcion,
+                ocd.cantidad,
+                ocd.precio_unitario,
+                ocd.subtotal,
+                COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario
+            FROM orden_compra_detalle ocd
+            INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            INNER JOIN productos p ON p.id = ocd.id_producto
+            LEFT JOIN usuarios u ON u.id = oc.id_usuario
+            $whereSql
+            ORDER BY oc.fecha_orden DESC, oc.id DESC, p.nombre ASC
+        ");
     }
 
 
@@ -181,6 +221,18 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function bloquearOrdenSalida($id)
+    {
+        $id = (int)$id;
+        return $this->ejecutar("
+            SELECT *
+            FROM ordenes_salida
+            WHERE id = $id
+            LIMIT 1
+            FOR UPDATE
+        ");
+    }
+
     public function listarOrdenesSalida($limit = null, $fechaInicio = '', $fechaFin = '')
     {
         $limitSql = $limit !== null ? " LIMIT " . max(1, (int)$limit) : "";
@@ -207,6 +259,53 @@ class AdministradorOrdenes extends Con
         ";
 
         return $this->ejecutar($sql);
+    }
+
+    public function listarSalidasDetalle($fechaInicio = '', $fechaFin = '', $idArea = 0)
+    {
+        $condiciones = [];
+        $fechaInicio = $this->normalizarFecha($fechaInicio);
+        $fechaFin = $this->normalizarFecha($fechaFin);
+        $idArea = (int)$idArea;
+
+        if ($fechaInicio !== '') {
+            $condiciones[] = "os.fecha_salida >= '$fechaInicio'";
+        }
+
+        if ($fechaFin !== '') {
+            $condiciones[] = "os.fecha_salida <= '$fechaFin'";
+        }
+
+        if ($idArea > 0) {
+            $condiciones[] = "os.id_area = $idArea";
+        }
+
+        $whereSql = count($condiciones) ? 'WHERE ' . implode(' AND ', $condiciones) : '';
+
+        return $this->ejecutar("
+            SELECT
+                os.id,
+                os.folio,
+                os.fecha_salida,
+                os.estatus,
+                os.tipo,
+                os.nota,
+                COALESCE(a.nombre, '') AS area,
+                p.sku,
+                p.nombre AS articulo,
+                p.descripcion,
+                osd.cantidad,
+                COALESCE(osd.costo_peps, osd.costo_unitario, p.costo_reposicion, 0) AS costo_peps,
+                osd.subtotal,
+                COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario
+            FROM orden_salida_detalle osd
+            INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+            INNER JOIN productos p ON p.id = osd.id_producto
+            LEFT JOIN areas a ON a.id = os.id_area
+            LEFT JOIN usuarios u ON u.id = os.id_usuario
+            $whereSql
+            ORDER BY os.fecha_salida DESC, os.id DESC, p.nombre ASC
+        ");
     }
 
 
@@ -481,6 +580,52 @@ class AdministradorOrdenes extends Con
             INNER JOIN productos p ON p.id = ocd.id_producto
             $whereSql
             ORDER BY pr.nombre ASC, oc.fecha_orden DESC, oc.id DESC
+        ");
+    }
+
+    public function listarConsumosPorArea($fechaInicio = '', $fechaFin = '', $idArea = 0)
+    {
+        $condiciones = ["os.estatus = 'CONFIRMADA'"];
+        $fechaInicio = $this->normalizarFecha($fechaInicio);
+        $fechaFin = $this->normalizarFecha($fechaFin);
+        $idArea = (int)$idArea;
+
+        if ($fechaInicio !== '') {
+            $condiciones[] = "os.fecha_salida >= '$fechaInicio'";
+        }
+
+        if ($fechaFin !== '') {
+            $condiciones[] = "os.fecha_salida <= '$fechaFin'";
+        }
+
+        if ($idArea > 0) {
+            $condiciones[] = "os.id_area = $idArea";
+        }
+
+        $whereSql = 'WHERE ' . implode(' AND ', $condiciones);
+
+        return $this->ejecutar("
+            SELECT
+                COALESCE(a.nombre, 'Sin area') AS area,
+                f.nombre AS familia,
+                COALESCE(sf.nombre, 'Sin subfamilia') AS subfamilia,
+                p.sku,
+                p.nombre AS articulo,
+                SUM(osd.cantidad) AS cantidad,
+                SUM(osd.subtotal) AS total,
+                CASE
+                    WHEN SUM(osd.cantidad) > 0 THEN SUM(osd.subtotal) / SUM(osd.cantidad)
+                    ELSE 0
+                END AS costo_peps_promedio
+            FROM orden_salida_detalle osd
+            INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+            INNER JOIN productos p ON p.id = osd.id_producto
+            INNER JOIN familias f ON f.id = p.id_familia
+            LEFT JOIN subfamilias sf ON sf.id = p.id_subfamilia
+            LEFT JOIN areas a ON a.id = os.id_area
+            $whereSql
+            GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, p.nombre
+            ORDER BY a.nombre ASC, f.nombre ASC, p.nombre ASC
         ");
     }
 

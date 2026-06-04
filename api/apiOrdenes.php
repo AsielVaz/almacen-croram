@@ -10,6 +10,28 @@ $accion = $_POST['accion'] ?? '';
 
 $admin = new AdministradorOrdenes();
 
+function validar_idempotencia(string $accion): void {
+    $token = trim((string)($_POST['request_token'] ?? ''));
+    if ($token === '') {
+        return;
+    }
+
+    $_SESSION['orden_tokens_procesados'] = $_SESSION['orden_tokens_procesados'] ?? [];
+    $clave = $accion . ':' . $token;
+
+    if (!empty($_SESSION['orden_tokens_procesados'][$clave])) {
+        throw new Exception(json_encode([
+            'status' => 'error',
+            'message' => 'Esta solicitud ya fue procesada. Actualiza la pantalla antes de intentar de nuevo.',
+        ]));
+    }
+
+    $_SESSION['orden_tokens_procesados'][$clave] = time();
+    if (count($_SESSION['orden_tokens_procesados']) > 50) {
+        $_SESSION['orden_tokens_procesados'] = array_slice($_SESSION['orden_tokens_procesados'], -50, null, true);
+    }
+}
+
 try {
 
     switch ($accion) {
@@ -31,6 +53,7 @@ try {
                 ]));
             }
 
+            validar_idempotencia('altaOrdenCompra');
             $admin->iniciarTransaccion();
             $admin->agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario, $nota);
             $ultimo_id = $admin->dameUltimoIdOrdenCompra();
@@ -63,13 +86,14 @@ try {
             $nota = $_POST['nota'] ?? '';
             $id_area = $_POST['id_area'] ?? 0;
 
-            if ((int)$id_area <= 0 || count($salidaDecode) === 0) {
+            if ((int)$id_area <= 0 || trim((string)$nota) === '' || count($salidaDecode) === 0) {
                 throw new Exception(json_encode([
                     'status' => 'error',
-                    'message' => 'Área y productos son obligatorios para registrar la salida',
+                    'message' => 'Area, observaciones y productos son obligatorios para registrar la salida',
                 ]));
             }
 
+            validar_idempotencia('altaOrdenSalida');
             $admin->iniciarTransaccion();
             $admin->agregarOrdenSalida($folio, $fecha_orden, 'CONSUMO_INTERNO', $estatus, $id_usuario, $nota, $id_area);
             $ultimo_id = $admin->dameUltimoIdOrdenSalida();
@@ -95,9 +119,12 @@ try {
             break;
 
         case 'guardarOrdenEntrada':
+            validar_idempotencia('guardarOrdenEntrada');
             $idOrden = $_POST['id_orden'] ?? 0;
             $productos = json_decode($_POST['productos'] ?? '[]', true) ?: [];
-            $ordenActual = json_decode($admin->obtenerOrdenCompra($idOrden), true)[0] ?? null;
+
+            $admin->iniciarTransaccion();
+            $ordenActual = json_decode($admin->bloquearOrdenCompra($idOrden), true)[0] ?? null;
 
             if (!$ordenActual || ($ordenActual['estatus'] ?? '') === 'RECIBIDA') {
                 throw new Exception(json_encode([
@@ -105,8 +132,6 @@ try {
                     'message' => 'La orden de entrada no existe o ya fue recibida',
                 ]));
             }
-
-            $admin->iniciarTransaccion();
 
             foreach ($productos as $producto) {
                 $idProducto = $producto['id_producto'] ?? 0;
@@ -128,8 +153,10 @@ try {
             break;
 
         case 'aprovarSalida':
+            validar_idempotencia('aprovarSalida');
             $idOrden = $_POST['id'] ?? 0;
-            $ordenActual = json_decode($admin->obtenerOrdenSalida($idOrden), true)[0] ?? null;
+            $admin->iniciarTransaccion();
+            $ordenActual = json_decode($admin->bloquearOrdenSalida($idOrden), true)[0] ?? null;
             if (!$ordenActual || ($ordenActual['estatus'] ?? '') === 'CONFIRMADA') {
                 throw new Exception(json_encode([
                     'status' => 'error',
@@ -137,8 +164,6 @@ try {
                 ]));
             }
             $detalles = json_decode($admin->listarDetallesOrdenSalida($idOrden), true) ?: [];
-
-            $admin->iniciarTransaccion();
 
             foreach ($detalles as $detalle) {
                 $costoPeps = $admin->consumirInventarioPeps($detalle['id_producto'] ?? 0, $detalle['cantidad'] ?? 0);

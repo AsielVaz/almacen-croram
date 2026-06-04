@@ -141,6 +141,7 @@ let paginaActual = 1;
 const ARTICULOS_POR_PAGINA = 10;
 let totalArticulos = 0;
 let debounceBusqueda = null;
+const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
 const USUARIO_ACTUAL_ID = <?= (int)$usuarioActualId ?>;
 
 const filtroFamilia = document.getElementById('filtroFamilia');
@@ -223,6 +224,9 @@ function renderArticulos(pagination) {
     container.innerHTML = '';
     articulosPagina.forEach(p => {
         const costo = Number(p.costo_reposicion || 0).toFixed(2);
+        const ultimaCompra = p.ultima_compra_fecha
+            ? `<div class="mt-2 small text-dark"><strong>Ultima compra:</strong><br>${p.ultima_compra_proveedor || 'Proveedor no disponible'}<br>${p.ultima_compra_fecha} - $${Number(p.ultima_compra_precio || 0).toFixed(2)}</div>`
+            : '<div class="mt-2 small text-muted"><strong>Ultima compra:</strong> Sin historial</div>';
         container.innerHTML += `
             <div class="col">
                 <div class="card product-card h-100">
@@ -231,6 +235,7 @@ function renderArticulos(pagination) {
                         <span class="sku-badge"><i class="ri-barcode-line"></i> ${p.sku || 'Sin SKU'}</span>
                         <div class="mt-2 text-muted small">${p.descripcion || 'Sin descripcion'}</div>
                         <div class="mt-2 small"><strong>Stock:</strong> ${Math.trunc(Number(p.cantidad || 0))}</div>
+                        ${ultimaCompra}
                         <div class="mt-3">
                             <label class="form-label mb-1" style="font-size:.75rem;font-weight:600;color:#6c757d;">Cantidad (${p.unidad_medida || 'pz'})</label>
                             <input type="number" min="1" value="1" class="form-control product-input mb-2" id="qty_${p.id}">
@@ -356,6 +361,7 @@ async function enviarOrden(proveedor) {
     formData.append('id_usuario', USUARIO_ACTUAL_ID);
     formData.append('nota', document.getElementById('notaEntrada').value.trim());
     formData.append('orden', JSON.stringify(orden));
+    formData.append('request_token', REQUEST_TOKEN);
 
     const response = await fetch('api/apiOrdenes.php', { method: 'POST', body: formData });
     return response.json();
@@ -382,6 +388,8 @@ filtroFamilia.addEventListener('change', async () => {
 filtroSubfamilia.addEventListener('change', () => buscarArticulos(1));
 
 document.getElementById('btnEnviar').addEventListener('click', async () => {
+    const btnEnviar = document.getElementById('btnEnviar');
+    if (btnEnviar.disabled) return;
     const proveedor = document.getElementById('filtroProveedor').value;
     if (!proveedor) {
         Swal.fire({ icon: 'warning', title: 'Proveedor requerido', text: 'Seleccione un proveedor antes de enviar la orden', confirmButtonColor: '#495057' });
@@ -405,6 +413,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
 
     if (!confirmacion.isConfirmed) return;
 
+    btnEnviar.disabled = true;
     Swal.fire({ title: 'Procesando...', text: 'Enviando orden de compra', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     try {
@@ -416,6 +425,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
             throw new Error(resultado.message || 'No fue posible registrar la orden');
         }
     } catch (error) {
+        btnEnviar.disabled = false;
         Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Ocurrio un error al enviar la orden', confirmButtonColor: '#6c757d' });
     }
 });

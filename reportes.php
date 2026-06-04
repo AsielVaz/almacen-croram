@@ -27,11 +27,13 @@ include_once 'api/adminArticulos.php';
 include_once 'api/adminOrdenes.php';
 include_once 'api/adminProveedores.php';
 include_once 'api/adminCatalogos.php';
+include_once 'api/adminAreas.php';
 
 $adminArticulos = new AdministradorArticulos();
 $adminOrdenes = new AdministradorOrdenes();
 $adminProveedores = new AdministradorProveedores();
 $adminCatalogos = new AdministradorCatalogos();
+$adminAreas = new AdministradorAreas();
 
 $entradaInicio = $_GET['entrada_inicio'] ?? '';
 $entradaFin = $_GET['entrada_fin'] ?? '';
@@ -40,6 +42,7 @@ $salidaFin = $_GET['salida_fin'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
 $idProveedor = (int)($_GET['id_proveedor'] ?? 0);
+$idArea = (int)($_GET['id_area'] ?? 0);
 
 $familias = json_decode($adminCatalogos->listarFamilias(true), true) ?: [];
 $subfamilias = json_decode($adminCatalogos->listarSubfamilias($idFamilia > 0 ? $idFamilia : null, true), true) ?: [];
@@ -58,6 +61,7 @@ $querySalidas = http_build_query([
     'tipo' => 'salidas',
     'salida_inicio' => $salidaInicio,
     'salida_fin' => $salidaFin,
+    'id_area' => $idArea,
 ]);
 $queryComprasProveedor = http_build_query([
     'tipo' => 'compras_proveedor',
@@ -68,8 +72,12 @@ $queryComprasProveedor = http_build_query([
 
 $articulos = json_decode($adminArticulos->listarArticulosReporteGeneral(false, $idFamilia, $idSubfamilia), true) ?: [];
 $proveedores = json_decode($adminProveedores->listarProveedores(false), true) ?: [];
+$areas = json_decode($adminAreas->listarAreas(), true) ?: [];
 $ordenesEntrada = json_decode($adminOrdenes->listarOrdenesCompra(null, $entradaInicio, $entradaFin), true) ?: [];
 $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaInicio, $salidaFin), true) ?: [];
+$entradasDetalle = json_decode($adminOrdenes->listarEntradasDetalle($entradaInicio, $entradaFin), true) ?: [];
+$salidasDetalle = json_decode($adminOrdenes->listarSalidasDetalle($salidaInicio, $salidaFin, $idArea), true) ?: [];
+$consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, $salidaFin, $idArea), true) ?: [];
 ?>
 
 <div class="page-content">
@@ -129,6 +137,17 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="id_area">Area para consumos</label>
+                        <select class="form-select" id="id_area" name="id_area">
+                            <option value="0">Todas las areas</option>
+                            <?php foreach ($areas as $area): ?>
+                                <option value="<?= (int)$area['id'] ?>" <?= $idArea === (int)$area['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($area['nombre'] ?? '') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="col-md-auto">
                         <button type="submit" class="btn btn-primary">Aplicar filtros</button>
                     </div>
@@ -138,6 +157,14 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                     <div class="col-md-auto">
                         <a class="btn btn-success" href="reportes-exportar.php?<?= htmlspecialchars($queryComprasProveedor) ?>">Descargar compras por proveedor</a>
                     </div>
+                    <div class="col-md-auto">
+                        <a class="btn btn-outline-success" href="reportes-exportar.php?<?= htmlspecialchars(http_build_query([
+                            'tipo' => 'consumos_area',
+                            'salida_inicio' => $salidaInicio,
+                            'salida_fin' => $salidaFin,
+                            'id_area' => $idArea,
+                        ])) ?>">Descargar consumos por area</a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -146,7 +173,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="header-title mb-1">Inventario detallado</h4>
-                    <p class="text-muted mb-0">Catálogo completo con existencias, entradas, salidas, movimientos y precio promedio de compra.</p>
+                    <p class="text-muted mb-0">Catálogo completo con saldo inicial, entradas, salidas, existencia y precio promedio de compra.</p>
                 </div>
                 <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars($queryInventario) ?>">Exportar Excel</a>
             </div>
@@ -157,6 +184,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                     <input type="hidden" name="salida_inicio" value="<?= htmlspecialchars($salidaInicio) ?>">
                     <input type="hidden" name="salida_fin" value="<?= htmlspecialchars($salidaFin) ?>">
                     <input type="hidden" name="id_proveedor" value="<?= $idProveedor ?>">
+                    <input type="hidden" name="id_area" value="<?= $idArea ?>">
                     <div class="col-md-4">
                         <label class="form-label" for="id_familia">Familia</label>
                         <select class="form-select" id="id_familia" name="id_familia">
@@ -196,10 +224,10 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                                 <th>Descripción</th>
                                 <th>Condición</th>
                                 <th>Unidad</th>
-                                <th>Existencia</th>
+                                <th>Saldo inicial</th>
                                 <th>Entradas</th>
                                 <th>Salidas</th>
-                                <th>Movimientos</th>
+                                <th>Existencia</th>
                                 <th>Precio promedio</th>
                                 <th>Estado</th>
                             </tr>
@@ -215,10 +243,16 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                                 <td><?= htmlspecialchars($articulo['descripcion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['tipo_articulo'] ?? 'NUEVO') ?></td>
                                 <td><?= htmlspecialchars($articulo['unidad_medida'] ?? '') ?></td>
-                                <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
-                                <td><?= number_format((float)($articulo['total_entradas'] ?? 0), 0) ?></td>
-                                <td><?= number_format((float)($articulo['total_salidas'] ?? 0), 0) ?></td>
-                                <td><?= (int)($articulo['total_movimientos'] ?? 0) ?></td>
+                                <?php
+                                $existenciaActual = (float)($articulo['cantidad'] ?? 0);
+                                $totalEntradas = (float)($articulo['total_entradas'] ?? 0);
+                                $totalSalidas = (float)($articulo['total_salidas'] ?? 0);
+                                $saldoInicial = $existenciaActual - $totalEntradas + $totalSalidas;
+                                ?>
+                                <td><?= number_format($saldoInicial, 0) ?></td>
+                                <td><?= number_format($totalEntradas, 0) ?></td>
+                                <td><?= number_format($totalSalidas, 0) ?></td>
+                                <td><?= number_format($existenciaActual, 0) ?></td>
                                 <td>$<?= number_format((float)($articulo['precio_promedio_compra'] ?? 0), 2) ?></td>
                                 <td><?= ((int)($articulo['activo'] ?? 0) === 1) ? 'Activo' : 'Inactivo' ?></td>
                             </tr>
@@ -321,6 +355,105 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="header-title mb-1">Detalle de entradas</h4>
+                    <p class="text-muted mb-0">Unidades, descripcion, precio unitario y compra total.</p>
+                </div>
+                <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars($queryEntradas) ?>">Exportar Excel</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive nowrap w-100 report-table">
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Proveedor</th><th>Articulo</th><th>Descripcion</th><th>Unidades</th><th>Precio unitario</th><th>Total compra</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($entradasDetalle as $entrada): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($entrada['folio'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['fecha_orden'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['proveedor'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['articulo'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['descripcion'] ?? '') ?></td>
+                                <td><?= number_format((float)($entrada['cantidad'] ?? 0), 0) ?></td>
+                                <td>$<?= number_format((float)($entrada['precio_unitario'] ?? 0), 2) ?></td>
+                                <td>$<?= number_format((float)($entrada['subtotal'] ?? 0), 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="header-title mb-1">Detalle de salidas</h4>
+                    <p class="text-muted mb-0">Observacion, area, costo PEPS y total en pesos.</p>
+                </div>
+                <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars($querySalidas) ?>">Exportar Excel</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive nowrap w-100 report-table">
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Area</th><th>Articulo</th><th>Descripcion</th><th>Observacion</th><th>Unidades</th><th>Costo PEPS</th><th>Total</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($salidasDetalle as $salida): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($salida['folio'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['fecha_salida'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['area'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['articulo'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['nota'] ?? '') ?></td>
+                                <td><?= number_format((float)($salida['cantidad'] ?? 0), 0) ?></td>
+                                <td>$<?= number_format((float)($salida['costo_peps'] ?? 0), 2) ?></td>
+                                <td>$<?= number_format((float)($salida['subtotal'] ?? 0), 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="header-title mb-1">Consumos por area</h4>
+                    <p class="text-muted mb-0">Reporte por periodo con costo PEPS promedio y total.</p>
+                </div>
+                <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars(http_build_query([
+                    'tipo' => 'consumos_area',
+                    'salida_inicio' => $salidaInicio,
+                    'salida_fin' => $salidaFin,
+                    'id_area' => $idArea,
+                ])) ?>">Exportar Excel</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive nowrap w-100 report-table">
+                        <thead><tr><th>Area</th><th>Familia</th><th>Subfamilia</th><th>SKU</th><th>Articulo</th><th>Unidades</th><th>Costo PEPS prom.</th><th>Total</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($consumosArea as $consumo): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($consumo['area'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($consumo['familia'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($consumo['subfamilia'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($consumo['sku'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($consumo['articulo'] ?? '') ?></td>
+                                <td><?= number_format((float)($consumo['cantidad'] ?? 0), 0) ?></td>
+                                <td>$<?= number_format((float)($consumo['costo_peps_promedio'] ?? 0), 2) ?></td>
+                                <td>$<?= number_format((float)($consumo['total'] ?? 0), 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

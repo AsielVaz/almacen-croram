@@ -274,16 +274,39 @@ class AdministradorArticulos extends Con {
                 f.nombre AS familia,
                 s.nombre AS subfamilia,
                 COALESCE(consumos.consumo_12_meses, 0) AS consumo_12_meses,
-                COALESCE(consumos.consumo_12_meses, 0) / 12 AS consumo_mensual_promedio,
+                CASE
+                    WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                    ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                END AS consumo_mensual_promedio,
                 $diasStockRequeridos AS dias_stock_requeridos,
-                ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) AS stock_objetivo,
+                ROUND((
+                    CASE
+                        WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                        ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                    END / 30.4
+                ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) AS stock_objetivo,
                 GREATEST(
-                    ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
+                    ROUND((
+                        CASE
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                        END / 30.4
+                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
                     0
                 ) AS pedido_sugerido,
                 CASE
-                    WHEN (COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) > 0
-                        THEN ROUND(COALESCE(inv.stock, 0) / (COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4), 2)
+                    WHEN (
+                        CASE
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                        END / 30.4
+                    ) > 0
+                        THEN ROUND(COALESCE(inv.stock, 0) / (
+                            CASE
+                                WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                                ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                            END / 30.4
+                        ), 2)
                     ELSE NULL
                 END AS dias_restantes
             FROM productos p
@@ -301,9 +324,17 @@ class AdministradorArticulos extends Con {
                 GROUP BY osd.id_producto
             ) consumos ON consumos.id_producto = p.id
             WHERE p.activo = 1
-              AND COALESCE(consumos.consumo_12_meses, 0) > 0
+              AND (
+                    COALESCE(consumos.consumo_12_meses, 0) > 0
+                    OR COALESCE(p.consumo_diario, 0) > 0
+                  )
               AND GREATEST(
-                    ROUND((COALESCE(consumos.consumo_12_meses, 0) / 12 / 30.4) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
+                    ROUND((
+                        CASE
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                        END / 30.4
+                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
                     0
                   ) > 0
             ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, p.nombre ASC
@@ -502,6 +533,9 @@ class AdministradorArticulos extends Con {
                 p.costo_reposicion,
                 p.consumo_diario,
                 p.tiempo_reposicion,
+                ultima_compra.fecha_orden AS ultima_compra_fecha,
+                ultima_compra.nombre_proveedor AS ultima_compra_proveedor,
+                ultima_compra.precio_unitario AS ultima_compra_precio,
                 COALESCE(inv.stock, 0) AS cantidad,
                 f.nombre AS familia,
                 s.nombre AS subfamilia
@@ -509,6 +543,22 @@ class AdministradorArticulos extends Con {
             JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
             LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    oc.fecha_orden,
+                    pr.nombre AS nombre_proveedor,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
             $orderSql
             $limitSql

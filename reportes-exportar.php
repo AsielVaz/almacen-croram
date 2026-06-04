@@ -15,6 +15,7 @@ $salidaFin = $_GET['salida_fin'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
 $idProveedor = (int)($_GET['id_proveedor'] ?? 0);
+$idArea = (int)($_GET['id_area'] ?? 0);
 
 $adminArticulos = new AdministradorArticulos();
 $adminOrdenes = new AdministradorOrdenes();
@@ -73,6 +74,11 @@ switch ($tipo) {
 
         $filas = [];
         foreach ($articulos as $articulo) {
+            $existenciaActual = (float)($articulo['cantidad'] ?? 0);
+            $totalEntradas = (float)($articulo['total_entradas'] ?? 0);
+            $totalSalidas = (float)($articulo['total_salidas'] ?? 0);
+            $saldoInicial = $existenciaActual - $totalEntradas + $totalSalidas;
+
             $filas[] = [
                 $articulo['id'] ?? '',
                 $articulo['sku'] ?? '',
@@ -82,10 +88,10 @@ switch ($tipo) {
                 $articulo['descripcion'] ?? '',
                 $articulo['tipo_articulo'] ?? 'NUEVO',
                 $articulo['unidad_medida'] ?? '',
-                number_format((float)($articulo['cantidad'] ?? 0), 0, '.', ''),
-                number_format((float)($articulo['total_entradas'] ?? 0), 0, '.', ''),
-                number_format((float)($articulo['total_salidas'] ?? 0), 0, '.', ''),
-                (int)($articulo['total_movimientos'] ?? 0),
+                number_format($saldoInicial, 0, '.', ''),
+                number_format($totalEntradas, 0, '.', ''),
+                number_format($totalSalidas, 0, '.', ''),
+                number_format($existenciaActual, 0, '.', ''),
                 number_format((float)($articulo['precio_promedio_compra'] ?? 0), 2, '.', ''),
                 ((int)($articulo['activo'] ?? 0) === 1) ? 'Activo' : 'Inactivo',
             ];
@@ -113,7 +119,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_inventario_' . ($idFamilia ?: 'todas') . '_' . ($idSubfamilia ?: 'todas'),
             'Inventario',
-            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Existencia', 'Entradas', 'Salidas', 'Movimientos', 'Precio promedio', 'Estado'],
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Precio promedio', 'Estado'],
             $filas
         );
         break;
@@ -143,46 +149,52 @@ switch ($tipo) {
         break;
 
     case 'entradas':
-        $ordenesEntrada = json_decode($adminOrdenes->listarOrdenesCompra(null, $entradaInicio, $entradaFin), true) ?: [];
+        $ordenesEntrada = json_decode($adminOrdenes->listarEntradasDetalle($entradaInicio, $entradaFin), true) ?: [];
         $filas = [];
-        foreach ($ordenesEntrada as $orden) {
+        foreach ($ordenesEntrada as $entrada) {
             $filas[] = [
-                $orden['id'] ?? '',
-                $orden['folio'] ?? '',
-                $orden['nombre_proveedor'] ?? '',
-                $orden['fecha_orden'] ?? '',
-                $orden['estatus'] ?? '',
-                $orden['nombre_usuario'] ?? '',
+                $entrada['folio'] ?? '',
+                $entrada['fecha_orden'] ?? '',
+                $entrada['proveedor'] ?? '',
+                $entrada['sku'] ?? '',
+                $entrada['articulo'] ?? '',
+                $entrada['descripcion'] ?? '',
+                number_format((float)($entrada['cantidad'] ?? 0), 0, '.', ''),
+                number_format((float)($entrada['precio_unitario'] ?? 0), 2, '.', ''),
+                number_format((float)($entrada['subtotal'] ?? 0), 2, '.', ''),
             ];
         }
 
         exportarExcelHtml(
             'reporte_ordenes_entrada_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
             'Ordenes de entrada',
-            ['ID', 'Folio', 'Proveedor', 'Fecha', 'Estatus', 'Solicito'],
+            ['Folio', 'Fecha', 'Proveedor', 'SKU', 'Articulo', 'Descripcion', 'Unidades', 'Precio unitario', 'Total compra'],
             $filas
         );
         break;
 
     case 'salidas':
-        $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaInicio, $salidaFin), true) ?: [];
+        $ordenesSalida = json_decode($adminOrdenes->listarSalidasDetalle($salidaInicio, $salidaFin, $idArea), true) ?: [];
         $filas = [];
-        foreach ($ordenesSalida as $orden) {
+        foreach ($ordenesSalida as $salida) {
             $filas[] = [
-                $orden['id'] ?? '',
-                $orden['folio'] ?? '',
-                $orden['fecha_salida'] ?? '',
-                $orden['tipo'] ?? '',
-                $orden['nombre_area'] ?? '',
-                $orden['estatus'] ?? '',
-                $orden['nombre_usuario'] ?? '',
+                $salida['folio'] ?? '',
+                $salida['fecha_salida'] ?? '',
+                $salida['area'] ?? '',
+                $salida['sku'] ?? '',
+                $salida['articulo'] ?? '',
+                $salida['descripcion'] ?? '',
+                $salida['nota'] ?? '',
+                number_format((float)($salida['cantidad'] ?? 0), 0, '.', ''),
+                number_format((float)($salida['costo_peps'] ?? 0), 2, '.', ''),
+                number_format((float)($salida['subtotal'] ?? 0), 2, '.', ''),
             ];
         }
 
         exportarExcelHtml(
             'reporte_ordenes_salida_' . ($salidaInicio ?: 'inicio') . '_' . ($salidaFin ?: 'fin'),
             'Ordenes de salida',
-            ['ID', 'Folio', 'Fecha', 'Tipo', 'Area', 'Estatus', 'Solicito'],
+            ['Folio', 'Fecha', 'Area', 'SKU', 'Articulo', 'Descripcion', 'Observacion', 'Unidades', 'Costo PEPS', 'Total'],
             $filas
         );
         break;
@@ -209,6 +221,30 @@ switch ($tipo) {
             'compras_por_proveedor_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
             'Compras por proveedor',
             ['ID orden', 'Folio', 'Fecha', 'Proveedor', 'Estatus', 'SKU', 'Articulo', 'Cantidad', 'Precio', 'Subtotal'],
+            $filas
+        );
+        break;
+
+    case 'consumos_area':
+        $consumos = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, $salidaFin, $idArea), true) ?: [];
+        $filas = [];
+        foreach ($consumos as $consumo) {
+            $filas[] = [
+                $consumo['area'] ?? '',
+                $consumo['familia'] ?? '',
+                $consumo['subfamilia'] ?? '',
+                $consumo['sku'] ?? '',
+                $consumo['articulo'] ?? '',
+                number_format((float)($consumo['cantidad'] ?? 0), 0, '.', ''),
+                number_format((float)($consumo['costo_peps_promedio'] ?? 0), 2, '.', ''),
+                number_format((float)($consumo['total'] ?? 0), 2, '.', ''),
+            ];
+        }
+
+        exportarExcelHtml(
+            'consumos_por_area_' . ($salidaInicio ?: 'inicio') . '_' . ($salidaFin ?: 'fin'),
+            'Consumos por area',
+            ['Area', 'Familia', 'Subfamilia', 'SKU', 'Articulo', 'Unidades', 'Costo PEPS promedio', 'Total'],
             $filas
         );
         break;

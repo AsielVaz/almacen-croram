@@ -75,10 +75,6 @@ $usuarioActualId = usuario_id_actual();
             <select id="filtroFamilia" class="form-select"><option value="">Todas las familias</option></select>
         </div>
         <div class="col-md-4">
-            <label><i class="ri-folder-open-line me-1"></i>Subfamilia</label>
-            <select id="filtroSubfamilia" class="form-select"><option value="">Todas las subfamilias</option></select>
-        </div>
-        <div class="col-md-4">
             <label><i class="ri-search-line me-1"></i>Buscar Producto</label>
             <input type="text" id="filtroTexto" class="form-control" placeholder="Nombre, SKU o descripcion...">
         </div>
@@ -93,7 +89,7 @@ $usuarioActualId = usuario_id_actual();
         </div>
         <div class="col-12">
             <label><i class="ri-sticky-note-line me-1"></i>Notas de salida</label>
-            <textarea id="notaSalida" class="form-control" rows="3" placeholder="Escriba observaciones para esta orden de salida..."></textarea>
+            <textarea id="notaSalida" class="form-control" rows="3" placeholder="Escriba observaciones para esta orden de salida..." required></textarea>
         </div>
     </div>
 </div>
@@ -146,10 +142,11 @@ let paginaActual = 1;
 const ARTICULOS_POR_PAGINA = 10;
 let totalArticulos = 0;
 let debounceBusqueda = null;
+const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
 const USUARIO_ACTUAL_ID = <?= (int)$usuarioActualId ?>;
 
 const filtroFamilia = document.getElementById('filtroFamilia');
-const filtroSubfamilia = document.getElementById('filtroSubfamilia');
+const filtroSubfamilia = { value: '', innerHTML: '' };
 const filtroTexto = document.getElementById('filtroTexto');
 
 function estadoVacioCatalogo(mensaje = 'Cargando productos...') {
@@ -171,7 +168,7 @@ function cargarFamilias() {
 
 async function cargarSubFamilias() {
     const idFamilia = filtroFamilia.value;
-    filtroSubfamilia.innerHTML = '<option value="">Todas las subfamilias</option>';
+    filtroSubfamilia.innerHTML = '';
     subfamilias = [];
     if (!idFamilia) return;
 
@@ -179,7 +176,6 @@ async function cargarSubFamilias() {
     const response = await fetch('api/apiCatalogos.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
     const data = await response.json();
     subfamilias = Array.isArray(data) ? data : [];
-    subfamilias.forEach(sf => filtroSubfamilia.innerHTML += `<option value="${sf.id}">${sf.nombre}</option>`);
 }
 
 async function buscarArticulos(pagina = 1) {
@@ -192,7 +188,7 @@ async function buscarArticulos(pagina = 1) {
     formData.append('porPagina', ARTICULOS_POR_PAGINA);
     formData.append('texto', filtroTexto.value.trim());
     formData.append('id_familia', filtroFamilia.value || '');
-    formData.append('id_subfamilia', filtroSubfamilia.value || '');
+    formData.append('id_subfamilia', '');
     formData.append('soloActivos', '1');
     formData.append('soloConStock', '1');
 
@@ -359,6 +355,7 @@ async function registrarSalida() {
     formData.append('id_area', document.getElementById('areaSalida').value);
     formData.append('nota', document.getElementById('notaSalida').value.trim());
     formData.append('orden', JSON.stringify(salida));
+    formData.append('request_token', REQUEST_TOKEN);
     const response = await fetch('api/apiOrdenes.php', { method: 'POST', body: formData });
     return response.json();
 }
@@ -378,18 +375,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 filtroTexto.addEventListener('input', programarBusqueda);
 filtroFamilia.addEventListener('change', async () => {
-    await cargarSubFamilias();
     buscarArticulos(1);
 });
-filtroSubfamilia.addEventListener('change', () => buscarArticulos(1));
 
 document.getElementById('btnEnviar').addEventListener('click', async () => {
+    const btnEnviar = document.getElementById('btnEnviar');
+    if (btnEnviar.disabled) return;
     if (salida.length === 0) {
         Swal.fire({ icon: 'warning', title: 'Salida vacia', text: 'Agregue al menos un producto a la salida', confirmButtonColor: '#6c757d' });
         return;
     }
     if (!document.getElementById('areaSalida').value) {
         Swal.fire({ icon: 'warning', title: 'Area requerida', text: 'Seleccione el area donde se registrara el gasto', confirmButtonColor: '#6c757d' });
+        return;
+    }
+    if (!document.getElementById('notaSalida').value.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Observaciones requeridas', text: 'Capture una observacion para registrar la salida', confirmButtonColor: '#6c757d' });
         return;
     }
 
@@ -407,6 +408,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
 
     if (!confirmacion.isConfirmed) return;
 
+    btnEnviar.disabled = true;
     Swal.fire({ title: 'Procesando...', text: 'Registrando orden de salida', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     try {
@@ -418,6 +420,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
             throw new Error(resultado.message || 'No fue posible registrar la salida');
         }
     } catch (error) {
+        btnEnviar.disabled = false;
         Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Ocurrio un error al registrar la salida', confirmButtonColor: '#6c757d' });
     }
 });
