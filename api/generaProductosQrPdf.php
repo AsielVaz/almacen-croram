@@ -14,9 +14,12 @@ function pdf_text($value)
 | 58mm = ancho típico
 | Alto dinámico (se calcula)
 */
-$anchoMM = 58;
-$altoPorQR = 50; // mm aproximados por QR + texto
-$altoDivider = 5; // mm para la línea divisoria punteada
+$anchoMM = 100;
+$altoPorQR = 46; // etiqueta horizontal: QR 4x4 cm + texto lateral
+$altoDivider = 4; // mm entre etiquetas
+$qrSize = 40;
+$paddingBox = 4;
+$anchoTexto = $anchoMM - ($paddingBox * 3) - $qrSize;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +58,42 @@ $pdf->SetAutoPageBreak(false);
 
 $pdf->AddPage();
 
+function drawDashedRect($pdf, $x, $y, $width, $height) {
+    $pdf->SetLineWidth(0.3);
+    $pdf->SetDrawColor(150, 150, 150);
+
+    $dashLength = 1;
+    $gapLength = 1.5;
+
+    $currentX = $x;
+    while ($currentX < $x + $width) {
+        $endX = min($currentX + $dashLength, $x + $width);
+        $pdf->Line($currentX, $y, $endX, $y);
+        $currentX += $dashLength + $gapLength;
+    }
+
+    $currentX = $x;
+    while ($currentX < $x + $width) {
+        $endX = min($currentX + $dashLength, $x + $width);
+        $pdf->Line($currentX, $y + $height, $endX, $y + $height);
+        $currentX += $dashLength + $gapLength;
+    }
+
+    $currentY = $y;
+    while ($currentY < $y + $height) {
+        $endY = min($currentY + $dashLength, $y + $height);
+        $pdf->Line($x, $currentY, $x, $endY);
+        $currentY += $dashLength + $gapLength;
+    }
+
+    $currentY = $y;
+    while ($currentY < $y + $height) {
+        $endY = min($currentY + $dashLength, $y + $height);
+        $pdf->Line($x + $width, $currentY, $x + $width, $endY);
+        $currentY += $dashLength + $gapLength;
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | GENERAR QR UNO DEBAJO DEL OTRO CON LÍNEAS DIVISORIAS
@@ -62,6 +101,8 @@ $pdf->AddPage();
 */
 $contador = 0;
 foreach ($qrs as $qr) {
+    $yEtiqueta = $pdf->GetY();
+    drawDashedRect($pdf, $paddingBox, $yEtiqueta, $anchoMM - ($paddingBox * 2), $altoPorQR);
 
     // Archivo temporal QR
     $qrFile = sys_get_temp_dir() . '/qr_' . md5($qr['sku']) . '.png';
@@ -74,21 +115,21 @@ foreach ($qrs as $qr) {
         1
     );
 
-    // Centrar QR
-    $qrSize = 30;
-    $xQR = ($anchoMM - $qrSize) / 2;
+    // QR 4x4 cm a la izquierda
+    $xQR = $paddingBox * 2;
+    $yQR = $yEtiqueta + (($altoPorQR - $qrSize) / 2);
+    $pdf->Image($qrFile, $xQR, $yQR, $qrSize);
 
-    $pdf->Image($qrFile, $xQR, $pdf->GetY(), $qrSize);
-
-    $pdf->Ln($qrSize + 2);
-
-    // Nombre y SKU debajo
-    $pdf->SetFont('Arial', 'B', 8);
-    $pdf->MultiCell(0, 4, pdf_text($qr['nombre']), 0, 'C');
+    // Nombre truncado a 50 caracteres y SKU a la derecha
+    $nombreQr = mb_substr((string)$qr['nombre'], 0, 50, 'UTF-8');
+    $xTexto = $xQR + $qrSize + $paddingBox;
+    $pdf->SetXY($xTexto, $yEtiqueta + 10);
+    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->MultiCell($anchoTexto, 5, pdf_text($nombreQr), 0, 'L');
+    $pdf->SetXY($xTexto, $yEtiqueta + 31);
     $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(0, 6, $qr['sku'], 0, 1, 'C');
-
-    $pdf->Ln(4);
+    $pdf->Cell($anchoTexto, 5, pdf_text($qr['sku']), 0, 1, 'L');
+    $pdf->SetY($yEtiqueta + $altoPorQR);
 
     // Limpiar QR temporal
     @unlink($qrFile);
