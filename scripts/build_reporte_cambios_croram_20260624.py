@@ -63,6 +63,10 @@ def build():
     applied = [
         "Se agrego generacion automatica de SKU consecutivo para articulos nuevos cuando el campo SKU queda vacio.",
         "Se corrigio el indicador de siguiente ID y el preview de SKU en alta de articulos.",
+        "Se agrego el campo Ubicacion en la base de datos de articulos.",
+        "Se agrego captura y edicion de Ubicacion en articulos.",
+        "Se agrego Ubicacion en carga masiva desde Excel.",
+        "Se agrego Ubicacion en listado de articulos, reportes, exportaciones y formatos PDF de entrada y salida.",
         "Se agrego carga de inventario actual al editar articulos y guardado de inventario exacto en edicion.",
         "Se cambio la recepcion de ordenes de entrada para usar las cantidades registradas en la orden y evitar duplicados provenientes del formulario.",
         "Se agrego autorizacion de orden de compra antes de ingresar partes, dejando el flujo en tres pasos: captura, autorizacion e ingreso.",
@@ -83,32 +87,6 @@ def build():
 
     for item in applied:
         story.append(bullet(item, styles["BodyC"]))
-
-    story.append(Spacer(1, 8))
-    story.append(Paragraph("Cambios no aplicados completamente", styles["Section"]))
-
-    pending_rows = [
-        ["Solicitud", "Motivo"],
-        ["Campo Ubicacion en articulos y formatos", "No se encontro una columna de base de datos existente para guardar Ubicacion sin migracion."],
-        ["Validacion fisica por QR en recepcion y entrega", "Requiere definir el flujo operativo de escaneo por partida y el dato exacto que debe validar el lector."],
-        ["Reporte de articulos obsoletos", "Requiere confirmar criterio final: sin salidas, sin entradas, o sin cualquier movimiento durante 12 meses."],
-    ]
-    table = Table(pending_rows, colWidths=[2.2 * inch, 4.6 * inch])
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e5e7eb")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.HexColor("#111827")),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-        ("FONTSIZE", (0, 0), (-1, -1), 8),
-        ("LEADING", (0, 0), (-1, -1), 10),
-        ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#d1d5db")),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 6),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-        ("TOPPADDING", (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-    ]))
-    story.append(table)
 
     doc = SimpleDocTemplate(
         str(OUT),

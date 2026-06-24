@@ -15,6 +15,7 @@ class AdministradorArticulos extends Con {
         $id_subfamilia = null,
         $unidad_medida = '',
         $descripcion = '',
+        $ubicacion = '',
         $activo = 1,
         $costo_reposicon = 0,
         $consumo_diario = 0,
@@ -32,6 +33,7 @@ class AdministradorArticulos extends Con {
         $unidad_medida = $this->limpiar($unidad_medida);
         $tipo_articulo = $this->normalizarTipoArticulo($tipo_articulo);
         $descripcion = $this->limpiar($descripcion);
+        $ubicacion = $this->limpiar($ubicacion);
         $costo_reposicon = (float)$costo_reposicon;
         $consumo_diario = max(0, (float)$consumo_diario);
         $tiempo_reposicion = max(0, (int)$tiempo_reposicion);
@@ -39,7 +41,7 @@ class AdministradorArticulos extends Con {
 
         $sql = "
             INSERT INTO productos
-            (sku, nombre, id_familia, id_subfamilia, unidad_medida, tipo_articulo, descripcion, activo, costo_reposicion, consumo_diario, tiempo_reposicion)
+            (sku, nombre, id_familia, id_subfamilia, unidad_medida, tipo_articulo, descripcion, ubicacion, activo, costo_reposicion, consumo_diario, tiempo_reposicion)
             VALUES (
                 " . ($sku !== '' ? "'$sku'" : "NULL") . ",
                 '$nombre',
@@ -48,6 +50,7 @@ class AdministradorArticulos extends Con {
                 '$unidad_medida',
                 '$tipo_articulo',
                 '$descripcion',
+                " . ($ubicacion !== '' ? "'$ubicacion'" : "NULL") . ",
                 $activo,
                 $costo_reposicon,
                 $consumo_diario,
@@ -154,6 +157,7 @@ class AdministradorArticulos extends Con {
                 p.unidad_medida,
                 p.activo,
                 p.descripcion,
+                p.ubicacion,
                 COALESCE(inv.stock, 0) AS cantidad,
                 f.nombre AS familia,
                 s.nombre AS subfamilia,
@@ -227,6 +231,7 @@ class AdministradorArticulos extends Con {
             $where[] = "(
                 p.nombre LIKE '%$textoEscapado%' OR
                 p.descripcion LIKE '%$textoEscapado%' OR
+                p.ubicacion LIKE '%$textoEscapado%' OR
                 p.sku LIKE '%$textoEscapado%'
             )";
         }
@@ -299,6 +304,7 @@ class AdministradorArticulos extends Con {
                 p.nombre,
                 p.unidad_medida,
                 p.descripcion,
+                p.ubicacion,
                 p.costo_reposicion,
                 p.consumo_diario,
                 p.tiempo_reposicion,
@@ -460,6 +466,7 @@ class AdministradorArticulos extends Con {
                 p.unidad_medida,
                 p.tipo_articulo,
                 p.descripcion,
+                p.ubicacion,
                 p.activo,
                 p.costo_reposicion,
                 p.consumo_diario,
@@ -483,6 +490,7 @@ class AdministradorArticulos extends Con {
         $id_subfamilia = null,
         $unidad_medida = '',
         $descripcion = '',
+        $ubicacion = '',
         $activo = 1,
         $costo_reposicion = 0,
         $consumo_diario = 0,
@@ -501,6 +509,7 @@ class AdministradorArticulos extends Con {
         $unidad_medida = $this->limpiar($unidad_medida);
         $tipo_articulo = $this->normalizarTipoArticulo($tipo_articulo);
         $descripcion = $this->limpiar($descripcion);
+        $ubicacion = $this->limpiar($ubicacion);
         $costo_reposicion = (float)$costo_reposicion;
         $consumo_diario = max(0, (float)$consumo_diario);
         $tiempo_reposicion = max(0, (int)$tiempo_reposicion);
@@ -516,6 +525,7 @@ class AdministradorArticulos extends Con {
                 unidad_medida = '$unidad_medida',
                 tipo_articulo = '$tipo_articulo',
                 descripcion = '$descripcion',
+                ubicacion = " . ($ubicacion !== '' ? "'$ubicacion'" : "NULL") . ",
                 costo_reposicion = $costo_reposicion,
                 consumo_diario = $consumo_diario,
                 tiempo_reposicion = $tiempo_reposicion,
@@ -585,6 +595,7 @@ class AdministradorArticulos extends Con {
                 p.id_familia,
                 p.id_subfamilia,
                 p.descripcion,
+                p.ubicacion,
                 p.costo_reposicion,
                 p.consumo_diario,
                 p.tiempo_reposicion,
@@ -633,6 +644,7 @@ class AdministradorArticulos extends Con {
                 p.unidad_medida,
                 p.tipo_articulo,
                 p.descripcion,
+                p.ubicacion,
                 p.activo,
                 p.costo_reposicion,
                 p.consumo_diario,

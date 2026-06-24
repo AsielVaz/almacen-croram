@@ -421,6 +421,7 @@ requerir_autenticacion();
                                                 <th>CONDICI&Oacute;N</th>
                                                 <th>Unidad de medida</th>
                                                 <th>DESCRIPCI&Oacute;N</th>
+                                                <th>UBICACI&Oacute;N</th>
                                                 <th class="text-center">ACCIONES</th>
                                             </tr>
                                         </thead>
@@ -462,6 +463,9 @@ requerir_autenticacion();
                                                     </td>
                                                       <td>
                                                         <span class="family-text"><?= htmlspecialchars($articulo->descripcion) ?></span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="family-text"><?= htmlspecialchars($articulo->ubicacion ?? '') ?></span>
                                                     </td>
                                                     <td class="text-center">
                                                         <div class="action-stack">

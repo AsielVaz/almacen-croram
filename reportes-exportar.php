@@ -86,6 +86,7 @@ switch ($tipo) {
                 $articulo['familia'] ?? '',
                 $articulo['subfamilia'] ?? '',
                 $articulo['descripcion'] ?? '',
+                $articulo['ubicacion'] ?? '',
                 $articulo['tipo_articulo'] ?? 'NUEVO',
                 $articulo['unidad_medida'] ?? '',
                 number_format($saldoInicial, 0, '.', ''),
@@ -117,13 +118,14 @@ switch ($tipo) {
                 '',
                 '',
                 '',
+                '',
             ]);
         }
 
         exportarExcelHtml(
             'reporte_inventario_' . ($idFamilia ?: 'todas') . '_' . ($idSubfamilia ?: 'todas'),
             'Inventario',
-            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Valor inventario', 'Costo por unidad', 'Precio promedio', 'Estado'],
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Ubicacion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Valor inventario', 'Costo por unidad', 'Precio promedio', 'Estado'],
             $filas
         );
         break;
@@ -163,6 +165,7 @@ switch ($tipo) {
                 $entrada['sku'] ?? '',
                 $entrada['articulo'] ?? '',
                 $entrada['descripcion'] ?? '',
+                $entrada['ubicacion'] ?? '',
                 number_format((float)($entrada['cantidad'] ?? 0), 0, '.', ''),
                 number_format((float)($entrada['precio_unitario'] ?? 0), 2, '.', ''),
                 number_format((float)($entrada['subtotal'] ?? 0), 2, '.', ''),
@@ -172,7 +175,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_ordenes_entrada_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
             'Ordenes de entrada',
-            ['Folio', 'Fecha', 'Proveedor', 'SKU', 'Articulo', 'Descripcion', 'Unidades', 'Precio unitario', 'Total compra'],
+            ['Folio', 'Fecha', 'Proveedor', 'SKU', 'Articulo', 'Descripcion', 'Ubicacion', 'Unidades', 'Precio unitario', 'Total compra'],
             $filas
         );
         break;
@@ -188,6 +191,7 @@ switch ($tipo) {
                 $salida['sku'] ?? '',
                 $salida['articulo'] ?? '',
                 $salida['descripcion'] ?? '',
+                $salida['ubicacion'] ?? '',
                 $salida['nota'] ?? '',
                 number_format((float)($salida['cantidad'] ?? 0), 0, '.', ''),
                 number_format((float)($salida['costo_peps'] ?? 0), 2, '.', ''),
@@ -198,7 +202,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_ordenes_salida_' . ($salidaInicio ?: 'inicio') . '_' . ($salidaFin ?: 'fin'),
             'Ordenes de salida',
-            ['Folio', 'Fecha', 'Area', 'SKU', 'Articulo', 'Descripcion', 'Observacion', 'Unidades', 'Costo PEPS', 'Total'],
+            ['Folio', 'Fecha', 'Area', 'SKU', 'Articulo', 'Descripcion', 'Ubicacion', 'Observacion', 'Unidades', 'Costo PEPS', 'Total'],
             $filas
         );
         break;
@@ -215,6 +219,7 @@ switch ($tipo) {
                 $compra['estatus'] ?? '',
                 $compra['sku'] ?? '',
                 $compra['articulo'] ?? '',
+                $compra['ubicacion'] ?? '',
                 number_format((float)($compra['cantidad'] ?? 0), 0, '.', ''),
                 number_format((float)($compra['precio_unitario'] ?? 0), 2, '.', ''),
                 number_format((float)($compra['subtotal'] ?? 0), 2, '.', ''),
@@ -224,7 +229,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'compras_por_proveedor_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
             'Compras por proveedor',
-            ['ID orden', 'Folio', 'Fecha', 'Proveedor', 'Estatus', 'SKU', 'Articulo', 'Cantidad', 'Precio', 'Subtotal'],
+            ['ID orden', 'Folio', 'Fecha', 'Proveedor', 'Estatus', 'SKU', 'Articulo', 'Ubicacion', 'Cantidad', 'Precio', 'Subtotal'],
             $filas
         );
         break;
@@ -239,6 +244,7 @@ switch ($tipo) {
                 $consumo['subfamilia'] ?? '',
                 $consumo['sku'] ?? '',
                 $consumo['articulo'] ?? '',
+                $consumo['ubicacion'] ?? '',
                 number_format((float)($consumo['cantidad'] ?? 0), 0, '.', ''),
                 number_format((float)($consumo['costo_peps_promedio'] ?? 0), 2, '.', ''),
                 number_format((float)($consumo['total'] ?? 0), 2, '.', ''),
@@ -248,7 +254,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'consumos_por_area_' . ($salidaInicio ?: 'inicio') . '_' . ($salidaFin ?: 'fin'),
             'Consumos por area',
-            ['Area', 'Familia', 'Subfamilia', 'SKU', 'Articulo', 'Unidades', 'Costo PEPS promedio', 'Total'],
+            ['Area', 'Familia', 'Subfamilia', 'SKU', 'Articulo', 'Ubicacion', 'Unidades', 'Costo PEPS promedio', 'Total'],
             $filas
         );
         break;

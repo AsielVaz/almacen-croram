@@ -466,6 +466,18 @@ requerir_autenticacion();
                                                 placeholder="Descripción detallada del artículo"><?= $esEdicion ? htmlspecialchars($articulo[0]->descripcion) : '' ?></textarea>
                                         </div>
 
+                                        <div class="cr-field">
+                                            <label class="cr-label" for="ubicacion_articulo">Ubicación</label>
+                                            <input
+                                                type="text"
+                                                id="ubicacion_articulo"
+                                                name="ubicacion"
+                                                class="cr-input"
+                                                maxlength="150"
+                                                placeholder="Ubicación física del artículo"
+                                                value="<?= $esEdicion ? htmlspecialchars($articulo[0]->ubicacion ?? '') : '' ?>">
+                                        </div>
+
                                         <div class="cr-grid-2">
                                             <div class="cr-field">
                                                 <label class="cr-label" for="unidad_medida">Unidad de medida</label>

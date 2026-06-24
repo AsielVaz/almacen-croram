@@ -129,6 +129,7 @@ $items = array();
 foreach ($detallesOrden as $detalle) {
     $items[] = array(
         'producto' => $detalle->nombre_producto,
+        'ubicacion' => $detalle->ubicacion ?? '',
         'cantidad' => (int)round((float)$detalle->cantidad),
         'costo_promedio' => (float)($detalle->costo_promedio ?? 0),
         'subtotal' => ((int)round((float)$detalle->cantidad)) * (float)($detalle->costo_promedio ?? 0),
@@ -200,7 +201,8 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(15, 9, '#', 1, 0, 'C', true);
-$pdf->Cell(90, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
+$pdf->Cell(68, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
+$pdf->Cell(22, 9, pdf_text('UBIC.'), 1, 0, 'C', true);
 $pdf->Cell(28, 9, 'CANTIDAD', 1, 0, 'C', true);
 $pdf->Cell(32, 9, pdf_text('PRECIO PROM.'), 1, 0, 'C', true);
 $pdf->Cell(25, 9, 'TOTAL', 1, 1, 'C', true);
@@ -227,7 +229,8 @@ foreach ($items as $item) {
     }
     
     $pdf->Cell(15, 8, $i, 'LR', 0, 'C', true);
-    $pdf->Cell(90, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
+    $pdf->Cell(68, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
+    $pdf->Cell(22, 8, pdf_text($item['ubicacion']), 'LR', 0, 'L', true);
     
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(28, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);

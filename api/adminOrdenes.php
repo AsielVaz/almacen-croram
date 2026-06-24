@@ -113,7 +113,10 @@ class AdministradorOrdenes extends Con
         $id_orden_compra = (int)$id_orden_compra;
 
         $sql = "
-            SELECT orden_compra_detalle.*, productos.nombre AS nombre_producto
+            SELECT
+                orden_compra_detalle.*,
+                productos.nombre AS nombre_producto,
+                productos.ubicacion
             FROM orden_compra_detalle
             inner join productos on productos.id = orden_compra_detalle.id_producto
             WHERE id_orden_compra = $id_orden_compra
@@ -136,6 +139,7 @@ class AdministradorOrdenes extends Con
                 p.sku,
                 p.nombre AS articulo,
                 p.descripcion,
+                p.ubicacion,
                 ocd.cantidad,
                 ocd.precio_unitario,
                 ocd.subtotal,
@@ -196,6 +200,7 @@ class AdministradorOrdenes extends Con
             SELECT
                 orden_salida_detalle.*,
                 productos.nombre AS nombre_producto,
+                productos.ubicacion,
                 COALESCE(orden_salida_detalle.costo_peps, orden_salida_detalle.costo_unitario, productos.costo_reposicion, 0) AS costo_promedio
             FROM orden_salida_detalle
             INNER JOIN productos ON productos.id = orden_salida_detalle.id_producto
@@ -294,6 +299,7 @@ class AdministradorOrdenes extends Con
                 p.sku,
                 p.nombre AS articulo,
                 p.descripcion,
+                p.ubicacion,
                 osd.cantidad,
                 COALESCE(osd.costo_peps, osd.costo_unitario, p.costo_reposicion, 0) AS costo_peps,
                 osd.subtotal,
@@ -571,6 +577,7 @@ class AdministradorOrdenes extends Con
                 pr.nombre AS proveedor,
                 p.sku,
                 p.nombre AS articulo,
+                p.ubicacion,
                 ocd.cantidad,
                 ocd.precio_unitario,
                 ocd.subtotal
@@ -611,6 +618,7 @@ class AdministradorOrdenes extends Con
                 COALESCE(sf.nombre, 'Sin subfamilia') AS subfamilia,
                 p.sku,
                 p.nombre AS articulo,
+                p.ubicacion,
                 SUM(osd.cantidad) AS cantidad,
                 SUM(osd.subtotal) AS total,
                 CASE
@@ -624,7 +632,7 @@ class AdministradorOrdenes extends Con
             LEFT JOIN subfamilias sf ON sf.id = p.id_subfamilia
             LEFT JOIN areas a ON a.id = os.id_area
             $whereSql
-            GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, p.nombre
+            GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, p.nombre, p.ubicacion
             ORDER BY a.nombre ASC, f.nombre ASC, p.nombre ASC
         ");
     }

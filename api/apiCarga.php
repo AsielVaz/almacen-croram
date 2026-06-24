@@ -109,8 +109,8 @@ if ($primera_fila === false) {
 }
 
 $sql_producto = "INSERT INTO productos 
-    (sku, nombre, descripcion, id_familia, id_subfamilia, unidad_medida, activo, created_at, costo_reposicion)
-    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+    (sku, nombre, descripcion, ubicacion, id_familia, id_subfamilia, unidad_medida, activo, created_at, costo_reposicion)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
 $stmt_producto = $mysqli->prepare($sql_producto);
 
@@ -159,7 +159,7 @@ while (($fila = fgetcsv($handle)) !== false) {
     }
 
     $sku = 'NA' . str_pad($fila_numero, 6, '0', STR_PAD_LEFT);
-    $descripcion = $ubicacion;
+    $descripcion = '';
     $id_familia = 1;
     $id_subfamilia = 1;
     $activo = 1;
@@ -168,10 +168,11 @@ while (($fila = fgetcsv($handle)) !== false) {
     $mysqli->begin_transaction();
 
     $stmt_producto->bind_param(
-        'sssiisid',
+        'ssssiisid',
         $sku,
         $nombre,
         $descripcion,
+        $ubicacion,
         $id_familia,
         $id_subfamilia,
         $unidad_medida,

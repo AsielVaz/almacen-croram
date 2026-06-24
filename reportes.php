@@ -236,6 +236,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <th>Familia</th>
                                 <th>Subfamilia</th>
                                 <th>Descripción</th>
+                                <th>Ubicación</th>
                                 <th>Condición</th>
                                 <th>Unidad</th>
                                 <th>Saldo inicial</th>
@@ -257,6 +258,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['ubicacion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['tipo_articulo'] ?? 'NUEVO') ?></td>
                                 <td><?= htmlspecialchars($articulo['unidad_medida'] ?? '') ?></td>
                                 <?php
@@ -393,7 +395,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped dt-responsive nowrap w-100 report-table">
-                        <thead><tr><th>Folio</th><th>Fecha</th><th>Proveedor</th><th>Articulo</th><th>Descripcion</th><th>Unidades</th><th>Precio unitario</th><th>Total compra</th></tr></thead>
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Proveedor</th><th>Articulo</th><th>Descripcion</th><th>Ubicacion</th><th>Unidades</th><th>Precio unitario</th><th>Total compra</th></tr></thead>
                         <tbody>
                         <?php foreach ($entradasDetalle as $entrada): ?>
                             <tr>
@@ -402,6 +404,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <td><?= htmlspecialchars($entrada['proveedor'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($entrada['articulo'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($entrada['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['ubicacion'] ?? '') ?></td>
                                 <td><?= number_format((float)($entrada['cantidad'] ?? 0), 0) ?></td>
                                 <td>$<?= number_format((float)($entrada['precio_unitario'] ?? 0), 2) ?></td>
                                 <td>$<?= number_format((float)($entrada['subtotal'] ?? 0), 2) ?></td>
@@ -423,7 +426,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped dt-responsive nowrap w-100 report-table">
-                        <thead><tr><th>Folio</th><th>Fecha</th><th>Area</th><th>Articulo</th><th>Descripcion</th><th>Observacion</th><th>Unidades</th><th>Costo PEPS</th><th>Total</th></tr></thead>
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Area</th><th>Articulo</th><th>Descripcion</th><th>Ubicacion</th><th>Observacion</th><th>Unidades</th><th>Costo PEPS</th><th>Total</th></tr></thead>
                         <tbody>
                         <?php foreach ($salidasDetalle as $salida): ?>
                             <tr>
@@ -432,6 +435,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <td><?= htmlspecialchars($salida['area'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($salida['articulo'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($salida['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($salida['ubicacion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($salida['nota'] ?? '') ?></td>
                                 <td><?= number_format((float)($salida['cantidad'] ?? 0), 0) ?></td>
                                 <td>$<?= number_format((float)($salida['costo_peps'] ?? 0), 2) ?></td>
@@ -460,7 +464,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped dt-responsive nowrap w-100 report-table">
-                        <thead><tr><th>Area</th><th>Familia</th><th>Subfamilia</th><th>SKU</th><th>Articulo</th><th>Unidades</th><th>Costo PEPS prom.</th><th>Total</th></tr></thead>
+                        <thead><tr><th>Area</th><th>Familia</th><th>Subfamilia</th><th>SKU</th><th>Articulo</th><th>Ubicacion</th><th>Unidades</th><th>Costo PEPS prom.</th><th>Total</th></tr></thead>
                         <tbody>
                         <?php foreach ($consumosArea as $consumo): ?>
                             <tr>
@@ -469,6 +473,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <td><?= htmlspecialchars($consumo['subfamilia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($consumo['sku'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($consumo['articulo'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($consumo['ubicacion'] ?? '') ?></td>
                                 <td><?= number_format((float)($consumo['cantidad'] ?? 0), 0) ?></td>
                                 <td>$<?= number_format((float)($consumo['costo_peps_promedio'] ?? 0), 2) ?></td>
                                 <td>$<?= number_format((float)($consumo['total'] ?? 0), 2) ?></td>

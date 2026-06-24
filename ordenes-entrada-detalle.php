@@ -340,6 +340,7 @@ requerir_autenticacion();
                                             <td>
                                                 <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
                                                 <small class="text-muted">ID: <?= $detalle->id_producto ?? 'N/A' ?></small>
+                                                <br><small class="text-muted">Ubicación: <?= htmlspecialchars($detalle->ubicacion ?? 'N/A') ?></small>
                                             </td>
                                             <td class="text-center">
                                                 <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
@@ -517,6 +518,7 @@ requerir_autenticacion();
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                                     <td>
                                                         <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
+                                                        <small class="text-muted">Ubicación: <?= htmlspecialchars($detalle->ubicacion ?? 'N/A') ?></small>
                                                     </td>
                                                     <td class="text-center">
                                                         <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?></span>
