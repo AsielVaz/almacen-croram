@@ -219,6 +219,10 @@ requerir_autenticacion();
     <script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
     <script src="assets/js/components/table-datatable.js"></script>
     <script>
+        $(document).ready(function() {
+            $('#alternative-page-datatable').DataTable().order([0, 'desc']).draw();
+        });
+
         function eliminarFamilia(id) {
             Swal.fire({
                     title: '¿Estás seguro?',

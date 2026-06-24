@@ -106,6 +106,14 @@ try {
                 $_POST['tipo_articulo'] ?? 'NUEVO'
             );
 
+            if (isset($_POST['inventario_inicial']) && $_POST['inventario_inicial'] !== '') {
+                $admin->actualizarInventarioExacto(
+                    $_POST['id'] ?? 0,
+                    $_POST['inventario_inicial'],
+                    date('Y-m-d H:i:s')
+                );
+            }
+
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Artículo actualizado correctamente'
@@ -119,7 +127,7 @@ try {
 
         case 'listarComprasSugeridas':
 
-            echo $admin->listarComprasSugeridas($_POST['dias'] ?? 30);
+            echo $admin->listarComprasSugeridas($_POST['dias'] ?? 30, $_POST['fecha_inicio'] ?? '');
             break;
 
         default:

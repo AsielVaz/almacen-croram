@@ -23,6 +23,9 @@ class AdministradorArticulos extends Con {
     ) {
 
         $sku = $this->limpiar($sku);
+        if ($sku === '') {
+            $sku = $this->generarSkuConsecutivo();
+        }
         $nombre = $this->limpiar($nombre);
         $id_familia = (int)$id_familia;
         $id_subfamilia = $id_subfamilia !== null ? (int)$id_subfamilia : 'NULL';
@@ -69,6 +72,25 @@ class AdministradorArticulos extends Con {
             )
             ON DUPLICATE KEY UPDATE
                 stock = stock + VALUES(stock),
+                updated_at = VALUES(updated_at)
+        ";
+        return $this->ejecutar($sql);
+    }
+
+    public function actualizarInventarioExacto($id_articulo, $cantidad, $fecha) {
+        $id_articulo = (int)$id_articulo;
+        $cantidad = max(0, (float)$cantidad);
+        $fecha = $this->limpiar($fecha);
+        $sql = "
+            INSERT INTO inventario
+            (id_producto, stock, updated_at)
+            VALUES (
+                $id_articulo,
+                $cantidad,
+                '$fecha'
+            )
+            ON DUPLICATE KEY UPDATE
+                stock = VALUES(stock),
                 updated_at = VALUES(updated_at)
         ";
         return $this->ejecutar($sql);
@@ -138,7 +160,9 @@ class AdministradorArticulos extends Con {
                 COALESCE(entradas.total_entradas, 0) AS total_entradas,
                 COALESCE(salidas.total_salidas, 0) AS total_salidas,
                 COALESCE(entradas.total_movimientos_entrada, 0) + COALESCE(salidas.total_movimientos_salida, 0) AS total_movimientos,
-                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS precio_promedio_compra
+                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS precio_promedio_compra,
+                COALESCE(inv.stock, 0) * COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS valor_inventario,
+                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS costo_por_unidad
             FROM productos p
             JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
@@ -257,8 +281,16 @@ class AdministradorArticulos extends Con {
         return $this->ejecutar($this->consultaBaseArticulos($whereSql, "ORDER BY cantidad ASC, p.nombre ASC"));
     }
 
-    public function listarComprasSugeridas($diasStockRequeridos = 15) {
+    public function listarComprasSugeridas($diasStockRequeridos = 15, $fechaInicioAnalisis = '') {
         $diasStockRequeridos = max(1, (int)$diasStockRequeridos);
+        $fechaInicioAnalisis = $this->normalizarFecha($fechaInicioAnalisis);
+        $fechaMinima = date('Y-m-d', strtotime('-12 months'));
+
+        if ($fechaInicioAnalisis === '' || $fechaInicioAnalisis < $fechaMinima) {
+            $fechaInicioAnalisis = $fechaMinima;
+        }
+
+        $mesesAnalisis = "GREATEST(DATEDIFF(CURDATE(), '$fechaInicioAnalisis') / 30.4, 1)";
 
         $sql = "
             SELECT
@@ -273,22 +305,23 @@ class AdministradorArticulos extends Con {
                 COALESCE(inv.stock, 0) AS cantidad,
                 f.nombre AS familia,
                 s.nombre AS subfamilia,
+                '$fechaInicioAnalisis' AS fecha_inicio_analisis,
                 COALESCE(consumos.consumo_12_meses, 0) AS consumo_12_meses,
                 CASE
-                    WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                    WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                     ELSE COALESCE(p.consumo_diario, 0) * 30.4
                 END AS consumo_mensual_promedio,
                 $diasStockRequeridos AS dias_stock_requeridos,
                 ROUND((
                     CASE
-                        WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                        WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                         ELSE COALESCE(p.consumo_diario, 0) * 30.4
                     END / 30.4
                 ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) AS stock_objetivo,
                 GREATEST(
                     ROUND((
                         CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                             ELSE COALESCE(p.consumo_diario, 0) * 30.4
                         END / 30.4
                     ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
@@ -297,13 +330,13 @@ class AdministradorArticulos extends Con {
                 CASE
                     WHEN (
                         CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                             ELSE COALESCE(p.consumo_diario, 0) * 30.4
                         END / 30.4
                     ) > 0
                         THEN ROUND(COALESCE(inv.stock, 0) / (
                             CASE
-                                WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                                WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                                 ELSE COALESCE(p.consumo_diario, 0) * 30.4
                             END / 30.4
                         ), 2)
@@ -320,7 +353,7 @@ class AdministradorArticulos extends Con {
                 FROM orden_salida_detalle osd
                 INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
                 WHERE os.estatus = 'CONFIRMADA'
-                  AND os.fecha_salida >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                  AND os.fecha_salida >= '$fechaInicioAnalisis'
                 GROUP BY osd.id_producto
             ) consumos ON consumos.id_producto = p.id
             WHERE p.activo = 1
@@ -331,7 +364,7 @@ class AdministradorArticulos extends Con {
               AND GREATEST(
                     ROUND((
                         CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / 12
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
                             ELSE COALESCE(p.consumo_diario, 0) * 30.4
                         END / 30.4
                     ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
@@ -419,20 +452,22 @@ class AdministradorArticulos extends Con {
 
         $sql = "
             SELECT
-                id,
-                sku,
-                nombre,
-                id_familia,
-                id_subfamilia,
-                unidad_medida,
-                tipo_articulo,
-                descripcion,
-                activo,
-                costo_reposicion,
-                consumo_diario,
-                tiempo_reposicion
-            FROM productos
-            WHERE id = $id
+                p.id,
+                p.sku,
+                p.nombre,
+                p.id_familia,
+                p.id_subfamilia,
+                p.unidad_medida,
+                p.tipo_articulo,
+                p.descripcion,
+                p.activo,
+                p.costo_reposicion,
+                p.consumo_diario,
+                p.tiempo_reposicion,
+                COALESCE(inv.stock, 0) AS inventario_inicial
+            FROM productos p
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            WHERE p.id = $id
             LIMIT 1
         ";
 
@@ -457,6 +492,9 @@ class AdministradorArticulos extends Con {
 
         $id = (int)$id;
         $sku = $this->limpiar($sku);
+        if ($sku === '') {
+            $sku = $this->generarSkuConsecutivo();
+        }
         $nombre = $this->limpiar($nombre);
         $id_familia = (int)$id_familia;
         $id_subfamilia = $id_subfamilia !== null ? (int)$id_subfamilia : 'NULL';
@@ -515,6 +553,23 @@ class AdministradorArticulos extends Con {
         return in_array($tipo, ['NUEVO', 'USADO'], true) ? $tipo : 'NUEVO';
     }
 
+    private function normalizarFecha($fecha) {
+        $fecha = trim((string)$fecha);
+        if ($fecha === '') {
+            return '';
+        }
+
+        $dt = DateTime::createFromFormat('Y-m-d', $fecha);
+        return ($dt && $dt->format('Y-m-d') === $fecha) ? $fecha : '';
+    }
+
+    private function generarSkuConsecutivo() {
+        $sql = "SELECT COALESCE(MAX(id), 0) + 1 AS siguiente_id FROM productos";
+        $resultado = json_decode($this->ejecutar($sql), true);
+        $siguienteId = (int)($resultado[0]['siguiente_id'] ?? 1);
+        return 'ART-' . str_pad((string)$siguienteId, 6, '0', STR_PAD_LEFT);
+    }
+
     private function consultaBaseArticulos($whereSql = "", $orderSql = "ORDER BY p.nombre", $limit = null, $offset = null) {
         $limitSql = $limit !== null ? " LIMIT " . max(1, (int)$limit) : "";
         $offsetSql = ($limit !== null && $offset !== null && (int)$offset > 0) ? " OFFSET " . (int)$offset : "";
@@ -570,20 +625,22 @@ class AdministradorArticulos extends Con {
         $id = (int)$id;
         $sql = "
             SELECT
-                id,
-                sku,
-                nombre,
-                id_familia,
-                id_subfamilia,
-                unidad_medida,
-                tipo_articulo,
-                descripcion,
-                activo,
-                costo_reposicion,
-                consumo_diario,
-                tiempo_reposicion
-            FROM productos
-            WHERE id = $id
+                p.id,
+                p.sku,
+                p.nombre,
+                p.id_familia,
+                p.id_subfamilia,
+                p.unidad_medida,
+                p.tipo_articulo,
+                p.descripcion,
+                p.activo,
+                p.costo_reposicion,
+                p.consumo_diario,
+                p.tiempo_reposicion,
+                COALESCE(inv.stock, 0) AS inventario_inicial
+            FROM productos p
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            WHERE p.id = $id
             LIMIT 1
         ";
         return $this->ejecutar($sql);

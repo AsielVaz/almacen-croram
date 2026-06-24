@@ -303,6 +303,7 @@ requerir_autenticacion();
         $adminArticulos  = new AdministradorArticulos();
         $adminCatalogos  = new AdministradorCatalogos();
         $ultimoId        = $adminArticulos->obtenerUltimoArticuloInsertado();
+        $siguienteId     = $ultimoId + 1;
         $familias        = $adminCatalogos->listarFamilias(true);
         $familias        = json_decode($familias);
         $esEdicion       = isset($_GET['id']);
@@ -342,7 +343,7 @@ requerir_autenticacion();
                         <?= $esEdicion ? 'Editar artículo' : 'Nuevo artículo' ?>
                     </h4>
                     <?php if (!$esEdicion): ?>
-                        <span class="cr-next-id">Siguiente ID <span><?= $ultimoId ?></span></span>
+                        <span class="cr-next-id">Siguiente ID <span><?= $siguienteId ?></span></span>
                     <?php endif; ?>
                 </div>
                 <div class="text-end">
@@ -616,7 +617,7 @@ requerir_autenticacion();
     <script>
         /* �????,?�????,? Constantes PHP �?????T JS �????,?�????,? */
         const ES_EDICION = <?= $esEdicion ? 'true' : 'false' ?>;
-        const ULTIMO_ID  = <?= (int)$ultimoId ?>;
+        const ULTIMO_ID  = <?= (int)$siguienteId ?>;
         <?php if ($esEdicion): ?>
         const ARTICULO_ID = <?= (int)$_GET['id'] ?>;
         const SUBFAMILIA_ID = <?= isset($articulo[0]->id_subfamilia) ? (int)$articulo[0]->id_subfamilia : 1 ?>;
@@ -708,10 +709,10 @@ requerir_autenticacion();
             const previewText      = document.getElementById('sku_preview_text');
 
             const sfTexto = subfamiliaSelect.options[subfamiliaSelect.selectedIndex]?.text || '';
-            let sku = '';
+            let sku = 'ART-' + String(ULTIMO_ID).padStart(6, '0');
 
             if (sfTexto && sfTexto !== 'Selecciona una subfamilia' && sfTexto !== 'Sin familia') {
-                sku = sfTexto.substring(0, 3).toUpperCase() + '-000' + ULTIMO_ID;
+                sku = sfTexto.substring(0, 3).toUpperCase() + '-' + String(ULTIMO_ID).padStart(6, '0');
             }
 
             if (sku && !ES_EDICION) {

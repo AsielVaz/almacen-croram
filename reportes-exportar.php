@@ -92,6 +92,8 @@ switch ($tipo) {
                 number_format($totalEntradas, 0, '.', ''),
                 number_format($totalSalidas, 0, '.', ''),
                 number_format($existenciaActual, 0, '.', ''),
+                number_format((float)($articulo['valor_inventario'] ?? 0), 2, '.', ''),
+                number_format((float)($articulo['costo_por_unidad'] ?? 0), 2, '.', ''),
                 number_format((float)($articulo['precio_promedio_compra'] ?? 0), 2, '.', ''),
                 ((int)($articulo['activo'] ?? 0) === 1) ? 'Activo' : 'Inactivo',
             ];
@@ -113,13 +115,15 @@ switch ($tipo) {
                 '',
                 '',
                 '',
+                '',
+                '',
             ]);
         }
 
         exportarExcelHtml(
             'reporte_inventario_' . ($idFamilia ?: 'todas') . '_' . ($idSubfamilia ?: 'todas'),
             'Inventario',
-            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Precio promedio', 'Estado'],
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Valor inventario', 'Costo por unidad', 'Precio promedio', 'Estado'],
             $filas
         );
         break;

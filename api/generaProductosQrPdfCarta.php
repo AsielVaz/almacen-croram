@@ -44,12 +44,12 @@ $pdf->AddPage();
 | CONFIGURACIÓN DE BLOQUES
 |--------------------------------------------------------------------------
 */
-$qrSize       = 30; // tamaño QR
-$altoTexto    = 10;
+$qrSize       = 40; // 4x4 cm
+$anchoTexto   = 48;
 $paddingY     = 4;
 $paddingBox   = 3; // padding interno del recuadro
-$altoBloque   = $qrSize + $altoTexto + $paddingY + ($paddingBox * 2);
-$anchoBloque  = $qrSize + ($paddingBox * 2);
+$altoBloque   = $qrSize + ($paddingBox * 2);
+$anchoBloque  = $qrSize + $anchoTexto + ($paddingBox * 3);
 
 $anchoPagina  = $pdf->GetPageWidth() - 20;
 $bloquesFila  = floor($anchoPagina / $anchoBloque);
@@ -141,13 +141,14 @@ foreach ($qrs as $index => $qr) {
     // QR
     $pdf->Image($qrFile, $xQR, $yQR, $qrSize);
 
-    // Nombre y SKU debajo (centrado)
-    $pdf->SetXY($x, $yQR + $qrSize + 1);
-    $pdf->SetFont('Arial', 'B', 6);
-    $pdf->MultiCell($anchoBloque, 3, pdf_text($qr['nombre']), 0, 'C');
-    $pdf->SetX($x);
-    $pdf->SetFont('Arial', 'B', 7);
-    $pdf->Cell($anchoBloque, 4, $qr['sku'], 0, 0, 'C');
+    $nombreQr = mb_substr((string)$qr['nombre'], 0, 50, 'UTF-8');
+    $xTexto = $xQR + $qrSize + $paddingBox;
+    $pdf->SetXY($xTexto, $yQR + 4);
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->MultiCell($anchoTexto, 5, pdf_text($nombreQr), 0, 'L');
+    $pdf->SetXY($xTexto, $yQR + 29);
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->Cell($anchoTexto, 5, pdf_text($qr['sku']), 0, 0, 'L');
 
     @unlink($qrFile);
 

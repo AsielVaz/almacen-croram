@@ -35,6 +35,7 @@ $adminProveedores = new AdministradorProveedores();
 $adminCatalogos = new AdministradorCatalogos();
 $adminAreas = new AdministradorAreas();
 
+$seccion = $_GET['seccion'] ?? 'inventario';
 $entradaInicio = $_GET['entrada_inicio'] ?? '';
 $entradaFin = $_GET['entrada_fin'] ?? '';
 $salidaInicio = $_GET['salida_inicio'] ?? '';
@@ -94,6 +95,16 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
     </div>
 
     <div class="page-container">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="btn-group" role="group" aria-label="Secciones de reportes">
+                    <a class="btn <?= $seccion === 'inventario' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=inventario">Inventario</a>
+                    <a class="btn <?= $seccion === 'proveedores' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=proveedores">Proveedor</a>
+                    <a class="btn <?= $seccion === 'entradas_salidas' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=entradas_salidas">Entradas y salidas</a>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-3 mb-3">
             <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Artículos</small><h3 class="mb-0"><?= count($articulos) ?></h3></div></div></div>
             <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Proveedores</small><h3 class="mb-0"><?= count($proveedores) ?></h3></div></div></div>
@@ -108,6 +119,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             </div>
             <div class="card-body">
                 <form method="get" action="reportes.php" class="row g-3 align-items-end">
+                    <input type="hidden" name="seccion" value="<?= htmlspecialchars($seccion) ?>">
                     <input type="hidden" name="id_familia" value="<?= $idFamilia ?>">
                     <input type="hidden" name="id_subfamilia" value="<?= $idSubfamilia ?>">
                     <div class="col-md-3">
@@ -169,6 +181,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             </div>
         </div>
 
+        <?php if ($seccion === 'inventario'): ?>
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
@@ -179,6 +192,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             </div>
             <div class="card-body">
                 <form method="get" action="reportes.php" class="row g-3 align-items-end mb-3" id="filtroInventarioForm">
+                    <input type="hidden" name="seccion" value="inventario">
                     <input type="hidden" name="entrada_inicio" value="<?= htmlspecialchars($entradaInicio) ?>">
                     <input type="hidden" name="entrada_fin" value="<?= htmlspecialchars($entradaFin) ?>">
                     <input type="hidden" name="salida_inicio" value="<?= htmlspecialchars($salidaInicio) ?>">
@@ -228,6 +242,8 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <th>Entradas</th>
                                 <th>Salidas</th>
                                 <th>Existencia</th>
+                                <th>Valor inventario</th>
+                                <th>Costo por unidad</th>
                                 <th>Precio promedio</th>
                                 <th>Estado</th>
                             </tr>
@@ -253,6 +269,8 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                                 <td><?= number_format($totalEntradas, 0) ?></td>
                                 <td><?= number_format($totalSalidas, 0) ?></td>
                                 <td><?= number_format($existenciaActual, 0) ?></td>
+                                <td>$<?= number_format((float)($articulo['valor_inventario'] ?? 0), 2) ?></td>
+                                <td>$<?= number_format((float)($articulo['costo_por_unidad'] ?? 0), 2) ?></td>
                                 <td>$<?= number_format((float)($articulo['precio_promedio_compra'] ?? 0), 2) ?></td>
                                 <td><?= ((int)($articulo['activo'] ?? 0) === 1) ? 'Activo' : 'Inactivo' ?></td>
                             </tr>
@@ -263,6 +281,9 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             </div>
         </div>
 
+        <?php endif; ?>
+
+        <?php if ($seccion === 'proveedores'): ?>
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
@@ -293,7 +314,9 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
+        <?php if ($seccion === 'entradas_salidas'): ?>
         <div class="row">
             <div class="col-xl-6">
                 <div class="card mb-3">
@@ -389,7 +412,6 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                 </div>
             </div>
         </div>
-
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
@@ -457,6 +479,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 
     <?php include 'templates/footer.php'; ?>

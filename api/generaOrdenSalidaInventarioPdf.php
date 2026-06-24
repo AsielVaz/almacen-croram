@@ -121,6 +121,8 @@ $orden = array(
     'folio'     => $ordenes[0]->folio ?? 'OS-00000',
     'fecha'     => $ordenes[0]->fecha_salida ?? date('Y-m-d'),
     'estatus'   => $ordenes[0]->estatus ?? 'NO VALIDADA',
+    'area'      => $ordenes[0]->nombre_area ?? '',
+    'nota'      => $ordenes[0]->nota ?? '',
 );
 
 $items = array();
@@ -129,6 +131,7 @@ foreach ($detallesOrden as $detalle) {
         'producto' => $detalle->nombre_producto,
         'cantidad' => (int)round((float)$detalle->cantidad),
         'costo_promedio' => (float)($detalle->costo_promedio ?? 0),
+        'subtotal' => ((int)round((float)$detalle->cantidad)) * (float)($detalle->costo_promedio ?? 0),
     );
 }
 
@@ -169,6 +172,17 @@ $pdf->SetLineWidth(0.3);
 
 $pdf->InfoBox('FECHA DE SALIDA:', $orden['fecha'], 95, false);
 $pdf->InfoBox('ESTATUS:', $orden['estatus'], 95, true);
+$pdf->InfoBox('AREA:', $orden['area'] !== '' ? $orden['area'] : 'N/A', 95, true);
+
+if (trim((string)$orden['nota']) !== '') {
+    $pdf->Ln(4);
+    $pdf->SetFont('Arial', 'B', 9);
+    $pdf->SetTextColor(73, 80, 87);
+    $pdf->Cell(0, 6, 'OBSERVACIONES:', 0, 1, 'L');
+    $pdf->SetFont('Arial', '', 9);
+    $pdf->SetTextColor(33, 37, 41);
+    $pdf->MultiCell(0, 5, pdf_text($orden['nota']), 1, 'L');
+}
 
 $pdf->Ln(8);
 
@@ -186,9 +200,10 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(15, 9, '#', 1, 0, 'C', true);
-$pdf->Cell(100, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
-$pdf->Cell(30, 9, 'CANTIDAD', 1, 0, 'C', true);
-$pdf->Cell(45, 9, pdf_text('PRECIO PROM.'), 1, 1, 'C', true);
+$pdf->Cell(90, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
+$pdf->Cell(28, 9, 'CANTIDAD', 1, 0, 'C', true);
+$pdf->Cell(32, 9, pdf_text('PRECIO PROM.'), 1, 0, 'C', true);
+$pdf->Cell(25, 9, 'TOTAL', 1, 1, 'C', true);
 
 // Items de la tabla
 $pdf->SetFont('Arial', '', 9);
@@ -196,11 +211,13 @@ $pdf->SetTextColor(33, 37, 41);
 $pdf->SetDrawColor(222, 226, 230);
 
 $totalUnidades = 0;
+$totalCosto = 0;
 $i = 1;
 $fill = false;
 
 foreach ($items as $item) {
     $totalUnidades += $item['cantidad'];
+    $totalCosto += $item['subtotal'];
     
     // Alternar color de fondo
     if ($fill) {
@@ -210,11 +227,12 @@ foreach ($items as $item) {
     }
     
     $pdf->Cell(15, 8, $i, 'LR', 0, 'C', true);
-    $pdf->Cell(100, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
+    $pdf->Cell(90, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
     
     $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(30, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);
-    $pdf->Cell(45, 8, '$' . number_format($item['costo_promedio'], 2), 'LR', 1, 'R', true);
+    $pdf->Cell(28, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);
+    $pdf->Cell(32, 8, '$' . number_format($item['costo_promedio'], 2), 'LR', 0, 'R', true);
+    $pdf->Cell(25, 8, '$' . number_format($item['subtotal'], 2), 'LR', 1, 'R', true);
     
     $pdf->SetFont('Arial', '', 9);
     $fill = !$fill;
@@ -258,6 +276,15 @@ $pdf->Cell(50, 9, 'TOTAL UNIDADES:', 1, 0, 'L', true);
 
 $pdf->SetFont('Arial', 'B', 13);
 $pdf->Cell(40, 9, $totalUnidades, 1, 1, 'C', true);
+
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetFillColor(220, 53, 69);
+$pdf->SetTextColor(255, 255, 255);
+$pdf->SetX(100);
+$pdf->Cell(50, 9, 'TOTAL COSTO:', 1, 0, 'L', true);
+
+$pdf->SetFont('Arial', 'B', 13);
+$pdf->Cell(40, 9, '$' . number_format($totalCosto, 2), 1, 1, 'C', true);
 
 $pdf->Ln(15);
 

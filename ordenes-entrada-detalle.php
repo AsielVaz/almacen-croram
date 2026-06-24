@@ -542,7 +542,12 @@ requerir_autenticacion();
                                 <!-- Botón Ingresar Orden -->
                                 <div class="row mt-4">
                                     <div class="col-12 text-center">
-                                        <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden" <?= (($ordenes[0]->estatus ?? '') === 'RECIBIDA') ? 'disabled' : '' ?>>
+                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE'): ?>
+                                            <button type="button" class="btn btn-primary-modern btn-modern" id="btnAutorizarOrdenCompra">
+                                                <i class="ri-check-line me-2"></i>Autorizar Orden
+                                            </button>
+                                        <?php endif; ?>
+                                        <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden" <?= (($ordenes[0]->estatus ?? '') === 'AUTORIZADA') ? '' : 'disabled' ?>>
                                             <i class="ri-download-cloud-line me-2"></i>Ingresar Orden
                                         </button>
                                     </div>
@@ -623,6 +628,56 @@ requerir_autenticacion();
         const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
 
         document.addEventListener('DOMContentLoaded', function() {
+            const btnAutorizarOrden = document.getElementById('btnAutorizarOrdenCompra');
+            if (btnAutorizarOrden) {
+                btnAutorizarOrden.addEventListener('click', function() {
+                    if (btnAutorizarOrden.disabled) return;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const idOrden = urlParams.get('id') || 0;
+
+                    Swal.fire({
+                        title: 'Autorizar orden',
+                        text: 'La orden quedara lista para ingresar las partes.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Autorizar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#495057'
+                    }).then(result => {
+                        if (!result.isConfirmed) return;
+
+                        btnAutorizarOrden.disabled = true;
+                        const formData = new FormData();
+                        formData.append('accion', 'autorizarOrdenCompra');
+                        formData.append('id', idOrden);
+                        formData.append('request_token', REQUEST_TOKEN + ':autorizar');
+
+                        fetch('api/apiOrdenes.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Orden autorizada',
+                                    text: data.message || 'Orden de compra autorizada correctamente',
+                                    confirmButtonColor: '#495057'
+                                }).then(() => location.reload());
+                            } else {
+                                btnAutorizarOrden.disabled = false;
+                                Swal.fire('Error', data.message || 'No se pudo autorizar la orden', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            btnAutorizarOrden.disabled = false;
+                            console.error('Error:', error);
+                            Swal.fire('Error', 'Ocurrio un error al autorizar la orden', 'error');
+                        });
+                    });
+                });
+            }
             // Botón Guardar Orden de Entrada
             const btnGuardarOrden = document.getElementById('btnGuardarOrdenEntrada');
             

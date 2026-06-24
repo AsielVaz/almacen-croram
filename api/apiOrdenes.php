@@ -133,10 +133,42 @@ try {
                 ]));
             }
 
+            if (($ordenActual['estatus'] ?? '') !== 'AUTORIZADA') {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden debe estar autorizada antes de ingresar las partes',
+                ]));
+            }
+
+            $preciosReales = [];
             foreach ($productos as $producto) {
-                $idProducto = $producto['id_producto'] ?? 0;
-                $cantidad = $producto['cantidad'] ?? 0;
-                $precioReal = $producto['precio_real'] ?? 0;
+                $idProducto = (int)($producto['id_producto'] ?? 0);
+                if ($idProducto > 0) {
+                    $preciosReales[$idProducto] = (float)($producto['precio_real'] ?? 0);
+                }
+            }
+
+            $detallesOrden = json_decode($admin->listarDetallesOrden($idOrden), true) ?: [];
+            $productosOrden = [];
+            foreach ($detallesOrden as $detalle) {
+                $idProducto = (int)($detalle['id_producto'] ?? 0);
+                if ($idProducto <= 0) {
+                    continue;
+                }
+
+                if (!isset($productosOrden[$idProducto])) {
+                    $productosOrden[$idProducto] = [
+                        'cantidad' => 0,
+                        'precio_unitario' => (float)($detalle['precio_unitario'] ?? 0),
+                    ];
+                }
+
+                $productosOrden[$idProducto]['cantidad'] += (float)($detalle['cantidad'] ?? 0);
+            }
+
+            foreach ($productosOrden as $idProducto => $productoOrden) {
+                $cantidad = $productoOrden['cantidad'];
+                $precioReal = $preciosReales[$idProducto] ?? $productoOrden['precio_unitario'];
 
                 $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
                 $admin->registrarEntradaInventario($idProducto, $cantidad);
@@ -149,6 +181,29 @@ try {
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Orden de entrada guardada correctamente'
+            ]);
+            break;
+
+        case 'autorizarOrdenCompra':
+            validar_idempotencia('autorizarOrdenCompra');
+            $idOrden = $_POST['id'] ?? 0;
+
+            $admin->iniciarTransaccion();
+            $ordenActual = json_decode($admin->bloquearOrdenCompra($idOrden), true)[0] ?? null;
+
+            if (!$ordenActual || ($ordenActual['estatus'] ?? '') !== 'PENDIENTE') {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden no existe o ya no se encuentra pendiente',
+                ]));
+            }
+
+            $admin->actualizarEstatusOrdenCompra($idOrden, 'AUTORIZADA');
+            $admin->confirmarTransaccion();
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Orden de compra autorizada correctamente'
             ]);
             break;
 

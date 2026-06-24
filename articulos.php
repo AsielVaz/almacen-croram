@@ -530,6 +530,20 @@ requerir_autenticacion();
     <script src="assets/js/components/table-datatable.js"></script>
     
     <script>
+        $(document).ready(function() {
+            const tablaArticulos = $('#alternative-page-datatable').DataTable();
+            const inputBusqueda = $('#alternative-page-datatable_filter input');
+            let temporizadorBusqueda = null;
+
+            inputBusqueda.off('keyup search input').on('input', function() {
+                clearTimeout(temporizadorBusqueda);
+                const valor = this.value;
+                temporizadorBusqueda = setTimeout(function() {
+                    tablaArticulos.search(valor).draw();
+                }, 250);
+            });
+        });
+
         document.getElementById('btnGenerarQr').addEventListener('click', function() {
 
             let seleccionados = [];

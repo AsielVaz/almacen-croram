@@ -6,7 +6,8 @@ include_once 'api/adminArticulos.php';
 
 $adminArticulos = new AdministradorArticulos();
 $diasStock = max(1, (int)($_GET['dias_stock'] ?? 15));
-$articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), true) ?: [];
+$fechaInicioAnalisis = $_GET['fecha_inicio'] ?? '';
+$articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fechaInicioAnalisis), true) ?: [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -51,6 +52,10 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), tr
                         <label for="dias_stock" class="form-label">Días de stock requeridos</label>
                         <input type="number" min="1" step="1" class="form-control" id="dias_stock" name="dias_stock" value="<?= $diasStock ?>">
                     </div>
+                    <div class="col-md-3">
+                        <label for="fecha_inicio" class="form-label">Inicio de anÃ¡lisis</label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="<?= htmlspecialchars($fechaInicioAnalisis) ?>">
+                    </div>
                     <div class="col-md-auto">
                         <button type="submit" class="btn btn-primary">Actualizar reporte</button>
                     </div>
@@ -58,7 +63,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), tr
                         <button type="button" class="btn btn-success" onclick="exportTableToExcel('tablaComprasSugeridas', 'compras_sugeridas_<?= $diasStock ?>_dias_stock')">Exportar Excel</button>
                     </div>
                     <div class="col-12">
-                        <p class="text-muted mb-0">Pedido sugerido = redondear((consumo mensual promedio / 30.4) * (días de stock requeridos + tiempo de surtido)) - existencia actual.</p>
+                        <p class="text-muted mb-0">Pedido sugerido = redondear((consumo mensual promedio desde el inicio de análisis / 30.4) * (días de stock requeridos + tiempo de surtido)) - existencia actual.</p>
                     </div>
                 </form>
             </div>
@@ -81,6 +86,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), tr
                                 <th>Subfamilia</th>
                                 <th>Existencia</th>
                                 <th>Consumo mensual prom.</th>
+                                <th>Inicio análisis</th>
                                 <th>Días stock req.</th>
                                 <th>Tiempo surtido</th>
                                 <th>Días restantes</th>
@@ -100,6 +106,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), tr
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? 'Sin familia') ?></td>
                                 <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
                                 <td><?= number_format((float)($articulo['consumo_mensual_promedio'] ?? 0), 2) ?></td>
+                                <td><?= htmlspecialchars($articulo['fecha_inicio_analisis'] ?? '') ?></td>
                                 <td><?= (int)($articulo['dias_stock_requeridos'] ?? $diasStock) ?></td>
                                 <td><?= (int)($articulo['tiempo_reposicion'] ?? 0) ?></td>
                                 <td><?= number_format((float)($articulo['dias_restantes'] ?? 0), 2) ?></td>
@@ -134,7 +141,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock), tr
         $('#tablaComprasSugeridas').DataTable({
             pageLength: 10,
             responsive: true,
-            order: [[11, 'desc']]
+            order: [[12, 'desc']]
         });
     });
 
