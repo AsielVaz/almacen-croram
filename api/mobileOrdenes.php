@@ -5,14 +5,21 @@ include_once 'adminOrdenes.php';
 
 $config = include __DIR__ . '/mobile_config.php';
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowedOrigins = $config['allowed_origins'] ?? [];
 
-if ($origin !== '' && in_array($origin, $config['allowed_origins'] ?? [], true)) {
+if (in_array('*', $allowedOrigins, true)) {
+    header('Access-Control-Allow-Origin: *');
+} elseif ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
     header('Access-Control-Allow-Origin: ' . $origin);
     header('Vary: Origin');
 }
 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-CRORAM-Mobile-Token');
+$requestedHeaders = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? '';
+$allowedHeaders = $requestedHeaders !== ''
+    ? $requestedHeaders
+    : 'Content-Type, X-CRORAM-Mobile-Token, Authorization, X-Requested-With';
+header('Access-Control-Allow-Headers: ' . $allowedHeaders);
 header('Access-Control-Max-Age: 86400');
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
@@ -235,6 +242,106 @@ function preparar_respuesta_orden(AdministradorOrdenes $admin, array $ordenInfo)
     ];
 }
 
+function listar_ordenes_pendientes(AdministradorOrdenes $admin, array $payload): array {
+    $tipo = normalizar_tipo($payload['tipo_orden'] ?? '');
+    $texto = trim((string)($payload['texto'] ?? $payload['busqueda'] ?? ''));
+    $limite = max(1, min(100, (int)($payload['limite'] ?? 50)));
+    $textoSql = $texto !== '' ? $admin->escapar($texto) : '';
+
+    $ordenes = [];
+
+    if ($tipo === '' || $tipo === 'entrada') {
+        $whereEntrada = ["oc.estatus = 'AUTORIZADA'"];
+        $whereEntrada[] = "NOT EXISTS (
+            SELECT 1
+            FROM inventario_lotes il
+            WHERE il.id_orden_compra = oc.id
+            LIMIT 1
+        )";
+
+        if ($textoSql !== '') {
+            $whereEntrada[] = "(oc.folio LIKE '%$textoSql%' OR pr.nombre LIKE '%$textoSql%')";
+        }
+
+        $entradas = json_decode($admin->ejecutar("
+            SELECT
+                'entrada' AS tipo_orden,
+                oc.id,
+                oc.folio,
+                oc.fecha_orden AS fecha,
+                oc.estatus,
+                oc.created_at,
+                pr.nombre AS contraparte,
+                pr.nombre AS nombre_proveedor,
+                '' AS nombre_area,
+                COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario,
+                COUNT(ocd.id) AS total_partidas,
+                COALESCE(SUM(ocd.cantidad), 0) AS total_unidades
+            FROM ordenes_compra oc
+            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN usuarios u ON u.id = oc.id_usuario
+            LEFT JOIN orden_compra_detalle ocd ON ocd.id_orden_compra = oc.id
+            WHERE " . implode(' AND ', $whereEntrada) . "
+            GROUP BY oc.id
+            ORDER BY oc.created_at DESC
+            LIMIT $limite
+        "), true);
+
+        $ordenes = array_merge($ordenes, is_array($entradas) ? $entradas : []);
+    }
+
+    if ($tipo === '' || $tipo === 'salida') {
+        $whereSalida = ["os.estatus <> 'CONFIRMADA'"];
+
+        if ($textoSql !== '') {
+            $whereSalida[] = "(os.folio LIKE '%$textoSql%' OR COALESCE(a.nombre, '') LIKE '%$textoSql%' OR os.tipo LIKE '%$textoSql%')";
+        }
+
+        $salidas = json_decode($admin->ejecutar("
+            SELECT
+                'salida' AS tipo_orden,
+                os.id,
+                os.folio,
+                os.fecha_salida AS fecha,
+                os.estatus,
+                os.created_at,
+                COALESCE(a.nombre, os.tipo, '') AS contraparte,
+                '' AS nombre_proveedor,
+                COALESCE(a.nombre, '') AS nombre_area,
+                COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario,
+                COUNT(osd.id) AS total_partidas,
+                COALESCE(SUM(osd.cantidad), 0) AS total_unidades
+            FROM ordenes_salida os
+            LEFT JOIN areas a ON a.id = os.id_area
+            LEFT JOIN usuarios u ON u.id = os.id_usuario
+            LEFT JOIN orden_salida_detalle osd ON osd.id_orden_salida = os.id
+            WHERE " . implode(' AND ', $whereSalida) . "
+            GROUP BY os.id
+            ORDER BY os.created_at DESC
+            LIMIT $limite
+        "), true);
+
+        $ordenes = array_merge($ordenes, is_array($salidas) ? $salidas : []);
+    }
+
+    usort($ordenes, function ($a, $b) {
+        return strcmp((string)($b['created_at'] ?? ''), (string)($a['created_at'] ?? ''));
+    });
+
+    $ordenes = array_slice($ordenes, 0, $limite);
+
+    return [
+        'status' => 'success',
+        'ordenes' => array_values($ordenes),
+        'total' => count($ordenes),
+        'filtros' => [
+            'tipo_orden' => $tipo,
+            'texto' => $texto,
+            'limite' => $limite,
+        ],
+    ];
+}
+
 autorizar_api($config);
 
 $payload = leer_payload();
@@ -266,6 +373,11 @@ try {
             }
 
             responder(preparar_respuesta_orden($admin, $ordenInfo));
+            break;
+
+        case 'listarPendientes':
+        case 'listarOrdenesPendientes':
+            responder(listar_ordenes_pendientes($admin, $payload));
             break;
 
         case 'validarEscaneos':
