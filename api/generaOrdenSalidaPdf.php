@@ -130,7 +130,7 @@ foreach ($detallesOrden as $detalle) {
         'producto' => $detalle->nombre_producto,
         'ubicacion' => $detalle->ubicacion ?? '',
         'cantidad' => (int)round((float)$detalle->cantidad),
-        'precio'   => (float)($detalle->costo_promedio ?? 0),
+        'precio'   => (float)($detalle->precio_unitario ?? 0),
     );
 }
 
@@ -163,7 +163,7 @@ $pdf->SetAutoPageBreak(true, 25);
 // INFORMACIÓN GENERAL
 // =====================
 
-$pdf->SectionTitle('DATOS GENERALES', chr(149));
+$pdf->SectionTitle('DATOS GENERALES');
 
 // Usar el método InfoBox
 $pdf->SetDrawColor(222, 226, 230);
@@ -180,7 +180,7 @@ $pdf->Ln(8);
 // TABLA DE PRODUCTOS
 // =====================
 
-$pdf->SectionTitle('DETALLE DE PRODUCTOS', chr(149));
+$pdf->SectionTitle('DETALLE DE PRODUCTOS');
 
 // Header de tabla con diseño moderno
 $pdf->SetFont('Arial', 'B', 9);

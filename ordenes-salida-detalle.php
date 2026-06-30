@@ -372,9 +372,10 @@ requerir_autenticacion();
                                         <thead>
                                             <tr>
                                                 <th width="10%">#</th>
-                                                <th width="50%">Producto</th>
-                                                <th width="20%" class="text-center">Cantidad</th>
+                                                <th width="40%">Producto</th>
+                                                <th width="15%" class="text-center">Cantidad</th>
                                                 <th width="20%" class="text-end">Precio promedio</th>
+                                                <th width="15%">Validar QR</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -391,12 +392,16 @@ requerir_autenticacion();
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                                     <td>
                                                         <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
+                                                        <small class="text-muted">SKU: <?= htmlspecialchars($detalle->sku ?? '') ?></small>
                                                     </td>
                                                     <td class="text-center">
                                                 <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
                                                     </td>
                                                     <td class="text-end fw-bold">
                                                         $<?= number_format((float)($detalle->costo_promedio ?? 0), 2) ?>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm qr-validacion-salida" placeholder="Escanee QR" data-id-producto="<?= $detalle->id_producto ?? '' ?>" data-sku="<?= htmlspecialchars($detalle->sku ?? '') ?>">
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -410,6 +415,7 @@ requerir_autenticacion();
                                                     </span>
                                                 </td>
                                                 <td class="text-end fw-bold">$<?= number_format($totalCostoPeps, 2) ?></td>
+                                                <td></td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -508,6 +514,30 @@ requerir_autenticacion();
                     // Obtener el ID de la orden
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
+
+                    const qrInvalidos = [];
+                    document.querySelectorAll('.qr-validacion-salida').forEach(function(input) {
+                        const valor = input.value.trim().toUpperCase();
+                        const sku = (input.dataset.sku || '').trim().toUpperCase();
+                        const idProducto = (input.dataset.idProducto || '').trim().toUpperCase();
+
+                        if (!valor || (valor !== sku && valor !== idProducto)) {
+                            qrInvalidos.push(sku || idProducto || 'Producto sin SKU');
+                            input.classList.add('is-invalid');
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (qrInvalidos.length > 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'QR incorrecto',
+                            text: 'Escanee el SKU o ID correcto para: ' + qrInvalidos.join(', '),
+                            confirmButtonColor: '#6c757d'
+                        });
+                        return;
+                    }
                     
                     // Confirmación
                     Swal.fire({

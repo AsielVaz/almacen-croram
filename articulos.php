@@ -319,11 +319,6 @@ requerir_autenticacion();
         <!-- Topbar Start -->
         <?php include_once 'templates/headder.php' ?>
 
-        <?php
-        include_once 'api/adminArticulos.php';
-        $adminArticulos = new AdministradorArticulos();
-        $articulos = json_decode($adminArticulos->listarArticulosCompleto(false));
-        ?>
         <!-- Topbar End -->
 
         <!-- Search Modal -->
@@ -404,8 +399,26 @@ requerir_autenticacion();
                             </div>
 
                             <div class="card-body-custom">
+                                <div class="row g-3 align-items-end mb-3">
+                                    <div class="col-md-6">
+                                        <label for="busquedaArticulos" class="form-label fw-semibold">Buscar articulo</label>
+                                        <input type="search" id="busquedaArticulos" class="form-control" placeholder="Nombre, SKU, descripcion o ubicacion">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="porPaginaArticulos" class="form-label fw-semibold">Por pagina</label>
+                                        <select id="porPaginaArticulos" class="form-select">
+                                            <option value="10">10</option>
+                                            <option value="25" selected>25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <div id="estadoArticulos" class="text-muted small">Cargando articulos...</div>
+                                    </div>
+                                </div>
                                 <div class="table-container">
-                                    <table id="alternative-page-datatable"
+                                    <table id="articulos-api-table"
                                         class="table table-modern table-striped dt-responsive nowrap w-100">
                                         <thead>
                                             <tr>
@@ -425,62 +438,17 @@ requerir_autenticacion();
                                                 <th class="text-center">ACCIONES</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <?php foreach ($articulos as $articulo) :
-                                                $cantidad = (int)round((float)($articulo->cantidad ?? 0));
-                                            ?>
-                                                <tr>
-                                                    <td>
-                                                        <input type="checkbox" class="chkProducto checkbox-custom"
-                                                            data-id="<?= $articulo->id ?>"
-                                                            data-nombre="<?= htmlspecialchars($articulo->nombre) ?>"
-                                                            data-sku="<?= htmlspecialchars($articulo->sku) ?>"
-                                                            data-cantidad="<?= $cantidad ?>">
-                                                    </td>
-                                                    <td class="fw-bold"><?= $articulo->id ?></td>
-                                                    <td>
-                                                        <div class="fw-bold text-dark"><?= htmlspecialchars($articulo->nombre) ?></div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="family-text"><?= htmlspecialchars($articulo->familia) ?></span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="subfamily-text"><?= htmlspecialchars($articulo->subfamilia) ?></span>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <span class="badge-quantity"><?= $cantidad ?></span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge-sku">
-                                                            <i class="ri-barcode-line"></i> <?= htmlspecialchars($articulo->sku) ?>
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="family-text"><?= htmlspecialchars($articulo->tipo_articulo ?? 'NUEVO') ?></span>
-                                                    </td>
-                                                      <td>
-                                                        <span class="family-text"><?= htmlspecialchars($articulo->unidad_medida) ?></span>
-                                                    </td>
-                                                      <td>
-                                                        <span class="family-text"><?= htmlspecialchars($articulo->descripcion) ?></span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="family-text"><?= htmlspecialchars($articulo->ubicacion ?? '') ?></span>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <div class="action-stack">
-                                                            <a href="articulos-form.php?id=<?= $articulo->id ?>" class="btn btn-action">
-                                                                <i class="ri-edit-line me-1"></i> Editar
-                                                            </a>
-                                                            <a href="articulo-historial.php?id=<?= $articulo->id ?>" class="btn btn-action btn-history">
-                                                                <i class="ri-time-line me-1"></i> Historial
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
+                                        <tbody id="articulosTableBody">
+                                            <tr><td colspan="12" class="text-center text-muted py-4">Cargando articulos...</td></tr>
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                                    <div id="resumenPaginacionArticulos" class="text-muted small"></div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPaginaAnterior">Anterior</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPaginaSiguiente">Siguiente</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -531,22 +499,142 @@ requerir_autenticacion();
     <script src="assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
     <script src="assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
     <script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
-    <script src="assets/js/components/table-datatable.js"></script>
     
     <script>
-        $(document).ready(function() {
-            const tablaArticulos = $('#alternative-page-datatable').DataTable();
-            const inputBusqueda = $('#alternative-page-datatable_filter input');
-            let temporizadorBusqueda = null;
+        const estadoArticulos = {
+            pagina: 1,
+            porPagina: 25,
+            texto: '',
+            totalPaginas: 1,
+            total: 0,
+            timer: null
+        };
 
-            inputBusqueda.off('keyup search input').on('input', function() {
-                clearTimeout(temporizadorBusqueda);
-                const valor = this.value;
-                temporizadorBusqueda = setTimeout(function() {
-                    tablaArticulos.search(valor).draw();
-                }, 250);
+        function escaparHtml(valor) {
+            return String(valor ?? '').replace(/[&<>"']/g, function(caracter) {
+                return ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                })[caracter];
             });
+        }
+
+        function renderArticulos(articulos) {
+            const tbody = document.getElementById('articulosTableBody');
+
+            if (!articulos.length) {
+                tbody.innerHTML = '<tr><td colspan="12" class="text-center text-muted py-4">Sin articulos para mostrar</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = articulos.map(articulo => {
+                const cantidad = Math.round(parseFloat(articulo.cantidad || 0));
+                const id = escaparHtml(articulo.id);
+                const nombre = escaparHtml(articulo.nombre);
+                const sku = escaparHtml(articulo.sku || '');
+
+                return `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="chkProducto checkbox-custom"
+                                data-id="${id}"
+                                data-nombre="${nombre}"
+                                data-sku="${sku}"
+                                data-cantidad="${cantidad}">
+                        </td>
+                        <td class="fw-bold">${id}</td>
+                        <td><div class="fw-bold text-dark">${nombre}</div></td>
+                        <td><span class="family-text">${escaparHtml(articulo.familia || '')}</span></td>
+                        <td><span class="subfamily-text">${escaparHtml(articulo.subfamilia || '')}</span></td>
+                        <td class="text-center"><span class="badge-quantity">${cantidad}</span></td>
+                        <td><span class="badge-sku"><i class="ri-barcode-line"></i> ${sku}</span></td>
+                        <td><span class="family-text">${escaparHtml(articulo.tipo_articulo || 'NUEVO')}</span></td>
+                        <td><span class="family-text">${escaparHtml(articulo.unidad_medida || '')}</span></td>
+                        <td><span class="family-text">${escaparHtml(articulo.descripcion || '')}</span></td>
+                        <td><span class="family-text">${escaparHtml(articulo.ubicacion || '')}</span></td>
+                        <td class="text-center">
+                            <div class="action-stack">
+                                <a href="articulos-form.php?id=${id}" class="btn btn-action">
+                                    <i class="ri-edit-line me-1"></i> Editar
+                                </a>
+                                <a href="articulo-historial.php?id=${id}" class="btn btn-action btn-history">
+                                    <i class="ri-time-line me-1"></i> Historial
+                                </a>
+                            </div>
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function cargarArticulos() {
+            const formData = new FormData();
+            formData.append('accion', 'listarArticulosPaginados');
+            formData.append('pagina', estadoArticulos.pagina);
+            formData.append('porPagina', estadoArticulos.porPagina);
+            formData.append('texto', estadoArticulos.texto);
+            formData.append('soloActivos', 0);
+
+            document.getElementById('estadoArticulos').textContent = 'Cargando articulos...';
+
+            fetch('api/apiArticulos.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const articulos = data.data || [];
+                const pagination = data.pagination || {};
+                estadoArticulos.total = pagination.total || 0;
+                estadoArticulos.totalPaginas = pagination.total_pages || 1;
+                estadoArticulos.pagina = pagination.page || estadoArticulos.pagina;
+
+                renderArticulos(articulos);
+                document.getElementById('estadoArticulos').textContent = `${estadoArticulos.total} articulos encontrados`;
+                document.getElementById('resumenPaginacionArticulos').textContent = `Pagina ${estadoArticulos.pagina} de ${estadoArticulos.totalPaginas}`;
+                document.getElementById('btnPaginaAnterior').disabled = estadoArticulos.pagina <= 1;
+                document.getElementById('btnPaginaSiguiente').disabled = estadoArticulos.pagina >= estadoArticulos.totalPaginas;
+                document.getElementById('checkAll').checked = false;
+            })
+            .catch(error => {
+                console.error('Error cargando articulos:', error);
+                document.getElementById('articulosTableBody').innerHTML = '<tr><td colspan="12" class="text-center text-danger py-4">No se pudieron cargar los articulos</td></tr>';
+                document.getElementById('estadoArticulos').textContent = 'Error al cargar articulos';
+            });
+        }
+
+        document.getElementById('busquedaArticulos').addEventListener('input', function() {
+            clearTimeout(estadoArticulos.timer);
+            estadoArticulos.timer = setTimeout(() => {
+                estadoArticulos.texto = this.value.trim();
+                estadoArticulos.pagina = 1;
+                cargarArticulos();
+            }, 250);
         });
+
+        document.getElementById('porPaginaArticulos').addEventListener('change', function() {
+            estadoArticulos.porPagina = parseInt(this.value, 10) || 25;
+            estadoArticulos.pagina = 1;
+            cargarArticulos();
+        });
+
+        document.getElementById('btnPaginaAnterior').addEventListener('click', function() {
+            if (estadoArticulos.pagina > 1) {
+                estadoArticulos.pagina--;
+                cargarArticulos();
+            }
+        });
+
+        document.getElementById('btnPaginaSiguiente').addEventListener('click', function() {
+            if (estadoArticulos.pagina < estadoArticulos.totalPaginas) {
+                estadoArticulos.pagina++;
+                cargarArticulos();
+            }
+        });
+
+        cargarArticulos();
 
         document.getElementById('btnGenerarQr').addEventListener('click', function() {
 

@@ -79,6 +79,7 @@ $ordenesSalida = json_decode($adminOrdenes->listarOrdenesSalida(null, $salidaIni
 $entradasDetalle = json_decode($adminOrdenes->listarEntradasDetalle($entradaInicio, $entradaFin), true) ?: [];
 $salidasDetalle = json_decode($adminOrdenes->listarSalidasDetalle($salidaInicio, $salidaFin, $idArea), true) ?: [];
 $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, $salidaFin, $idArea), true) ?: [];
+$articulosObsoletos = $seccion === 'obsoletos' ? (json_decode($adminArticulos->listarArticulosObsoletos(12), true) ?: []) : [];
 ?>
 
 <div class="page-content">
@@ -99,6 +100,7 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             <div class="card-body">
                 <div class="btn-group" role="group" aria-label="Secciones de reportes">
                     <a class="btn <?= $seccion === 'inventario' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=inventario">Inventario</a>
+                    <a class="btn <?= $seccion === 'obsoletos' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=obsoletos">Obsoletos</a>
                     <a class="btn <?= $seccion === 'proveedores' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=proveedores">Proveedor</a>
                     <a class="btn <?= $seccion === 'entradas_salidas' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=entradas_salidas">Entradas y salidas</a>
                 </div>
@@ -283,6 +285,41 @@ $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, 
             </div>
         </div>
 
+        <?php endif; ?>
+
+        <?php if ($seccion === 'obsoletos'): ?>
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="header-title mb-1">Articulos obsoletos</h4>
+                    <p class="text-muted mb-0">Articulos con existencia y sin movimientos en los ultimos 12 meses.</p>
+                </div>
+                <a class="btn btn-success btn-sm" href="reportes-exportar.php?tipo=obsoletos">Exportar Excel</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive nowrap w-100 report-table">
+                        <thead><tr><th>ID</th><th>SKU</th><th>Articulo</th><th>Familia</th><th>Subfamilia</th><th>Ubicacion</th><th>Unidades</th><th>Valor inventario</th><th>Costo por unidad</th><th>Ultimo movimiento</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($articulosObsoletos as $articulo): ?>
+                            <tr>
+                                <td><?= (int)($articulo['id'] ?? 0) ?></td>
+                                <td><?= htmlspecialchars($articulo['sku'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['nombre'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['subfamilia'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['ubicacion'] ?? '') ?></td>
+                                <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
+                                <td>$<?= number_format((float)($articulo['valor_inventario'] ?? 0), 2) ?></td>
+                                <td>$<?= number_format((float)($articulo['costo_por_unidad'] ?? 0), 2) ?></td>
+                                <td><?= htmlspecialchars($articulo['ultimo_movimiento'] ?? 'Sin movimiento') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <?php endif; ?>
 
         <?php if ($seccion === 'proveedores'): ?>

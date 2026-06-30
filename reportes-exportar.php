@@ -154,6 +154,32 @@ switch ($tipo) {
         );
         break;
 
+    case 'obsoletos':
+        $articulos = json_decode($adminArticulos->listarArticulosObsoletos(12), true) ?: [];
+        $filas = [];
+        foreach ($articulos as $articulo) {
+            $filas[] = [
+                $articulo['id'] ?? '',
+                $articulo['sku'] ?? '',
+                $articulo['nombre'] ?? '',
+                $articulo['familia'] ?? '',
+                $articulo['subfamilia'] ?? '',
+                $articulo['ubicacion'] ?? '',
+                number_format((float)($articulo['cantidad'] ?? 0), 0, '.', ''),
+                number_format((float)($articulo['valor_inventario'] ?? 0), 2, '.', ''),
+                number_format((float)($articulo['costo_por_unidad'] ?? 0), 2, '.', ''),
+                $articulo['ultimo_movimiento'] ?? 'Sin movimiento',
+            ];
+        }
+
+        exportarExcelHtml(
+            'reporte_articulos_obsoletos',
+            'Articulos obsoletos',
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Ubicacion', 'Unidades', 'Valor inventario', 'Costo por unidad', 'Ultimo movimiento'],
+            $filas
+        );
+        break;
+
     case 'entradas':
         $ordenesEntrada = json_decode($adminOrdenes->listarEntradasDetalle($entradaInicio, $entradaFin), true) ?: [];
         $filas = [];

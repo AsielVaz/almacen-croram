@@ -116,9 +116,31 @@ class AdministradorOrdenes extends Con
             SELECT
                 orden_compra_detalle.*,
                 productos.nombre AS nombre_producto,
-                productos.ubicacion
+                productos.sku,
+                productos.ubicacion,
+                ultima_compra.fecha_orden AS ultima_compra_fecha,
+                ultima_compra.nombre_proveedor AS ultima_compra_proveedor,
+                ultima_compra.precio_unitario AS ultima_compra_precio
             FROM orden_compra_detalle
             inner join productos on productos.id = orden_compra_detalle.id_producto
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    oc.fecha_orden,
+                    pr.nombre AS nombre_proveedor,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.id <> $id_orden_compra
+                      AND oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = productos.id
             WHERE id_orden_compra = $id_orden_compra
         ";
 
@@ -200,6 +222,7 @@ class AdministradorOrdenes extends Con
             SELECT
                 orden_salida_detalle.*,
                 productos.nombre AS nombre_producto,
+                productos.sku,
                 productos.ubicacion,
                 COALESCE(orden_salida_detalle.costo_peps, orden_salida_detalle.costo_unitario, productos.costo_reposicion, 0) AS costo_promedio
             FROM orden_salida_detalle
@@ -407,6 +430,18 @@ class AdministradorOrdenes extends Con
         ";
 
         return $this->ejecutar($sql);
+    }
+
+    public function ordenCompraTieneLotes($idOrdenCompra)
+    {
+        $idOrdenCompra = (int)$idOrdenCompra;
+        $resultado = json_decode($this->ejecutar("
+            SELECT COUNT(*) AS total
+            FROM inventario_lotes
+            WHERE id_orden_compra = $idOrdenCompra
+        "), true);
+
+        return (int)($resultado[0]['total'] ?? 0) > 0;
     }
 
     public function registrarSalidaInventario($idProducto, $cantidad)

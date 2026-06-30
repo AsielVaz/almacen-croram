@@ -140,6 +140,13 @@ try {
                 ]));
             }
 
+            if ($admin->ordenCompraTieneLotes($idOrden)) {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden ya tiene entradas registradas en inventario. No se volveran a sumar unidades.',
+                ]));
+            }
+
             $preciosReales = [];
             foreach ($productos as $producto) {
                 $idProducto = (int)($producto['id_producto'] ?? 0);

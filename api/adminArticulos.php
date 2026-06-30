@@ -164,13 +164,30 @@ class AdministradorArticulos extends Con {
                 COALESCE(entradas.total_entradas, 0) AS total_entradas,
                 COALESCE(salidas.total_salidas, 0) AS total_salidas,
                 COALESCE(entradas.total_movimientos_entrada, 0) + COALESCE(salidas.total_movimientos_salida, 0) AS total_movimientos,
-                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS precio_promedio_compra,
-                COALESCE(inv.stock, 0) * COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS valor_inventario,
-                COALESCE(entradas.precio_promedio_compra, p.costo_reposicion, 0) AS costo_por_unidad
+                CASE
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0))
+                    ELSE 0
+                END AS valor_inventario,
+                CASE
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
+                    ELSE 0
+                END AS costo_por_unidad,
+                CASE
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
+                    ELSE COALESCE(p.costo_reposicion, 0)
+                END AS precio_promedio_compra
             FROM productos p
             JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
             LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    id_producto,
+                    SUM(cantidad_disponible * costo_unitario) AS valor_inventario
+                FROM inventario_lotes
+                WHERE cantidad_disponible > 0
+                GROUP BY id_producto
+            ) valor_lotes ON valor_lotes.id_producto = p.id
             LEFT JOIN (
                 SELECT
                     ocd.id_producto,
@@ -181,6 +198,8 @@ class AdministradorArticulos extends Con {
                         ELSE 0
                     END AS precio_promedio_compra
                 FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                WHERE oc.estatus = 'RECIBIDA'
                 GROUP BY ocd.id_producto
             ) entradas ON entradas.id_producto = p.id
             LEFT JOIN (
@@ -189,6 +208,8 @@ class AdministradorArticulos extends Con {
                     SUM(osd.cantidad) AS total_salidas,
                     COUNT(DISTINCT osd.id_orden_salida) AS total_movimientos_salida
                 FROM orden_salida_detalle osd
+                INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+                WHERE os.estatus = 'CONFIRMADA'
                 GROUP BY osd.id_producto
             ) salidas ON salidas.id_producto = p.id
             $where
@@ -377,6 +398,64 @@ class AdministradorArticulos extends Con {
                     0
                   ) > 0
             ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, p.nombre ASC
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
+    public function listarArticulosObsoletos($mesesSinMovimiento = 12) {
+        $mesesSinMovimiento = max(1, (int)$mesesSinMovimiento);
+
+        $sql = "
+            SELECT
+                p.id,
+                p.sku,
+                p.nombre,
+                p.descripcion,
+                p.ubicacion,
+                f.nombre AS familia,
+                COALESCE(s.nombre, 'Sin familia') AS subfamilia,
+                COALESCE(inv.stock, 0) AS cantidad,
+                COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) AS valor_inventario,
+                CASE
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
+                    ELSE 0
+                END AS costo_por_unidad,
+                movimientos.ultimo_movimiento
+            FROM productos p
+            INNER JOIN familias f ON f.id = p.id_familia
+            LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
+            LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    id_producto,
+                    SUM(cantidad_disponible * costo_unitario) AS valor_inventario
+                FROM inventario_lotes
+                WHERE cantidad_disponible > 0
+                GROUP BY id_producto
+            ) valor_lotes ON valor_lotes.id_producto = p.id
+            LEFT JOIN (
+                SELECT id_producto, MAX(fecha_movimiento) AS ultimo_movimiento
+                FROM (
+                    SELECT ocd.id_producto, oc.fecha_orden AS fecha_movimiento
+                    FROM orden_compra_detalle ocd
+                    INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                    WHERE oc.estatus = 'RECIBIDA'
+                    UNION ALL
+                    SELECT osd.id_producto, os.fecha_salida AS fecha_movimiento
+                    FROM orden_salida_detalle osd
+                    INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
+                    WHERE os.estatus = 'CONFIRMADA'
+                ) mov
+                GROUP BY id_producto
+            ) movimientos ON movimientos.id_producto = p.id
+            WHERE p.activo = 1
+              AND COALESCE(inv.stock, 0) > 0
+              AND (
+                    movimientos.ultimo_movimiento IS NULL
+                    OR movimientos.ultimo_movimiento < DATE_SUB(CURDATE(), INTERVAL $mesesSinMovimiento MONTH)
+                  )
+            ORDER BY movimientos.ultimo_movimiento ASC, p.nombre ASC
         ";
 
         return $this->ejecutar($sql);
