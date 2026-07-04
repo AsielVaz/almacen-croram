@@ -3,114 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki de Uso - Almacen Croram</title>
+    <title>Resumen general - Wiki Croram</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="brand">Wiki de Uso</div>
-            <div class="brand-sub">Manual para usuarios del sistema</div>
-
-            <div class="nav-group">
-                <div class="nav-title">Inicio</div>
-                <a class="nav-link active" href="index.html">Resumen general</a>
-                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-title">Operación</div>
-                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
-                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
-                <a class="nav-link" href="reportes.html">Reportes</a>
-                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-title">Apoyo</div>
-                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
-            </div>
-        </aside>
-
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link active" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
         <main class="content">
             <section class="hero">
-                <div class="eyebrow">Guía del usuario</div>
-                <h1>Cómo usar el sistema de almacén</h1>
-                <p class="muted">Esta wiki explica el uso diario del sistema: acceso, registro de artículos, captura de órdenes, consulta de inventario, reportes y administración de usuarios. Está pensada para personal operativo y administrativo, no para desarrollo técnico.</p>
-                <div class="chips">
-                    <span class="chip">Artículos</span>
-                    <span class="chip">Inventario</span>
-                    <span class="chip">Órdenes</span>
-                    <span class="chip">Reportes</span>
-                    <span class="chip">Usuarios</span>
-                </div>
+                <div class="eyebrow">Guia del sistema</div>
+                <h1>Sistema de almacen Croram</h1>
+                <p class="muted">Referencia de funcionalidades operativas y cambios aplicados al sistema de almacen, inventario, ordenes, reportes, QR y API movil.</p>
             </section>
-
-            <section class="grid">
-                <article class="card">
-                    <h2>Ruta recomendada para empezar</h2>
-                    <ol class="steps">
-                        <li>Inicia sesión con tu correo y contraseña.</li>
-                        <li>Consulta el panel inicial para ver el estado general del almacén.</li>
-                        <li>Verifica artículos, proveedores y órdenes según tu tarea.</li>
-                        <li>Usa reportes para revisar existencias, movimientos y faltantes.</li>
-                    </ol>
-                </article>
-
-                <article class="card">
-                    <h2>Módulos principales</h2>
-                    <ul class="steps">
-                        <li><strong>Artículos:</strong> catálogo general e inventario actual.</li>
-                        <li><strong>Familias y subfamilias:</strong> clasificación de artículos.</li>
-                        <li><strong>Proveedores:</strong> datos para compras.</li>
-                        <li><strong>Órdenes:</strong> entradas y salidas del almacén.</li>
-                        <li><strong>Reportes:</strong> consulta y exportación de información.</li>
-                        <li><strong>Usuarios:</strong> control de accesos al sistema.</li>
-                    </ul>
-                </article>
-            </section>
-
-            <div class="callout ok">
-                <strong>Consejo:</strong> si no encuentras un artículo, primero usa el buscador por nombre, descripción o SKU antes de darlo de alta de nuevo.
-            </div>
-
-            <section class="card">
-                <h2>¿Qué página leer según tu tarea?</h2>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Necesito hacer esto</th>
-                                <th>Consulta esta página</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Entrar al sistema o cerrar sesión</td>
-                                <td><a href="inicio-sesion.html">Acceso al sistema</a></td>
-                            </tr>
-                            <tr>
-                                <td>Registrar, editar o buscar artículos</td>
-                                <td><a href="articulos.html">Artículos e inventario</a></td>
-                            </tr>
-                            <tr>
-                                <td>Capturar compras o salidas de almacén</td>
-                                <td><a href="ordenes.html">Órdenes de entrada y salida</a></td>
-                            </tr>
-                            <tr>
-                                <td>Consultar exportables e indicadores</td>
-                                <td><a href="reportes.html">Reportes</a></td>
-                            </tr>
-                            <tr>
-                                <td>Crear o desactivar accesos</td>
-                                <td><a href="usuarios.html">Administración de usuarios</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <p class="footer-note">Si esta wiki necesita adaptarse a tu operación interna, puedes ampliarla con políticas de captura, responsables por área y reglas de autorización.</p>
+            <section class="grid"><section class="card"><h2>Modulos principales</h2><ul class="steps"><li><strong>Articulos:</strong> catalogo, inventario, ubicacion, costos, QR e historial.</li><li><strong>Ordenes de entrada:</strong> compra, autorizacion, validacion QR, recepcion y PEPS.</li><li><strong>Ordenes de salida:</strong> consumo por area, observaciones, validacion QR, costos PEPS y aprobacion.</li><li><strong>Reportes:</strong> inventario, entradas, salidas, consumos, compras, sugeridos y obsoletos.</li><li><strong>Catalogos:</strong> familias, proveedores, areas y usuarios.</li><li><strong>API movil:</strong> consulta y cierre de ordenes desde app externa.</li></ul></section><section class="card"><h2>Cambios recientes integrados</h2><ul class="steps"><li>Inventario ya no se duplica al recibir entradas.</li><li>Salidas muestran costo PEPS, unitario y subtotal.</li><li>Reportes calculan valor de inventario y costos con respaldo de ultima compra.</li><li>Etiquetas QR imprimen descripcion del articulo junto al SKU.</li><li>Lista de articulos usa paginacion por API y busqueda en tiempo real.</li><li>API movil permite buscar, validar, listar pendientes y finalizar ordenes.</li></ul></section></section><div class="chips"><span class="chip ok">PEPS</span><span class="chip blue">QR 4x4 cm</span><span class="chip blue">CORS abierto API movil</span><span class="chip ok">Reportes exportables</span><span class="chip warn">Validacion por QR</span></div><section class="card"><h2>Flujo operativo recomendado</h2><ol class="steps"><li>Registrar catalogos base: familias, areas, proveedores y usuarios.</li><li>Dar de alta articulos con nombre, SKU, familia, descripcion, ubicacion, unidad, inventario y costo.</li><li>Generar QR de articulos cuando se requiera identificacion fisica.</li><li>Crear ordenes de entrada para compras y autorizar antes de ingresar partes.</li><li>Validar productos con QR o SKU antes de recibir o entregar.</li><li>Consultar reportes para revisar inventario, consumos, compras y costos.</li></ol></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

@@ -3,84 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artículos e Inventario - Wiki</title>
+    <title>Articulos e inventario - Wiki Croram</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="brand">Wiki de Uso</div>
-            <div class="brand-sub">Manual para usuarios del sistema</div>
-            <div class="nav-group">
-                <div class="nav-title">Inicio</div>
-                <a class="nav-link" href="index.html">Resumen general</a>
-                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Operación</div>
-                <a class="nav-link active" href="articulos.html">Artículos e inventario</a>
-                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
-                <a class="nav-link" href="reportes.html">Reportes</a>
-                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Apoyo</div>
-                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
-            </div>
-        </aside>
-
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link active" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
         <main class="content">
             <section class="hero">
                 <div class="eyebrow">Inventario</div>
-                <h1>Uso del módulo de artículos</h1>
-                <p class="muted">Este módulo permite consultar, registrar y actualizar los artículos del almacén, así como revisar su clasificación y existencias.</p>
+                <h1>Articulos, existencias, costos y QR</h1>
+                <p class="muted">El modulo de articulos concentra la informacion base de cada producto y su existencia actual.</p>
             </section>
-
-            <section class="grid">
-                <article class="card">
-                    <h2>Información principal de un artículo</h2>
-                    <ul class="steps">
-                        <li>SKU o clave interna</li>
-                        <li>Nombre del artículo</li>
-                        <li>Familia y subfamilia</li>
-                        <li>Unidad de medida</li>
-                        <li>Descripción</li>
-                        <li>Estado activo o inactivo</li>
-                    </ul>
-                </article>
-
-                <article class="card">
-                    <h2>Cómo buscar un artículo</h2>
-                    <ol class="steps">
-                        <li>Abre el módulo <strong>Artículos</strong>.</li>
-                        <li>Usa el buscador por nombre, descripción o SKU.</li>
-                        <li>Revisa los resultados paginados.</li>
-                        <li>Abre el registro si necesitas editarlo.</li>
-                    </ol>
-                </article>
-            </section>
-
-            <section class="card">
-                <h2>Cómo dar de alta un artículo</h2>
-                <ol class="steps">
-                    <li>Entra al formulario de artículos.</li>
-                    <li>Captura nombre, familia y demás datos obligatorios.</li>
-                    <li>Registra inventario inicial si corresponde.</li>
-                    <li>Guarda el registro.</li>
-                </ol>
-                <div class="callout ok">
-                    <strong>Consejo:</strong> usa descripciones claras y SKU consistentes para facilitar búsquedas y reportes.
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>Cuándo editar un artículo</h2>
-                <ul class="steps">
-                    <li>Cuando cambie su nombre o descripción.</li>
-                    <li>Cuando debas reclasificarlo en otra familia o subfamilia.</li>
-                    <li>Cuando necesites desactivarlo para evitar su uso futuro.</li>
-                </ul>
-            </section>
+            <section class="grid"><section class="card"><h2>Datos del articulo</h2><ul class="steps"><li>SKU o codigo interno. Si no se captura, el sistema puede generar consecutivo.</li><li>Nombre, descripcion y ubicacion fisica.</li><li>Familia y subfamilia.</li><li>Unidad de medida y condicion: NUEVO o USADO.</li><li>Inventario actual o inicial.</li><li>Costo de reposicion por unidad o costo total al editar.</li></ul></section><section class="card"><h2>Busqueda y listado</h2><ul class="steps"><li>La lista usa paginacion por API para cargar mas rapido.</li><li>El buscador filtra en tiempo real por nombre, SKU, descripcion o ubicacion.</li><li>Se puede cambiar el numero de articulos por pagina.</li><li>Cada registro permite editar o consultar historial.</li></ul></section></section><section class="card"><h2>Costos al editar</h2><ul class="steps"><li>En alta se captura costo por unidad.</li><li>En edicion se captura costo total actual.</li><li>Al guardar edicion, el sistema calcula costo por unidad dividiendo costo total entre inventario actual.</li><li>El costo por unidad se usa como respaldo en reportes si no hay PEPS o ultima compra.</li></ul></section><section class="card"><h2>QR de articulos</h2><ul class="steps"><li>Se pueden seleccionar articulos desde la lista y generar PDF de QR.</li><li>Formato termico: etiqueta horizontal con QR de 4x4 cm a la izquierda.</li><li>Formato carta: etiquetas en hoja carta con QR de 4x4 cm.</li><li>La etiqueta imprime descripcion hasta 50 caracteres y SKU.</li><li>El QR codifica el SKU para mantener compatibilidad con validacion de ordenes.</li></ul></section><section class="card"><h2>Historial e inventario</h2><ul class="steps"><li>El historial muestra entradas y salidas asociadas al articulo.</li><li>El inventario se calcula con stock actual.</li><li>El valor de inventario considera lotes PEPS, stock sin lote y respaldo por ultima compra.</li><li>Los lotes PEPS guardan cantidad inicial, disponible y costo unitario.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

@@ -3,77 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Órdenes - Wiki</title>
+    <title>Ordenes - Wiki Croram</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="brand">Wiki de Uso</div>
-            <div class="brand-sub">Manual para usuarios del sistema</div>
-            <div class="nav-group">
-                <div class="nav-title">Inicio</div>
-                <a class="nav-link" href="index.html">Resumen general</a>
-                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Operación</div>
-                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
-                <a class="nav-link active" href="ordenes.html">Órdenes de entrada y salida</a>
-                <a class="nav-link" href="reportes.html">Reportes</a>
-                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Apoyo</div>
-                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
-            </div>
-        </aside>
-
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link active" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
         <main class="content">
             <section class="hero">
                 <div class="eyebrow">Movimientos</div>
-                <h1>Órdenes de entrada y salida</h1>
-                <p class="muted">Las órdenes controlan el ingreso y egreso de mercancía. Son una parte clave para que el inventario refleje cantidades reales.</p>
+                <h1>Ordenes de entrada y salida</h1>
+                <p class="muted">Las ordenes controlan compras, recepciones y consumos internos del almacen.</p>
             </section>
-
-            <section class="grid">
-                <article class="card">
-                    <h2>Orden de entrada</h2>
-                    <ol class="steps">
-                        <li>Selecciona proveedor.</li>
-                        <li>Busca artículos por nombre, descripción o SKU.</li>
-                        <li>Agrega cantidades y precio unitario.</li>
-                        <li>Envía la orden.</li>
-                        <li>Cuando la mercancía llegue, confirma la recepción.</li>
-                    </ol>
-                </article>
-
-                <article class="card">
-                    <h2>Orden de salida</h2>
-                    <ol class="steps">
-                        <li>Busca artículos disponibles.</li>
-                        <li>Captura la cantidad a retirar.</li>
-                        <li>Agrega cada artículo a la salida.</li>
-                        <li>Registra la orden.</li>
-                        <li>La existencia del artículo se reducirá.</li>
-                    </ol>
-                </article>
-            </section>
-
-            <div class="callout danger">
-                <strong>Atención:</strong> una salida mal capturada afecta el inventario disponible. Revisa cantidades antes de confirmar.
-            </div>
-
-            <section class="card">
-                <h2>Buenas prácticas para órdenes</h2>
-                <ul class="steps">
-                    <li>Verifica el proveedor antes de enviar una orden de compra.</li>
-                    <li>No dupliques artículos en la misma orden si puedes consolidarlos.</li>
-                    <li>Revisa precios antes de guardar una entrada.</li>
-                    <li>En salidas, nunca excedas el stock disponible.</li>
-                    <li>Consulta los listados de órdenes para dar seguimiento a estatus.</li>
-                </ul>
-            </section>
+            <section class="grid"><section class="card"><h2>Orden de entrada</h2><ol class="steps"><li>Crear orden seleccionando proveedor y productos.</li><li>Capturar cantidad y precio unitario.</li><li>Autorizar orden antes de recibir partes.</li><li>Antes de autorizar se muestra ultima compra por producto: proveedor, fecha y precio.</li><li>Al ingresar partes se validan QR o SKU y precios reales.</li><li>Al pasar a RECIBIDA, la base de datos suma inventario mediante trigger.</li></ol></section><section class="card"><h2>Orden de salida</h2><ol class="steps"><li>Seleccionar articulos disponibles.</li><li>Capturar area obligatoria y observaciones.</li><li>Validar QR o SKU de cada producto.</li><li>Aprobar salida para confirmar consumo.</li><li>Al pasar a CONFIRMADA, la base de datos descuenta inventario mediante trigger.</li><li>El sistema registra costo PEPS, unitario y subtotal.</li></ol></section></section><div class="callout info"><strong>Validacion QR:</strong> en entradas y salidas se puede leer SKU o ID del producto para confirmar que la parte recibida o entregada corresponde a la orden.</div><section class="card"><h2>Estados principales</h2><div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Estado</th><th>Significado</th></tr></thead><tbody><tr><td>Entrada</td><td>PENDIENTE</td><td>Orden creada, aun sin autorizacion.</td></tr><tr><td>Entrada</td><td>AUTORIZADA</td><td>Lista para ingresar partes al inventario.</td></tr><tr><td>Entrada</td><td>RECIBIDA</td><td>Entrada concluida e inventario actualizado.</td></tr><tr><td>Salida</td><td>BORRADOR</td><td>Salida pendiente de aprobacion.</td></tr><tr><td>Salida</td><td>CONFIRMADA</td><td>Salida aprobada e inventario descontado.</td></tr></tbody></table></div></section><section class="card"><h2>PEPS en salidas</h2><ul class="steps"><li>El sistema consume lotes disponibles por orden de entrada mas antigua.</li><li>Si un detalle historico no tiene costo, los reportes usan respaldo por costo unitario, costo de reposicion o ultima compra.</li><li>El sistema evita crear lotes legacy cuando el producto ya tiene lotes de compra registrados.</li><li>La salida guarda costo PEPS promedio por producto y subtotal.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

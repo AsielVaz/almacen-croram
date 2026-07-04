@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambios aplicados - Wiki Croram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link active" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Bitacora</div>
+                <h1>Cambios y mejoras implementadas</h1>
+                <p class="muted">Registro de cambios aplicados al sistema durante las ultimas entregas.</p>
+            </section>
+            <section class="card"><h2>Inventario y PEPS</h2><ul class="steps"><li>Se corrigio duplicidad de entradas retirando suma manual cuando el trigger de base de datos ya suma al cambiar a RECIBIDA.</li><li>Se retiro descuento manual en aprobaciones de salida cuando el trigger ya descuenta al cambiar a CONFIRMADA.</li><li>Se corrigio consumo PEPS para no crear lote legacy si el producto ya tiene lotes de compra.</li><li>Se actualizaron costos historicos en cero cuando existia ultima compra o costo de reposicion.</li><li>Caso validado: salida OS-20260630103851 de Volante creta 2022 con PEPS de $1,280.00 y subtotal de $2,560.00.</li></ul></section><section class="card"><h2>Articulos y QR</h2><ul class="steps"><li>SKU automatico por consecutivo cuando el usuario no captura SKU.</li><li>Campo ubicacion agregado a articulos y reportes.</li><li>Listado de articulos cambiado a paginacion por API con busqueda en tiempo real.</li><li>QR termico y carta con QR de 4x4 cm, descripcion impresa y SKU.</li><li>Edicion de articulo calcula costo por unidad desde costo total actual / unidades.</li></ul></section><section class="card"><h2>Ordenes</h2><ul class="steps"><li>Entrada requiere autorizacion antes de recibir.</li><li>Antes de autorizar entrada se muestra ultima compra con proveedor, fecha y precio.</li><li>Entrada y salida validan QR/SKU por producto.</li><li>Salidas requieren area y observacion.</li><li>Salida guarda costo PEPS y subtotal para reportes.</li><li>Ordenes concluidas bloquean acciones para evitar duplicados.</li></ul></section><section class="card"><h2>Reportes</h2><ul class="steps"><li>Inventario muestra saldo inicial, entradas, salidas, existencia, valor inventario, costo por unidad y precio promedio.</li><li>Reportes de entradas muestran unidades, descripcion, precio unitario y total.</li><li>Reportes de salidas muestran area, observacion, costo PEPS y total.</li><li>Consumos por area incluyen costo PEPS promedio y total por periodo.</li><li>Compras sugeridas usan fecha de inicio de analisis y calculo por dias de stock requeridos.</li><li>Reporte de obsoletos lista articulos con existencia y sin movimiento en el periodo definido.</li></ul></section><section class="card"><h2>API movil</h2><ul class="steps"><li>Endpoint movil con token.</li><li>CORS abierto para permitir pruebas desde web y app.</li><li>Acciones para listar pendientes, buscar orden, validar escaneos y finalizar orden.</li><li>Listado de pendientes muestra entradas autorizadas sin lotes y salidas no confirmadas.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+        </main>
+    </div>
+</body>
+</html>

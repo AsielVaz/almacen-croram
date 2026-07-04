@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogos - Wiki Croram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link active" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Configuracion</div>
+                <h1>Catalogos operativos</h1>
+                <p class="muted">Los catalogos organizan la informacion base del sistema y deben mantenerse actualizados para que reportes y ordenes sean correctos.</p>
+            </section>
+            <section class="grid"><section class="card"><h2>Familias</h2><ul class="steps"><li>Agrupan articulos por tipo o uso.</li><li>Se usan en reportes de inventario y consumos.</li><li>Pueden estar activas o inactivas.</li></ul></section><section class="card"><h2>Proveedores</h2><ul class="steps"><li>Se usan en ordenes de compra.</li><li>Permiten reportes de compras por proveedor.</li><li>La ultima compra muestra proveedor, fecha y precio.</li></ul></section></section><section class="grid"><section class="card"><h2>Areas</h2><ul class="steps"><li>Son obligatorias en salidas.</li><li>Permiten registrar el gasto o consumo por area.</li><li>Alimentan reportes de consumos por area, familia y periodo.</li></ul></section><section class="card"><h2>Subfamilias</h2><ul class="steps"><li>El menu de subfamilias fue retirado de la navegacion principal.</li><li>El sistema conserva subfamilias como dato de clasificacion cuando existen.</li><li>En reportes puede mostrarse 'Sin familia' cuando no hay subfamilia asignada.</li></ul></section></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API movil - Wiki Croram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link active" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Integracion</div>
+                <h1>API para aplicacion movil</h1>
+                <p class="muted">El sistema cuenta con un endpoint para app movil que permite consultar ordenes, validar escaneos, listar pendientes y finalizar operaciones.</p>
+            </section>
+            <section class="card"><h2>Endpoint</h2><pre>POST https://almacen.grupocroram.com/api/mobileOrdenes.php
+Header: Content-Type: application/json
+Header: X-CRORAM-Mobile-Token: croram-mobile-dev-2026-cambiar</pre></section><section class="grid"><section class="card"><h2>Acciones disponibles</h2><ul class="steps"><li><code>health</code>: valida disponibilidad del API.</li><li><code>listarPendientes</code>: muestra ordenes pendientes de ingresar o aprobar.</li><li><code>buscarOrden</code>: obtiene informacion y detalle de una orden.</li><li><code>validarEscaneos</code>: compara escaneos contra productos esperados.</li><li><code>finalizarOrden</code>: registra entrada o confirma salida despues de validar.</li></ul></section><section class="card"><h2>CORS</h2><ul class="steps"><li>El endpoint responde con <code>Access-Control-Allow-Origin: *</code>.</li><li>Acepta preflight <code>OPTIONS</code>.</li><li>Permite encabezados solicitados por navegador, incluyendo token movil.</li></ul></section></section><section class="card"><h2>Listar pendientes</h2><pre>{
+  "accion": "listarPendientes",
+  "limite": 50,
+  "tipo_orden": "",
+  "texto": ""
+}</pre></section><section class="card"><h2>Buscar orden</h2><pre>{
+  "accion": "buscarOrden",
+  "tipo_orden": "entrada",
+  "id_orden": 35
+}</pre></section><section class="card"><h2>Finalizar orden</h2><ul class="steps"><li>Entrada: requiere orden AUTORIZADA, validacion completa y que no tenga lotes ya registrados.</li><li>Salida: requiere validacion completa y que la orden no este CONFIRMADA.</li><li>Los escaneos pueden usar SKU o ID de producto.</li><li>El flujo movil usa las mismas reglas de inventario y PEPS del sistema web.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+        </main>
+    </div>
+</body>
+</html>

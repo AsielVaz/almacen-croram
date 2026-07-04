@@ -3,73 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buenas Prácticas - Wiki</title>
+    <title>Buenas practicas - Wiki Croram</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="brand">Wiki de Uso</div>
-            <div class="brand-sub">Manual para usuarios del sistema</div>
-            <div class="nav-group">
-                <div class="nav-title">Inicio</div>
-                <a class="nav-link" href="index.html">Resumen general</a>
-                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Operación</div>
-                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
-                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
-                <a class="nav-link" href="reportes.html">Reportes</a>
-                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Apoyo</div>
-                <a class="nav-link active" href="buenas-practicas.html">Buenas prácticas</a>
-            </div>
-        </aside>
-
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link active" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
         <main class="content">
             <section class="hero">
-                <div class="eyebrow">Operación diaria</div>
-                <h1>Buenas prácticas de uso</h1>
-                <p class="muted">Estas recomendaciones ayudan a mantener la información limpia, consistente y útil para compras, salidas y reportes.</p>
+                <div class="eyebrow">Operacion</div>
+                <h1>Buenas practicas de captura</h1>
+                <p class="muted">Recomendaciones para mantener inventario, costos y reportes confiables.</p>
             </section>
-
-            <section class="grid">
-                <article class="card">
-                    <h2>Antes de capturar</h2>
-                    <ul class="steps">
-                        <li>Verifica si el artículo ya existe.</li>
-                        <li>Confirma la familia y subfamilia correctas.</li>
-                        <li>Usa nombres claros y uniformes.</li>
-                    </ul>
-                </article>
-
-                <article class="card">
-                    <h2>Durante la operación</h2>
-                    <ul class="steps">
-                        <li>Evita dejar órdenes a medias si ya no se usarán.</li>
-                        <li>Revisa cantidades antes de confirmar entradas o salidas.</li>
-                        <li>Usa reportes para validar cambios importantes.</li>
-                    </ul>
-                </article>
-            </section>
-
-            <div class="callout warn">
-                <strong>Recomendación:</strong> si detectas una diferencia entre el inventario físico y el sistema, repórtala y corrígela cuanto antes para evitar errores acumulados.
-            </div>
-
-            <section class="card">
-                <h2>Errores comunes a evitar</h2>
-                <ul class="steps">
-                    <li>Registrar dos veces el mismo artículo con nombres parecidos.</li>
-                    <li>Guardar precios equivocados en una orden de entrada.</li>
-                    <li>Capturar salidas mayores al stock disponible.</li>
-                    <li>Dejar usuarios activos cuando ya no usan el sistema.</li>
-                    <li>No revisar reportes de bajo stock a tiempo.</li>
-                </ul>
-            </section>
+            <section class="grid"><section class="card"><h2>Antes de capturar</h2><ul class="steps"><li>Buscar articulo por SKU, nombre, descripcion y ubicacion antes de crearlo.</li><li>Verificar proveedor y area.</li><li>Confirmar unidades fisicas antes de guardar.</li><li>Usar descripcion clara para que el QR y la busqueda sean utiles.</li></ul></section><section class="card"><h2>Durante movimientos</h2><ul class="steps"><li>Escanear o validar SKU/ID de cada producto.</li><li>Revisar precio real de compra al ingresar una entrada.</li><li>No aprobar salidas si falta area u observacion.</li><li>No repetir una orden si ya esta RECIBIDA o CONFIRMADA.</li></ul></section></section><section class="card"><h2>Revision periodica</h2><ul class="steps"><li>Revisar reporte de inventario contra conteos fisicos.</li><li>Revisar salidas sin costo cuando no exista compra previa.</li><li>Mantener costos de reposicion actualizados para articulos sin historial de compra.</li><li>Usar reportes de consumos por area para detectar patrones o desviaciones.</li><li>Desactivar articulos obsoletos cuando ya no deban usarse.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

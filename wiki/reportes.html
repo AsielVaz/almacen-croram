@@ -3,84 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes - Wiki</title>
+    <title>Reportes - Wiki Croram</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="brand">Wiki de Uso</div>
-            <div class="brand-sub">Manual para usuarios del sistema</div>
-            <div class="nav-group">
-                <div class="nav-title">Inicio</div>
-                <a class="nav-link" href="index.html">Resumen general</a>
-                <a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Operación</div>
-                <a class="nav-link" href="articulos.html">Artículos e inventario</a>
-                <a class="nav-link" href="ordenes.html">Órdenes de entrada y salida</a>
-                <a class="nav-link active" href="reportes.html">Reportes</a>
-                <a class="nav-link" href="usuarios.html">Administración de usuarios</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Apoyo</div>
-                <a class="nav-link" href="buenas-practicas.html">Buenas prácticas</a>
-            </div>
-        </aside>
-
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link active" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
         <main class="content">
             <section class="hero">
-                <div class="eyebrow">Consulta</div>
-                <h1>Uso del módulo de reportes</h1>
-                <p class="muted">Los reportes ayudan a revisar existencias, movimientos y artículos críticos, además de exportar información para seguimiento externo.</p>
+                <div class="eyebrow">Analisis</div>
+                <h1>Reportes del sistema</h1>
+                <p class="muted">Los reportes permiten revisar existencias, costos, consumos, compras, movimientos y sugerencias de compra.</p>
             </section>
-
-            <section class="card">
-                <h2>Reportes disponibles</h2>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Reporte</th>
-                                <th>Para qué sirve</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Reportes generales</td>
-                                <td>Consulta inventario, proveedores y órdenes exportables.</td>
-                            </tr>
-                            <tr>
-                                <td>Items con bajo stock</td>
-                                <td>Detecta productos que requieren reabastecimiento.</td>
-                            </tr>
-                            <tr>
-                                <td>Items sin stock</td>
-                                <td>Localiza productos agotados.</td>
-                            </tr>
-                            <tr>
-                                <td>Reporte de artículos</td>
-                                <td>Revisa inventario desde una vista operativa.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>Cómo exportar</h2>
-                <ol class="steps">
-                    <li>Abre el reporte deseado.</li>
-                    <li>Revisa los datos antes de exportar.</li>
-                    <li>Haz clic en el botón de exportación a Excel.</li>
-                    <li>Guarda el archivo en la carpeta que prefieras.</li>
-                </ol>
-            </section>
-
-            <div class="callout ok">
-                <strong>Consejo:</strong> usa el reporte de bajo stock como rutina diaria para anticipar compras y evitar faltantes.
-            </div>
+            <section class="grid"><section class="card"><h2>Inventario</h2><ul class="steps"><li>Muestra saldo inicial, entradas, salidas y existencia.</li><li>Incluye valor de inventario y costo por unidad.</li><li>Calcula costo promedio usando lotes PEPS, stock sin lote, costo de reposicion y ultima compra.</li><li>Permite filtrar por familia y subfamilia.</li></ul></section><section class="card"><h2>Entradas y salidas</h2><ul class="steps"><li>Entradas: proveedor, articulo, descripcion, unidades, precio unitario y total.</li><li>Salidas: area, observacion, articulo, unidades, costo PEPS y total.</li><li>Los formatos muestran unidades sin decimales cuando corresponde.</li></ul></section></section><section class="card"><h2>Reportes disponibles</h2><div class="table-wrap"><table><thead><tr><th>Reporte</th><th>Contenido</th></tr></thead><tbody><tr><td>Inventario</td><td>Existencias, saldo inicial, entradas, salidas, valor inventario, costo por unidad y precio promedio.</td></tr><tr><td>Proveedor</td><td>Compras por proveedor con articulo, fecha, precio unitario y total.</td></tr><tr><td>Entradas</td><td>Unidades, descripcion, precio unitario y compra total.</td></tr><tr><td>Salidas</td><td>Observacion, area, costo PEPS y total en pesos.</td></tr><tr><td>Consumos por area</td><td>Consumo por area, familia, subfamilia, unidades, costo promedio PEPS y total.</td></tr><tr><td>Compras sugeridas</td><td>Calculo de pedido sugerido con dias de stock requeridos y periodo de analisis.</td></tr><tr><td>Obsoletos</td><td>Articulos con existencia y sin movimiento durante el periodo definido.</td></tr><tr><td>Bajo stock</td><td>Articulos cuya existencia se encuentra debajo del limite definido.</td></tr></tbody></table></div></section><section class="card"><h2>Exportacion</h2><ul class="steps"><li>Los reportes pueden exportarse desde las pantallas correspondientes.</li><li>La informacion exportada respeta filtros aplicados por fecha, proveedor, area o catalogo.</li><li>Los costos en reportes usan respaldo para evitar totales en cero cuando hay ultima compra registrada.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>
