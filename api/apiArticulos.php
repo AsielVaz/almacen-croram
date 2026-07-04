@@ -91,6 +91,12 @@ try {
             break;
 
         case 'actualizarArticulo':
+            $inventarioActualizado = $_POST['inventario_inicial'] ?? '';
+            $costoReposicion = (float)($_POST['costo_reposicion'] ?? 0);
+
+            if ($inventarioActualizado !== '' && (float)$inventarioActualizado > 0) {
+                $costoReposicion = $costoReposicion / (float)$inventarioActualizado;
+            }
 
             $admin->actualizarArticulo(
                 $_POST['id'] ?? 0,
@@ -102,16 +108,16 @@ try {
                 $_POST['descripcion'] ?? '',
                 $_POST['ubicacion'] ?? '',
                 $_POST['activo'] ?? 1,
-                $_POST['costo_reposicion'] ?? 0,
+                $costoReposicion,
                 $_POST['consumo_diario'] ?? 0,
                 $_POST['tiempo_reposicion'] ?? 0,
                 $_POST['tipo_articulo'] ?? 'NUEVO'
             );
 
-            if (isset($_POST['inventario_inicial']) && $_POST['inventario_inicial'] !== '') {
+            if ($inventarioActualizado !== '') {
                 $admin->actualizarInventarioExacto(
                     $_POST['id'] ?? 0,
-                    $_POST['inventario_inicial'],
+                    $inventarioActualizado,
                     date('Y-m-d H:i:s')
                 );
             }

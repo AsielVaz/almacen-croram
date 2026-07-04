@@ -535,6 +535,7 @@ requerir_autenticacion();
                 const id = escaparHtml(articulo.id);
                 const nombre = escaparHtml(articulo.nombre);
                 const sku = escaparHtml(articulo.sku || '');
+                const descripcion = escaparHtml(articulo.descripcion || '');
 
                 return `
                     <tr>
@@ -543,6 +544,7 @@ requerir_autenticacion();
                                 data-id="${id}"
                                 data-nombre="${nombre}"
                                 data-sku="${sku}"
+                                data-descripcion="${descripcion}"
                                 data-cantidad="${cantidad}">
                         </td>
                         <td class="fw-bold">${id}</td>
@@ -645,6 +647,7 @@ requerir_autenticacion();
                     id: chk.dataset.id,
                     nombre: chk.dataset.nombre,
                     sku: chk.dataset.sku,
+                    descripcion: chk.dataset.descripcion || '',
                     cantidad: chk.dataset.cantidad
                 });
             });

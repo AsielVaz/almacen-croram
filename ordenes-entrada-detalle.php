@@ -653,6 +653,14 @@ requerir_autenticacion();
 
     <script>
         const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
+        const ULTIMAS_COMPRAS = <?= json_encode(array_map(function ($detalle) {
+            return [
+                'producto' => $detalle->nombre_producto ?? '',
+                'proveedor' => $detalle->ultima_compra_proveedor ?? '',
+                'fecha' => $detalle->ultima_compra_fecha ?? '',
+                'precio' => (float)($detalle->ultima_compra_precio ?? 0),
+            ];
+        }, $detallesOrden), JSON_UNESCAPED_UNICODE) ?>;
 
         document.addEventListener('DOMContentLoaded', function() {
             const btnAutorizarOrden = document.getElementById('btnAutorizarOrdenCompra');
@@ -662,9 +670,31 @@ requerir_autenticacion();
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
 
+                    const escaparHtml = valor => String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    })[caracter]);
+                    const resumenCompras = ULTIMAS_COMPRAS.map(item => {
+                        const proveedor = item.proveedor || 'Sin compra previa';
+                        const fecha = item.fecha || 'N/A';
+                        const precio = Number(item.precio || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                        return `<tr><td>${escaparHtml(item.producto)}</td><td>${escaparHtml(proveedor)}</td><td>${escaparHtml(fecha)}</td><td class="text-end">${precio}</td></tr>`;
+                    }).join('');
+
                     Swal.fire({
                         title: 'Autorizar orden',
-                        text: 'La orden quedara lista para ingresar las partes.',
+                        html: `
+                            <p class="mb-3">La orden quedara lista para ingresar las partes.</p>
+                            <div class="table-responsive text-start">
+                                <table class="table table-sm">
+                                    <thead><tr><th>Producto</th><th>Ultimo proveedor</th><th>Fecha</th><th class="text-end">Precio</th></tr></thead>
+                                    <tbody>${resumenCompras}</tbody>
+                                </table>
+                            </div>
+                        `,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonText: 'Autorizar',

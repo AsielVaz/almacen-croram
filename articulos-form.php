@@ -633,6 +633,26 @@ requerir_autenticacion();
         <?php if ($esEdicion): ?>
         const ARTICULO_ID = <?= (int)$_GET['id'] ?>;
         const SUBFAMILIA_ID = <?= isset($articulo[0]->id_subfamilia) ? (int)$articulo[0]->id_subfamilia : 1 ?>;
+        document.addEventListener('DOMContentLoaded', () => {
+            const costoInput = document.getElementById('costo_reposicion');
+            const inventarioInput = document.getElementById('inventario_inicial');
+            const costoLabel = document.querySelector('label[for="costo_reposicion"]');
+
+            if (costoLabel) {
+                costoLabel.textContent = 'Costo total actual';
+            }
+
+            if (costoInput && inventarioInput) {
+                const costoUnitario = parseFloat(costoInput.value || '0');
+                const unidades = parseFloat(inventarioInput.value || '0');
+                costoInput.value = unidades > 0 ? (costoUnitario * unidades).toFixed(2) : costoUnitario.toFixed(2);
+
+                const hint = document.createElement('p');
+                hint.className = 'cr-hint';
+                hint.textContent = 'Al guardar se calculara el costo por unidad dividiendo entre el inventario actual.';
+                costoInput.closest('.cr-field')?.appendChild(hint);
+            }
+        });
         <?php endif; ?>
 
         /* �????,?�????,? Submit �????,?�????,? */

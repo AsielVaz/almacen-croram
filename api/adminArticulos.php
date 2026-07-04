@@ -165,16 +165,27 @@ class AdministradorArticulos extends Con {
                 COALESCE(salidas.total_salidas, 0) AS total_salidas,
                 COALESCE(entradas.total_movimientos_entrada, 0) + COALESCE(salidas.total_movimientos_salida, 0) AS total_movimientos,
                 CASE
-                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0))
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN
+                        COALESCE(valor_lotes.valor_inventario, 0)
+                        + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                          * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
                     ELSE 0
                 END AS valor_inventario,
                 CASE
-                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN (
+                        COALESCE(valor_lotes.valor_inventario, 0)
+                        + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                          * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                    ) / COALESCE(inv.stock, 0)
                     ELSE 0
                 END AS costo_por_unidad,
                 CASE
-                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
-                    ELSE COALESCE(p.costo_reposicion, 0)
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN (
+                        COALESCE(valor_lotes.valor_inventario, 0)
+                        + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                          * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                    ) / COALESCE(inv.stock, 0)
+                    ELSE COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
                 END AS precio_promedio_compra
             FROM productos p
             JOIN familias f ON f.id = p.id_familia
@@ -182,11 +193,26 @@ class AdministradorArticulos extends Con {
             LEFT JOIN inventario inv ON inv.id_producto = p.id
             LEFT JOIN (
                 SELECT
-                    id_producto,
-                    SUM(cantidad_disponible * costo_unitario) AS valor_inventario
-                FROM inventario_lotes
-                WHERE cantidad_disponible > 0
-                GROUP BY id_producto
+                    il.id_producto,
+                    SUM(il.cantidad_disponible * COALESCE(NULLIF(il.costo_unitario, 0), ultima_compra.precio_unitario, 0)) AS valor_inventario,
+                    SUM(il.cantidad_disponible) AS cantidad_lotes
+                FROM inventario_lotes il
+                LEFT JOIN (
+                    SELECT
+                        ocd.id_producto,
+                        ocd.precio_unitario
+                    FROM orden_compra_detalle ocd
+                    INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                    INNER JOIN (
+                        SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                        FROM orden_compra_detalle ocd2
+                        INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                        WHERE oc2.estatus = 'RECIBIDA'
+                        GROUP BY ocd2.id_producto
+                    ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+                ) ultima_compra ON ultima_compra.id_producto = il.id_producto
+                WHERE il.cantidad_disponible > 0
+                GROUP BY il.id_producto
             ) valor_lotes ON valor_lotes.id_producto = p.id
             LEFT JOIN (
                 SELECT
@@ -212,6 +238,20 @@ class AdministradorArticulos extends Con {
                 WHERE os.estatus = 'CONFIRMADA'
                 GROUP BY osd.id_producto
             ) salidas ON salidas.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             $where
             ORDER BY p.nombre
         ";
@@ -416,9 +456,17 @@ class AdministradorArticulos extends Con {
                 f.nombre AS familia,
                 COALESCE(s.nombre, 'Sin familia') AS subfamilia,
                 COALESCE(inv.stock, 0) AS cantidad,
-                COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) AS valor_inventario,
+                (
+                    COALESCE(valor_lotes.valor_inventario, 0)
+                    + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                      * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                ) AS valor_inventario,
                 CASE
-                    WHEN COALESCE(inv.stock, 0) > 0 THEN COALESCE(valor_lotes.valor_inventario, COALESCE(inv.stock, 0) * COALESCE(p.costo_reposicion, 0)) / COALESCE(inv.stock, 0)
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN (
+                        COALESCE(valor_lotes.valor_inventario, 0)
+                        + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                          * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                    ) / COALESCE(inv.stock, 0)
                     ELSE 0
                 END AS costo_por_unidad,
                 movimientos.ultimo_movimiento
@@ -428,12 +476,41 @@ class AdministradorArticulos extends Con {
             LEFT JOIN inventario inv ON inv.id_producto = p.id
             LEFT JOIN (
                 SELECT
-                    id_producto,
-                    SUM(cantidad_disponible * costo_unitario) AS valor_inventario
-                FROM inventario_lotes
-                WHERE cantidad_disponible > 0
-                GROUP BY id_producto
+                    il.id_producto,
+                    SUM(il.cantidad_disponible * COALESCE(NULLIF(il.costo_unitario, 0), ultima_compra.precio_unitario, 0)) AS valor_inventario,
+                    SUM(il.cantidad_disponible) AS cantidad_lotes
+                FROM inventario_lotes il
+                LEFT JOIN (
+                    SELECT
+                        ocd.id_producto,
+                        ocd.precio_unitario
+                    FROM orden_compra_detalle ocd
+                    INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                    INNER JOIN (
+                        SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                        FROM orden_compra_detalle ocd2
+                        INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                        WHERE oc2.estatus = 'RECIBIDA'
+                        GROUP BY ocd2.id_producto
+                    ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+                ) ultima_compra ON ultima_compra.id_producto = il.id_producto
+                WHERE il.cantidad_disponible > 0
+                GROUP BY il.id_producto
             ) valor_lotes ON valor_lotes.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             LEFT JOIN (
                 SELECT id_producto, MAX(fecha_movimiento) AS ultimo_movimiento
                 FROM (

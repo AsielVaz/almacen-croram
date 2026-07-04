@@ -451,7 +451,7 @@ try {
                         : (float)$producto['precio_unitario'];
 
                     $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
-                    $admin->registrarEntradaInventario($idProducto, $cantidad);
+                    // El trigger trg_oc_recibida_entrada suma inventario al cambiar a RECIBIDA.
                     $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, $ordenActual['fecha_orden'] ?? date('Y-m-d'));
                 }
 
@@ -480,9 +480,9 @@ try {
                     $cantidad = (float)$producto['cantidad_requerida'];
                     $costoPeps = $admin->consumirInventarioPeps($idProducto, $cantidad);
                     $admin->actualizarCostoDetalleSalida($idOrden, $idProducto, $costoPeps);
-                    $admin->registrarSalidaInventario($idProducto, $cantidad);
                 }
 
+                // El trigger trg_os_confirmada_salida descuenta inventario al confirmar.
                 $admin->actualizarEstatusOrdenSalida($idOrden, 'CONFIRMADA');
                 $admin->confirmarTransaccion();
 

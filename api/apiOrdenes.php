@@ -178,7 +178,7 @@ try {
                 $precioReal = $preciosReales[$idProducto] ?? $productoOrden['precio_unitario'];
 
                 $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
-                $admin->registrarEntradaInventario($idProducto, $cantidad);
+                // El trigger trg_oc_recibida_entrada suma inventario al cambiar a RECIBIDA.
                 $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, $ordenActual['fecha_orden'] ?? date('Y-m-d'));
             }
 
@@ -230,9 +230,9 @@ try {
             foreach ($detalles as $detalle) {
                 $costoPeps = $admin->consumirInventarioPeps($detalle['id_producto'] ?? 0, $detalle['cantidad'] ?? 0);
                 $admin->actualizarCostoDetalleSalida($idOrden, $detalle['id_producto'] ?? 0, $costoPeps);
-                $admin->registrarSalidaInventario($detalle['id_producto'] ?? 0, $detalle['cantidad'] ?? 0);
             }
 
+            // El trigger trg_os_confirmada_salida descuenta inventario al confirmar.
             $admin->actualizarEstatusOrdenSalida($idOrden, 'CONFIRMADA');
             $admin->confirmarTransaccion();
 

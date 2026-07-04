@@ -7,12 +7,40 @@ function pdf_text($value)
     return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
 }
 
+function texto_etiqueta($producto)
+{
+    $texto = trim((string)($producto['descripcion'] ?? ''));
+    if ($texto === '') {
+        $texto = trim((string)($producto['nombre'] ?? ''));
+    }
+
+    return mb_substr($texto, 0, 50, 'UTF-8');
+}
+
+function font_size_etiqueta($texto)
+{
+    $largo = mb_strlen((string)$texto, 'UTF-8');
+    if ($largo <= 18) {
+        return 12;
+    }
+    if ($largo <= 32) {
+        return 10;
+    }
+    return 8;
+}
+
 /*
 |--------------------------------------------------------------------------
 | RECIBIR PRODUCTOS
 |--------------------------------------------------------------------------
 */
 $productos = json_decode($_POST['productos'] ?? '[]', true);
+if (isset($productos['sku'])) {
+    $productos = [$productos];
+}
+if (!is_array($productos)) {
+    $productos = [];
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +50,13 @@ $productos = json_decode($_POST['productos'] ?? '[]', true);
 $qrs = array();
 
 foreach ($productos as $producto) {
+    if (!is_array($producto)) {
+        continue;
+    }
     $qrs[] = array(
         'sku'  => $producto['sku'],
         'nombre' => $producto['nombre'] ?? '',
+        'descripcion' => texto_etiqueta($producto),
         'data' => $producto['sku']
     );
 }
@@ -141,10 +173,10 @@ foreach ($qrs as $index => $qr) {
     // QR
     $pdf->Image($qrFile, $xQR, $yQR, $qrSize);
 
-    $nombreQr = mb_substr((string)$qr['nombre'], 0, 50, 'UTF-8');
+    $nombreQr = $qr['descripcion'];
     $xTexto = $xQR + $qrSize + $paddingBox;
     $pdf->SetXY($xTexto, $yQR + 4);
-    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->SetFont('Arial', 'B', font_size_etiqueta($nombreQr));
     $pdf->MultiCell($anchoTexto, 5, pdf_text($nombreQr), 0, 'L');
     $pdf->SetXY($xTexto, $yQR + 29);
     $pdf->SetFont('Arial', 'B', 8);

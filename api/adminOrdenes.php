@@ -224,9 +224,39 @@ class AdministradorOrdenes extends Con
                 productos.nombre AS nombre_producto,
                 productos.sku,
                 productos.ubicacion,
-                COALESCE(orden_salida_detalle.costo_peps, orden_salida_detalle.costo_unitario, productos.costo_reposicion, 0) AS costo_promedio
+                COALESCE(
+                    NULLIF(orden_salida_detalle.costo_peps, 0),
+                    NULLIF(orden_salida_detalle.costo_unitario, 0),
+                    NULLIF(productos.costo_reposicion, 0),
+                    ultima_compra.precio_unitario,
+                    0
+                ) AS costo_promedio,
+                COALESCE(
+                    NULLIF(orden_salida_detalle.subtotal, 0),
+                    orden_salida_detalle.cantidad * COALESCE(
+                        NULLIF(orden_salida_detalle.costo_peps, 0),
+                        NULLIF(orden_salida_detalle.costo_unitario, 0),
+                        NULLIF(productos.costo_reposicion, 0),
+                        ultima_compra.precio_unitario,
+                        0
+                    )
+                ) AS subtotal
             FROM orden_salida_detalle
             INNER JOIN productos ON productos.id = orden_salida_detalle.id_producto
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = productos.id
             WHERE id_orden_salida = $id_orden_salida
         ";
 
@@ -324,14 +354,43 @@ class AdministradorOrdenes extends Con
                 p.descripcion,
                 p.ubicacion,
                 osd.cantidad,
-                COALESCE(osd.costo_peps, osd.costo_unitario, p.costo_reposicion, 0) AS costo_peps,
-                osd.subtotal,
+                COALESCE(
+                    NULLIF(osd.costo_peps, 0),
+                    NULLIF(osd.costo_unitario, 0),
+                    NULLIF(p.costo_reposicion, 0),
+                    ultima_compra.precio_unitario,
+                    0
+                ) AS costo_peps,
+                COALESCE(
+                    NULLIF(osd.subtotal, 0),
+                    osd.cantidad * COALESCE(
+                        NULLIF(osd.costo_peps, 0),
+                        NULLIF(osd.costo_unitario, 0),
+                        NULLIF(p.costo_reposicion, 0),
+                        ultima_compra.precio_unitario,
+                        0
+                    )
+                ) AS subtotal,
                 COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario
             FROM orden_salida_detalle osd
             INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
             INNER JOIN productos p ON p.id = osd.id_producto
             LEFT JOIN areas a ON a.id = os.id_area
             LEFT JOIN usuarios u ON u.id = os.id_usuario
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
             ORDER BY os.fecha_salida DESC, os.id DESC, p.nombre ASC
         ");
@@ -475,14 +534,18 @@ class AdministradorOrdenes extends Con
             LIMIT 1
         "), true)[0] ?? ['stock' => 0, 'costo' => 0];
 
-        $loteDisponible = json_decode($this->ejecutar("
-            SELECT COALESCE(SUM(cantidad_disponible), 0) AS disponible
+        $lotesResumen = json_decode($this->ejecutar("
+            SELECT
+                COALESCE(SUM(cantidad_disponible), 0) AS disponible,
+                COUNT(*) AS total_lotes
             FROM inventario_lotes
             WHERE id_producto = $idProducto
-        "), true)[0]['disponible'] ?? 0;
+        "), true)[0] ?? ['disponible' => 0, 'total_lotes' => 0];
 
-        $stockSinLote = (float)$stockActual['stock'] - (float)$loteDisponible;
-        if ($stockSinLote > 0.0001) {
+        $loteDisponible = (float)($lotesResumen['disponible'] ?? 0);
+        $totalLotes = (int)($lotesResumen['total_lotes'] ?? 0);
+        $stockSinLote = (float)$stockActual['stock'] - $loteDisponible;
+        if ($totalLotes === 0 && $stockSinLote > 0.0001) {
             $costoLegacy = (float)$stockActual['costo'];
             $this->ejecutar("
                 INSERT INTO inventario_lotes
@@ -655,9 +718,27 @@ class AdministradorOrdenes extends Con
                 p.nombre AS articulo,
                 p.ubicacion,
                 SUM(osd.cantidad) AS cantidad,
-                SUM(osd.subtotal) AS total,
+                SUM(COALESCE(
+                    NULLIF(osd.subtotal, 0),
+                    osd.cantidad * COALESCE(
+                        NULLIF(osd.costo_peps, 0),
+                        NULLIF(osd.costo_unitario, 0),
+                        NULLIF(p.costo_reposicion, 0),
+                        ultima_compra.precio_unitario,
+                        0
+                    )
+                )) AS total,
                 CASE
-                    WHEN SUM(osd.cantidad) > 0 THEN SUM(osd.subtotal) / SUM(osd.cantidad)
+                    WHEN SUM(osd.cantidad) > 0 THEN SUM(COALESCE(
+                        NULLIF(osd.subtotal, 0),
+                        osd.cantidad * COALESCE(
+                            NULLIF(osd.costo_peps, 0),
+                            NULLIF(osd.costo_unitario, 0),
+                            NULLIF(p.costo_reposicion, 0),
+                            ultima_compra.precio_unitario,
+                            0
+                        )
+                    )) / SUM(osd.cantidad)
                     ELSE 0
                 END AS costo_peps_promedio
             FROM orden_salida_detalle osd
@@ -666,6 +747,20 @@ class AdministradorOrdenes extends Con
             INNER JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias sf ON sf.id = p.id_subfamilia
             LEFT JOIN areas a ON a.id = os.id_area
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
             GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, p.nombre, p.ubicacion
             ORDER BY a.nombre ASC, f.nombre ASC, p.nombre ASC
