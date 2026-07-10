@@ -107,6 +107,7 @@ $usuarioSesion = usuario_actual();
                               <li class="side-nav-item"><a href="reportes.php?seccion=obsoletos" class="side-nav-link"><span class="menu-text">Obsoletos</span></a></li>
                               <li class="side-nav-item"><a href="reportes.php?seccion=proveedores" class="side-nav-link"><span class="menu-text">Proveedor</span></a></li>
                               <li class="side-nav-item"><a href="reportes.php?seccion=entradas_salidas" class="side-nav-link"><span class="menu-text">Entradas y salidas</span></a></li>
+                              <li class="side-nav-item"><a href="reportes.php?seccion=log_inventario" class="side-nav-link"><span class="menu-text">Log de Inventario</span></a></li>
                               <li class="side-nav-item"><a href="reportes-compras-sugeridas.php" class="side-nav-link"><span class="menu-text">Compras sugeridas</span></a></li>
                               <li class="side-nav-item"><a href="reportes-inventario-aleatorio.php" class="side-nav-link"><span class="menu-text">Rep. art&iacute;culos</span></a></li>
                           </ul>

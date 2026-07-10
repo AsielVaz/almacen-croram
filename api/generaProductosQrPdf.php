@@ -9,9 +9,9 @@ function pdf_text($value)
 
 function texto_etiqueta($producto)
 {
-    $texto = trim((string)($producto['descripcion'] ?? ''));
+    $texto = trim((string)($producto['nombre'] ?? ''));
     if ($texto === '') {
-        $texto = trim((string)($producto['nombre'] ?? ''));
+        $texto = trim((string)($producto['descripcion'] ?? ''));
     }
 
     return mb_substr($texto, 0, 50, 'UTF-8');
@@ -33,15 +33,29 @@ function font_size_etiqueta($texto)
 |--------------------------------------------------------------------------
 | CONFIGURACIÓN IMPRESORA TÉRMICA
 |--------------------------------------------------------------------------
-| 58mm = ancho típico
-| Alto dinámico (se calcula)
+| Etiqueta térmica horizontal: 10 x 5 cm
+| QR: 4 x 4 cm
+| Regla inferior tipo flexómetro: evidencia visual de 0 a 10 cm
+| FPDF trabaja en milímetros, por eso se convierten los centímetros.
 */
-$anchoMM = 100;
-$altoPorQR = 46; // etiqueta horizontal: QR 4x4 cm + texto lateral
-$altoDivider = 4; // mm entre etiquetas
-$qrSize = 40;
-$paddingBox = 4;
-$anchoTexto = $anchoMM - ($paddingBox * 3) - $qrSize;
+$cm = 10;
+$anchoEtiquetaCm = 10;
+$altoEtiquetaCm = 5;
+$altoReglaCm = 0.8;
+$qrSizeCm = 4;
+$paddingBoxCm = 0.4;
+$altoDividerCm = 0.4;
+$margenCorteCm = 0.8;
+
+$anchoMM = $anchoEtiquetaCm * $cm;
+$altoPorQR = $altoEtiquetaCm * $cm;
+$altoRegla = $altoReglaCm * $cm;
+$altoBloqueEtiqueta = $altoPorQR + $altoRegla;
+$altoDivider = $altoDividerCm * $cm;
+$margenCorte = $margenCorteCm * $cm;
+$qrSize = $qrSizeCm * $cm;
+$paddingBox = $paddingBoxCm * $cm;
+$anchoTexto = $anchoMM - ($paddingBox * 4) - $qrSize;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,15 +90,16 @@ foreach ($productos as $producto) {
 |--------------------------------------------------------------------------
 */
 $numQRs = count($qrs);
-// Alto total: QRs + divisores (uno menos que QRs)
-$altoTotal = ($numQRs * $altoPorQR) + (($numQRs - 1) * $altoDivider);
+// Alto total: etiquetas con regla + divisores (uno menos que etiquetas).
+$altoTotal = max($altoBloqueEtiqueta + $margenCorte, ($numQRs * $altoBloqueEtiqueta) + (max(0, $numQRs - 1) * $altoDivider) + $margenCorte);
 
 /*
 |--------------------------------------------------------------------------
 | PDF TÉRMICO
 |--------------------------------------------------------------------------
 */
-$pdf = new FPDF('P', 'mm', array($anchoMM, $altoTotal));
+$orientacion = $anchoMM > $altoTotal ? 'L' : 'P';
+$pdf = new FPDF($orientacion, 'mm', array($anchoMM, $altoTotal));
 $pdf->SetMargins(4, 4, 4);
 $pdf->SetAutoPageBreak(false);
 
@@ -126,6 +141,33 @@ function drawDashedRect($pdf, $x, $y, $width, $height) {
     }
 }
 
+function drawFlexometro($pdf, $x, $y, $width, $height, $centimetros) {
+    $pdf->SetFillColor(255, 255, 255);
+    $pdf->SetDrawColor(0, 0, 0);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetLineWidth(0.2);
+    $pdf->Rect($x, $y, $width, $height, 'DF');
+
+    $mmPorCm = $width / max(1, $centimetros);
+    for ($cmActual = 0; $cmActual <= $centimetros; $cmActual++) {
+        $xCm = $x + ($cmActual * $mmPorCm);
+        $pdf->Line($xCm, $y, $xCm, $y + $height);
+        $pdf->SetFont('Arial', '', 5);
+        $pdf->SetXY($xCm + 0.5, $y + $height - 3.2);
+        $pdf->Cell(5, 2.5, $cmActual . 'cm', 0, 0, 'L');
+
+        if ($cmActual === $centimetros) {
+            continue;
+        }
+
+        for ($mmActual = 1; $mmActual < 10; $mmActual++) {
+            $xMm = $xCm + ($mmActual * ($mmPorCm / 10));
+            $altoMarca = ($mmActual === 5) ? ($height * 0.62) : ($height * 0.38);
+            $pdf->Line($xMm, $y, $xMm, $y + $altoMarca);
+        }
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | GENERAR QR UNO DEBAJO DEL OTRO CON LÍNEAS DIVISORIAS
@@ -161,7 +203,8 @@ foreach ($qrs as $qr) {
     $pdf->SetXY($xTexto, $yEtiqueta + 31);
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell($anchoTexto, 5, pdf_text($qr['sku']), 0, 1, 'L');
-    $pdf->SetY($yEtiqueta + $altoPorQR);
+    drawFlexometro($pdf, 0, $yEtiqueta + $altoPorQR, $anchoMM, $altoRegla, $anchoEtiquetaCm);
+    $pdf->SetY($yEtiqueta + $altoBloqueEtiqueta);
 
     // Limpiar QR temporal
     @unlink($qrFile);

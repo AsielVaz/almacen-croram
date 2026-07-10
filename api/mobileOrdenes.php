@@ -398,19 +398,28 @@ try {
         case 'finalizarOrden':
             $tipo = normalizar_tipo($payload['tipo_orden'] ?? '');
             $idOrden = (int)($payload['id_orden'] ?? 0);
-            $escaneos = $payload['escaneos'] ?? [];
+            $escaneos = is_array($payload['escaneos'] ?? null) ? $payload['escaneos'] : [];
             $preciosReales = is_array($payload['precios_reales'] ?? null) ? $payload['precios_reales'] : [];
 
-            if ($tipo === '' || $idOrden <= 0 || !is_array($escaneos)) {
+            if ($tipo === '' || $idOrden <= 0) {
                 responder([
                     'status' => 'error',
-                    'message' => 'tipo_orden, id_orden y escaneos son obligatorios',
+                    'message' => 'tipo_orden e id_orden son obligatorios',
                 ], 400);
             }
 
             $detalles = detalles_orden($admin, $tipo, $idOrden);
-            $validacion = validar_escaneos($detalles, $escaneos);
-            if (!$validacion['valida']) {
+            $validacion = count($escaneos) > 0
+                ? validar_escaneos($detalles, $escaneos)
+                : [
+                    'status' => 'success',
+                    'valida' => true,
+                    'esperados' => array_values(agrupar_esperados($detalles)),
+                    'completos' => array_values(agrupar_esperados($detalles)),
+                    'faltantes' => [],
+                    'extras' => [],
+                ];
+            if (count($escaneos) > 0 && !$validacion['valida']) {
                 responder([
                     'status' => 'error',
                     'message' => 'La orden no esta completamente validada',

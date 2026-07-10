@@ -9,9 +9,9 @@ function pdf_text($value)
 
 function texto_etiqueta($producto)
 {
-    $texto = trim((string)($producto['descripcion'] ?? ''));
+    $texto = trim((string)($producto['nombre'] ?? ''));
     if ($texto === '') {
-        $texto = trim((string)($producto['nombre'] ?? ''));
+        $texto = trim((string)($producto['descripcion'] ?? ''));
     }
 
     return mb_substr($texto, 0, 50, 'UTF-8');

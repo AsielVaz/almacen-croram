@@ -12,6 +12,10 @@ $entradaInicio = $_GET['entrada_inicio'] ?? '';
 $entradaFin = $_GET['entrada_fin'] ?? '';
 $salidaInicio = $_GET['salida_inicio'] ?? '';
 $salidaFin = $_GET['salida_fin'] ?? '';
+$movimientoInicio = $_GET['movimiento_inicio'] ?? '';
+$movimientoFin = $_GET['movimiento_fin'] ?? '';
+$tipoMovimiento = $_GET['tipo_movimiento'] ?? '';
+$origenMovimiento = $_GET['origen_movimiento'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
 $idProveedor = (int)($_GET['id_proveedor'] ?? 0);
@@ -256,6 +260,36 @@ switch ($tipo) {
             'compras_por_proveedor_' . ($entradaInicio ?: 'inicio') . '_' . ($entradaFin ?: 'fin'),
             'Compras por proveedor',
             ['ID orden', 'Folio', 'Fecha', 'Proveedor', 'Estatus', 'SKU', 'Articulo', 'Ubicacion', 'Cantidad', 'Precio', 'Subtotal'],
+            $filas
+        );
+        break;
+
+    case 'log_inventario':
+        $movimientos = json_decode($adminArticulos->listarInventarioMovimientos($movimientoInicio, $movimientoFin, $tipoMovimiento, $origenMovimiento), true) ?: [];
+        $filas = [];
+        foreach ($movimientos as $movimiento) {
+            $filas[] = [
+                $movimiento['id'] ?? '',
+                $movimiento['created_at'] ?? '',
+                $movimiento['tipo'] ?? '',
+                $movimiento['origen'] ?? '',
+                $movimiento['id_referencia'] ?? '',
+                $movimiento['id_producto'] ?? '',
+                $movimiento['sku'] ?? '',
+                $movimiento['articulo'] ?? '',
+                $movimiento['descripcion'] ?? '',
+                $movimiento['ubicacion'] ?? '',
+                $movimiento['unidad_medida'] ?? '',
+                $movimiento['tipo_articulo'] ?? '',
+                number_format((float)($movimiento['cantidad'] ?? 0), 0, '.', ''),
+                $movimiento['id_usuario'] ?? '',
+            ];
+        }
+
+        exportarExcelHtml(
+            'log_inventario_' . ($movimientoInicio ?: 'inicio') . '_' . ($movimientoFin ?: 'fin'),
+            'Log de Inventario',
+            ['ID', 'Fecha', 'Tipo', 'Origen', 'ID referencia', 'ID producto', 'SKU', 'Articulo', 'Descripcion', 'Ubicacion', 'Unidad', 'Condicion', 'Cantidad', 'ID usuario'],
             $filas
         );
         break;

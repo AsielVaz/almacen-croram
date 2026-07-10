@@ -84,6 +84,12 @@ requerir_autenticacion();
             border-color: #dee2e6;
         }
 
+        .status-CAPTURADA {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffc107;
+        }
+
         .status-CONFIRMADA {
             background-color: #343a40;
             color: #fff;
@@ -334,6 +340,7 @@ requerir_autenticacion();
                                             </span>
                                             <select name="estatus" id="estatus" class="form-select w-auto bg-white">
                                                 <option value="BORRADOR" <?php if (($ordenes[0]->estatus ?? '') === 'BORRADOR') echo 'selected'; ?>>BORRADOR</option>
+                                                <option value="CAPTURADA" <?php if (($ordenes[0]->estatus ?? '') === 'CAPTURADA') echo 'selected'; ?>>CAPTURADA</option>
                                                 <option value="CONFIRMADA" <?php if (($ordenes[0]->estatus ?? '') === 'CONFIRMADA') echo 'selected'; ?>>CONFIRMADA</option>
                                                 <option value="CANCELADA" <?php if (($ordenes[0]->estatus ?? '') === 'CANCELADA') echo 'selected'; ?>>CANCELADA</option>
                                             </select>
@@ -372,10 +379,9 @@ requerir_autenticacion();
                                         <thead>
                                             <tr>
                                                 <th width="10%">#</th>
-                                                <th width="40%">Producto</th>
+                                                <th width="55%">Producto</th>
                                                 <th width="15%" class="text-center">Cantidad</th>
                                                 <th width="20%" class="text-end">Precio promedio</th>
-                                                <th width="15%">Validar QR</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -391,7 +397,7 @@ requerir_autenticacion();
                                                 <tr>
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                                     <td>
-                                                        <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
+                                                        <div class="fw-bold"><?= htmlspecialchars($detalle->nombre_producto ?? '') ?></div>
                                                         <small class="text-muted">SKU: <?= htmlspecialchars($detalle->sku ?? '') ?></small>
                                                     </td>
                                                     <td class="text-center">
@@ -399,9 +405,6 @@ requerir_autenticacion();
                                                     </td>
                                                     <td class="text-end fw-bold">
                                                         $<?= number_format((float)($detalle->costo_promedio ?? 0), 2) ?>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control form-control-sm qr-validacion-salida" placeholder="Escanee QR" data-id-producto="<?= $detalle->id_producto ?? '' ?>" data-sku="<?= htmlspecialchars($detalle->sku ?? '') ?>">
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -415,7 +418,6 @@ requerir_autenticacion();
                                                     </span>
                                                 </td>
                                                 <td class="text-end fw-bold">$<?= number_format($totalCostoPeps, 2) ?></td>
-                                                <td></td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -423,7 +425,7 @@ requerir_autenticacion();
 
                                 <!-- Botones de acción -->
                                 <div class="action-buttons">
-                                    <button type="button" class="btn btn-modern btn-approve" id="btnAprobar" <?= (($ordenes[0]->estatus ?? '') === 'CONFIRMADA') ? 'disabled' : '' ?>>
+                                    <button type="button" class="btn btn-modern btn-approve" id="btnAprobar" <?= in_array(($ordenes[0]->estatus ?? ''), ['CONFIRMADA', 'CANCELADA'], true) ? 'disabled' : '' ?>>
                                         <i class="ri-check-line me-2"></i>Aprobar Orden
                                     </button>
                                     <button type="button" class="btn btn-modern btn-cancel" onclick="history.back()">
@@ -515,30 +517,6 @@ requerir_autenticacion();
                     const urlParams = new URLSearchParams(window.location.search);
                     const idOrden = urlParams.get('id') || 0;
 
-                    const qrInvalidos = [];
-                    document.querySelectorAll('.qr-validacion-salida').forEach(function(input) {
-                        const valor = input.value.trim().toUpperCase();
-                        const sku = (input.dataset.sku || '').trim().toUpperCase();
-                        const idProducto = (input.dataset.idProducto || '').trim().toUpperCase();
-
-                        if (!valor || (valor !== sku && valor !== idProducto)) {
-                            qrInvalidos.push(sku || idProducto || 'Producto sin SKU');
-                            input.classList.add('is-invalid');
-                        } else {
-                            input.classList.remove('is-invalid');
-                        }
-                    });
-
-                    if (qrInvalidos.length > 0) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'QR incorrecto',
-                            text: 'Escanee el SKU o ID correcto para: ' + qrInvalidos.join(', '),
-                            confirmButtonColor: '#6c757d'
-                        });
-                        return;
-                    }
-                    
                     // Confirmación
                     Swal.fire({
                         title: '¿Aprobar orden de salida?',

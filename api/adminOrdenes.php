@@ -115,7 +115,7 @@ class AdministradorOrdenes extends Con
         $sql = "
             SELECT
                 orden_compra_detalle.*,
-                productos.nombre AS nombre_producto,
+                COALESCE(NULLIF(productos.nombre, ''), productos.descripcion, 'Sin nombre') AS nombre_producto,
                 productos.sku,
                 productos.ubicacion,
                 ultima_compra.fecha_orden AS ultima_compra_fecha,
@@ -159,7 +159,7 @@ class AdministradorOrdenes extends Con
                 oc.estatus,
                 pr.nombre AS proveedor,
                 p.sku,
-                p.nombre AS articulo,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.descripcion,
                 p.ubicacion,
                 ocd.cantidad,
@@ -172,7 +172,7 @@ class AdministradorOrdenes extends Con
             INNER JOIN productos p ON p.id = ocd.id_producto
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             $whereSql
-            ORDER BY oc.fecha_orden DESC, oc.id DESC, p.nombre ASC
+            ORDER BY oc.fecha_orden DESC, oc.id DESC, articulo ASC
         ");
     }
 
@@ -221,7 +221,7 @@ class AdministradorOrdenes extends Con
         $sql = "
             SELECT
                 orden_salida_detalle.*,
-                productos.nombre AS nombre_producto,
+                COALESCE(NULLIF(productos.nombre, ''), productos.descripcion, 'Sin nombre') AS nombre_producto,
                 productos.sku,
                 productos.ubicacion,
                 COALESCE(
@@ -350,7 +350,7 @@ class AdministradorOrdenes extends Con
                 os.nota,
                 COALESCE(a.nombre, '') AS area,
                 p.sku,
-                p.nombre AS articulo,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.descripcion,
                 p.ubicacion,
                 osd.cantidad,
@@ -392,7 +392,7 @@ class AdministradorOrdenes extends Con
                 ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
             ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
-            ORDER BY os.fecha_salida DESC, os.id DESC, p.nombre ASC
+            ORDER BY os.fecha_salida DESC, os.id DESC, articulo ASC
         ");
     }
 
@@ -674,7 +674,7 @@ class AdministradorOrdenes extends Con
                 oc.estatus,
                 pr.nombre AS proveedor,
                 p.sku,
-                p.nombre AS articulo,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.ubicacion,
                 ocd.cantidad,
                 ocd.precio_unitario,
@@ -715,7 +715,7 @@ class AdministradorOrdenes extends Con
                 f.nombre AS familia,
                 COALESCE(sf.nombre, 'Sin subfamilia') AS subfamilia,
                 p.sku,
-                p.nombre AS articulo,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.ubicacion,
                 SUM(osd.cantidad) AS cantidad,
                 SUM(COALESCE(
@@ -762,8 +762,8 @@ class AdministradorOrdenes extends Con
                 ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
             ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
-            GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, p.nombre, p.ubicacion
-            ORDER BY a.nombre ASC, f.nombre ASC, p.nombre ASC
+            GROUP BY a.nombre, f.nombre, sf.nombre, p.sku, articulo, p.ubicacion
+            ORDER BY a.nombre ASC, f.nombre ASC, articulo ASC
         ");
     }
 

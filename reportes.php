@@ -40,6 +40,10 @@ $entradaInicio = $_GET['entrada_inicio'] ?? '';
 $entradaFin = $_GET['entrada_fin'] ?? '';
 $salidaInicio = $_GET['salida_inicio'] ?? '';
 $salidaFin = $_GET['salida_fin'] ?? '';
+$movimientoInicio = $_GET['movimiento_inicio'] ?? '';
+$movimientoFin = $_GET['movimiento_fin'] ?? '';
+$tipoMovimiento = $_GET['tipo_movimiento'] ?? '';
+$origenMovimiento = $_GET['origen_movimiento'] ?? '';
 $idFamilia = (int)($_GET['id_familia'] ?? 0);
 $idSubfamilia = (int)($_GET['id_subfamilia'] ?? 0);
 $idProveedor = (int)($_GET['id_proveedor'] ?? 0);
@@ -70,6 +74,13 @@ $queryComprasProveedor = http_build_query([
     'entrada_fin' => $entradaFin,
     'id_proveedor' => $idProveedor,
 ]);
+$queryLogInventario = http_build_query([
+    'tipo' => 'log_inventario',
+    'movimiento_inicio' => $movimientoInicio,
+    'movimiento_fin' => $movimientoFin,
+    'tipo_movimiento' => $tipoMovimiento,
+    'origen_movimiento' => $origenMovimiento,
+]);
 
 $articulos = json_decode($adminArticulos->listarArticulosReporteGeneral(false, $idFamilia, $idSubfamilia), true) ?: [];
 $proveedores = json_decode($adminProveedores->listarProveedores(false), true) ?: [];
@@ -80,6 +91,7 @@ $entradasDetalle = json_decode($adminOrdenes->listarEntradasDetalle($entradaInic
 $salidasDetalle = json_decode($adminOrdenes->listarSalidasDetalle($salidaInicio, $salidaFin, $idArea), true) ?: [];
 $consumosArea = json_decode($adminOrdenes->listarConsumosPorArea($salidaInicio, $salidaFin, $idArea), true) ?: [];
 $articulosObsoletos = $seccion === 'obsoletos' ? (json_decode($adminArticulos->listarArticulosObsoletos(12), true) ?: []) : [];
+$logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->listarInventarioMovimientos($movimientoInicio, $movimientoFin, $tipoMovimiento, $origenMovimiento), true) ?: []) : [];
 ?>
 
 <div class="page-content">
@@ -103,6 +115,7 @@ $articulosObsoletos = $seccion === 'obsoletos' ? (json_decode($adminArticulos->l
                     <a class="btn <?= $seccion === 'obsoletos' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=obsoletos">Obsoletos</a>
                     <a class="btn <?= $seccion === 'proveedores' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=proveedores">Proveedor</a>
                     <a class="btn <?= $seccion === 'entradas_salidas' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=entradas_salidas">Entradas y salidas</a>
+                    <a class="btn <?= $seccion === 'log_inventario' ? 'btn-primary' : 'btn-outline-primary' ?>" href="reportes.php?seccion=log_inventario">Log de Inventario</a>
                 </div>
             </div>
         </div>
@@ -114,6 +127,7 @@ $articulosObsoletos = $seccion === 'obsoletos' ? (json_decode($adminArticulos->l
             <div class="col-md-3"><div class="card"><div class="card-body"><small class="text-muted d-block">Órdenes de salida</small><h3 class="mb-0"><?= count($ordenesSalida) ?></h3></div></div></div>
         </div>
 
+        <?php if ($seccion !== 'log_inventario'): ?>
         <div class="card mb-3">
             <div class="card-header">
                 <h4 class="header-title mb-1">Rango de análisis para órdenes</h4>
@@ -182,6 +196,98 @@ $articulosObsoletos = $seccion === 'obsoletos' ? (json_decode($adminArticulos->l
                 </form>
             </div>
         </div>
+        <?php endif; ?>
+
+        <?php if ($seccion === 'log_inventario'): ?>
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="header-title mb-1">Log de Inventario</h4>
+                    <p class="text-muted mb-0">Movimientos registrados en inventario relacionados únicamente con productos.</p>
+                </div>
+                <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars($queryLogInventario) ?>">Exportar Excel</a>
+            </div>
+            <div class="card-body">
+                <form method="get" action="reportes.php" class="row g-3 align-items-end mb-3">
+                    <input type="hidden" name="seccion" value="log_inventario">
+                    <div class="col-md-3">
+                        <label class="form-label" for="movimiento_inicio">Movimiento desde</label>
+                        <input type="date" class="form-control" id="movimiento_inicio" name="movimiento_inicio" value="<?= htmlspecialchars($movimientoInicio) ?>">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="movimiento_fin">Movimiento hasta</label>
+                        <input type="date" class="form-control" id="movimiento_fin" name="movimiento_fin" value="<?= htmlspecialchars($movimientoFin) ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" for="tipo_movimiento">Tipo</label>
+                        <select class="form-select" id="tipo_movimiento" name="tipo_movimiento">
+                            <option value="">Todos</option>
+                            <option value="ENTRADA" <?= $tipoMovimiento === 'ENTRADA' ? 'selected' : '' ?>>ENTRADA</option>
+                            <option value="SALIDA" <?= $tipoMovimiento === 'SALIDA' ? 'selected' : '' ?>>SALIDA</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" for="origen_movimiento">Origen</label>
+                        <select class="form-select" id="origen_movimiento" name="origen_movimiento">
+                            <option value="">Todos</option>
+                            <option value="COMPRA" <?= $origenMovimiento === 'COMPRA' ? 'selected' : '' ?>>COMPRA</option>
+                            <option value="ORDEN_SALIDA" <?= $origenMovimiento === 'ORDEN_SALIDA' ? 'selected' : '' ?>>ORDEN SALIDA</option>
+                            <option value="AJUSTE" <?= $origenMovimiento === 'AJUSTE' ? 'selected' : '' ?>>AJUSTE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+                    </div>
+                    <div class="col-md-auto">
+                        <a href="reportes.php?seccion=log_inventario" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive nowrap w-100 report-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Origen</th>
+                                <th>ID referencia</th>
+                                <th>ID producto</th>
+                                <th>SKU</th>
+                                <th>Articulo</th>
+                                <th>Descripcion</th>
+                                <th>Ubicacion</th>
+                                <th>Unidad</th>
+                                <th>Condicion</th>
+                                <th>Cantidad</th>
+                                <th>ID usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($logInventario as $movimiento): ?>
+                            <tr>
+                                <td><?= (int)($movimiento['id'] ?? 0) ?></td>
+                                <td><?= htmlspecialchars($movimiento['created_at'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['tipo'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['origen'] ?? '') ?></td>
+                                <td><?= (int)($movimiento['id_referencia'] ?? 0) ?></td>
+                                <td><?= (int)($movimiento['id_producto'] ?? 0) ?></td>
+                                <td><?= htmlspecialchars($movimiento['sku'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['articulo'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['descripcion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['ubicacion'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['unidad_medida'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($movimiento['tipo_articulo'] ?? '') ?></td>
+                                <td><?= number_format((float)($movimiento['cantidad'] ?? 0), 0) ?></td>
+                                <td><?= (int)($movimiento['id_usuario'] ?? 0) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <?php if ($seccion === 'inventario'): ?>
         <div class="card mb-3">

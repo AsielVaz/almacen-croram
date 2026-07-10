@@ -362,7 +362,7 @@ class AdministradorArticulos extends Con {
             SELECT
                 p.id,
                 p.sku,
-                p.nombre,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS nombre,
                 p.unidad_medida,
                 p.descripcion,
                 p.ubicacion,
@@ -437,7 +437,7 @@ class AdministradorArticulos extends Con {
                     ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
                     0
                   ) > 0
-            ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, p.nombre ASC
+            ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, nombre ASC
         ";
 
         return $this->ejecutar($sql);
@@ -450,7 +450,7 @@ class AdministradorArticulos extends Con {
             SELECT
                 p.id,
                 p.sku,
-                p.nombre,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS nombre,
                 p.descripcion,
                 p.ubicacion,
                 f.nombre AS familia,
@@ -532,7 +532,57 @@ class AdministradorArticulos extends Con {
                     movimientos.ultimo_movimiento IS NULL
                     OR movimientos.ultimo_movimiento < DATE_SUB(CURDATE(), INTERVAL $mesesSinMovimiento MONTH)
                   )
-            ORDER BY movimientos.ultimo_movimiento ASC, p.nombre ASC
+            ORDER BY movimientos.ultimo_movimiento ASC, nombre ASC
+        ";
+
+        return $this->ejecutar($sql);
+    }
+
+    public function listarInventarioMovimientos($fechaInicio = '', $fechaFin = '', $tipo = '', $origen = '') {
+        $fechaInicio = $this->normalizarFecha($fechaInicio);
+        $fechaFin = $this->normalizarFecha($fechaFin);
+        $tipo = strtoupper(trim((string)$tipo));
+        $origen = strtoupper(trim((string)$origen));
+        $condiciones = [];
+
+        if ($fechaInicio !== '') {
+            $condiciones[] = "DATE(im.created_at) >= '$fechaInicio'";
+        }
+
+        if ($fechaFin !== '') {
+            $condiciones[] = "DATE(im.created_at) <= '$fechaFin'";
+        }
+
+        if (in_array($tipo, ['ENTRADA', 'SALIDA'], true)) {
+            $condiciones[] = "im.tipo = '$tipo'";
+        }
+
+        if (in_array($origen, ['COMPRA', 'ORDEN_SALIDA', 'AJUSTE'], true)) {
+            $condiciones[] = "im.origen = '$origen'";
+        }
+
+        $where = count($condiciones) ? "WHERE " . implode(" AND ", $condiciones) : "";
+
+        $sql = "
+            SELECT
+                im.id,
+                im.id_producto,
+                im.tipo,
+                im.origen,
+                im.id_referencia,
+                im.cantidad,
+                im.id_usuario,
+                im.created_at,
+                p.sku,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
+                p.descripcion,
+                p.ubicacion,
+                p.unidad_medida,
+                p.tipo_articulo
+            FROM inventario_movimientos im
+            INNER JOIN productos p ON p.id = im.id_producto
+            $where
+            ORDER BY im.created_at DESC, im.id DESC
         ";
 
         return $this->ejecutar($sql);
@@ -744,7 +794,7 @@ class AdministradorArticulos extends Con {
             SELECT
                 p.id,
                 p.sku,
-                p.nombre,
+                COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS nombre,
                 p.unidad_medida,
                 p.tipo_articulo,
                 p.activo,

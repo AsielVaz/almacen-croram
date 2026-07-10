@@ -324,11 +324,10 @@ requerir_autenticacion();
                                 <thead>
                                     <tr>
                                         <th width="5%">#</th>
-                                        <th width="35%">Producto</th>
+                                        <th width="40%">Producto</th>
                                         <th width="10%">Cantidad</th>
                                         <th width="20%">Precio Original</th>
-                                        <th width="20%">Precio Real Comprado</th>
-                                        <th width="15%">Validar QR</th>
+                                        <th width="25%">Precio Real Comprado</th>
                                         <th width="5%"></th>
                                     </tr>
                                 </thead>
@@ -339,8 +338,8 @@ requerir_autenticacion();
                                         <tr class="product-row" data-detalle-id="<?= $detalle->id_detalle ?? $index ?>">
                                             <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                             <td>
-                                                <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
-                                                <small class="text-muted">ID: <?= $detalle->id_producto ?? 'N/A' ?></small>
+                                                <div class="fw-bold"><?= htmlspecialchars($detalle->nombre_producto ?? '') ?></div>
+                                                <small class="text-muted">SKU: <?= htmlspecialchars($detalle->sku ?? '') ?></small>
                                                 <br><small class="text-muted">Ubicación: <?= htmlspecialchars($detalle->ubicacion ?? 'N/A') ?></small>
                                                 <?php if (!empty($detalle->ultima_compra_fecha ?? '')): ?>
                                                     <br><small class="text-success">
@@ -372,16 +371,6 @@ requerir_autenticacion();
                                                         data-cantidad="<?= (int)round((float)$detalle->cantidad) ?>"
                                                     >
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    class="form-control form-control-sm qr-validacion"
-                                                    placeholder="Escanee QR"
-                                                    data-id-producto="<?= $detalle->id_producto ?? '' ?>"
-                                                    data-sku="<?= htmlspecialchars($detalle->sku ?? '') ?>"
-                                                >
-                                                <small class="text-muted">SKU o ID</small>
                                             </td>
                                             <td class="text-center">
                                                 <i class="ri-edit-line text-secondary fs-18"></i>
@@ -535,7 +524,7 @@ requerir_autenticacion();
                                                 <tr>
                                                     <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                                     <td>
-                                                        <div class="fw-bold"><?= $detalle->nombre_producto ?></div>
+                                                        <div class="fw-bold"><?= htmlspecialchars($detalle->nombre_producto ?? '') ?></div>
                                                         <small class="text-muted">Ubicación: <?= htmlspecialchars($detalle->ubicacion ?? 'N/A') ?></small>
                                                         <?php if (!empty($detalle->ultima_compra_fecha ?? '')): ?>
                                                             <br><small class="text-success">
@@ -749,31 +738,6 @@ requerir_autenticacion();
                     // Obtener las notas
                     const notas = document.getElementById('notasOrden').value.trim();
 
-                    const qrInvalidos = [];
-                    document.querySelectorAll('.qr-validacion').forEach(function(input) {
-                        const valor = input.value.trim().toUpperCase();
-                        const sku = (input.dataset.sku || '').trim().toUpperCase();
-                        const idProducto = (input.dataset.idProducto || '').trim().toUpperCase();
-
-                        if (!valor || (valor !== sku && valor !== idProducto)) {
-                            qrInvalidos.push(sku || idProducto || 'Producto sin SKU');
-                            input.classList.add('is-invalid');
-                        } else {
-                            input.classList.remove('is-invalid');
-                        }
-                    });
-
-                    if (qrInvalidos.length > 0) {
-                        btnGuardarOrden.disabled = false;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'QR incorrecto',
-                            text: 'Escanee el SKU o ID correcto para: ' + qrInvalidos.join(', '),
-                            confirmButtonColor: '#6c757d'
-                        });
-                        return;
-                    }
-                    
                     // Recopilar los productos con sus precios
                     const productos = [];
                     const inputsPrecios = document.querySelectorAll('.precio-real');

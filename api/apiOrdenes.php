@@ -81,7 +81,7 @@ try {
 
             $folio = 'OS-' . date('YmdHis');
             $fecha_orden = date('Y-m-d');
-            $estatus = 'CONFIRMADA';
+            $estatus = 'CAPTURADA';
             $id_usuario = $_POST['id_usuario'] ?? 0;
             $nota = $_POST['nota'] ?? '';
             $id_area = $_POST['id_area'] ?? 0;
@@ -105,9 +105,6 @@ try {
                     $item['cantidad'] ?? 0,
                     $item['precio'] ?? 0
                 );
-                $costoPeps = $admin->consumirInventarioPeps($item['id'] ?? 0, $item['cantidad'] ?? 0);
-                $admin->actualizarCostoDetalleSalida($ultimo_id, $item['id'] ?? 0, $costoPeps);
-                $admin->registrarSalidaInventario($item['id'] ?? 0, $item['cantidad'] ?? 0);
             }
 
             $admin->confirmarTransaccion();
