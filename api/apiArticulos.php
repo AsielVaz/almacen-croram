@@ -94,10 +94,6 @@ try {
             $inventarioActualizado = $_POST['inventario_inicial'] ?? '';
             $costoReposicion = (float)($_POST['costo_reposicion'] ?? 0);
 
-            if ($inventarioActualizado !== '' && (float)$inventarioActualizado > 0) {
-                $costoReposicion = $costoReposicion / (float)$inventarioActualizado;
-            }
-
             $admin->actualizarArticulo(
                 $_POST['id'] ?? 0,
                 $_POST['sku'] ?? '',

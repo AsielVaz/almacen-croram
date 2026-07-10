@@ -394,6 +394,15 @@ class AdministradorArticulos extends Con {
                     ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
                     0
                 ) AS pedido_sugerido,
+                GREATEST(
+                    ROUND((
+                        CASE
+                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
+                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
+                        END / 30.4
+                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
+                    0
+                ) AS compra_sugerida,
                 CASE
                     WHEN (
                         CASE

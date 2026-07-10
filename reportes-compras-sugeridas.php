@@ -63,7 +63,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                         <button type="button" class="btn btn-success" onclick="exportTableToExcel('tablaComprasSugeridas', 'compras_sugeridas_<?= $diasStock ?>_dias_stock')">Exportar Excel</button>
                     </div>
                     <div class="col-12">
-                        <p class="text-muted mb-0">Pedido sugerido = redondear((consumo mensual promedio desde el inicio de análisis / 30.4) * (días de stock requeridos + tiempo de surtido)) - existencia actual.</p>
+                        <p class="text-muted mb-0">Stock sugerido = redondear((consumo mensual promedio desde el inicio de análisis / 30.4) * (días de stock requeridos + tiempo de surtido)). Compra sugerida = stock sugerido - existencia actual.</p>
                     </div>
                 </form>
             </div>
@@ -90,10 +90,11 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <th>Días stock req.</th>
                                 <th>Tiempo surtido</th>
                                 <th>Días restantes</th>
-                                <th>Stock objetivo</th>
+                                <th>Stock sugerido</th>
                                 <th>Pedido sugerido</th>
                                 <th>Pedido confirmado</th>
                                 <th>Costo promedio</th>
+                                <th>Compra sugerida</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,6 +117,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                     <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['pedido_sugerido'] ?? 0)) ?>">
                                 </td>
                                 <td>$<?= number_format((float)($articulo['costo_reposicion'] ?? 0), 2) ?></td>
+                                <td><?= number_format((float)($articulo['compra_sugerida'] ?? $articulo['pedido_sugerido'] ?? 0), 0) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
