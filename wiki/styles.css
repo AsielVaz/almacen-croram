@@ -84,8 +84,9 @@ pre { background: #111827; color: #f8fafc; border-radius: 14px; padding: 16px; o
 .footer-note { color: var(--muted); font-size: 0.92rem; margin-top: 28px; }
 
 @media (max-width: 920px) {
-    .layout { grid-template-columns: 1fr; }
+    .layout { grid-template-columns: minmax(0, 1fr); }
     .sidebar { position: static; height: auto; }
     .grid { grid-template-columns: 1fr; }
-    .content { padding: 20px; }
+    .content { min-width: 0; padding: 20px; }
+    pre { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
 }

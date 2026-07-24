@@ -20,6 +20,7 @@
 <div class="nav-title">Operacion</div>
 <a class="nav-link" href="articulos.html">Articulos e inventario</a>
 <a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="compras-sugeridas.html">Compras sugeridas</a>
 <a class="nav-link" href="reportes.html">Reportes</a>
 <a class="nav-link" href="catalogos.html">Catalogos</a>
 <a class="nav-link active" href="usuarios.html">Usuarios</a>
@@ -40,8 +41,9 @@
                 <h1>Usuarios y accesos</h1>
                 <p class="muted">El modulo de usuarios controla quien puede ingresar al sistema y operar los modulos.</p>
             </section>
-            <section class="grid"><section class="card"><h2>Gestion de usuarios</h2><ul class="steps"><li>Alta de usuario con datos de acceso.</li><li>Edicion de informacion.</li><li>Activacion o desactivacion segun corresponda.</li><li>Uso de sesion para proteger endpoints web.</li></ul></section><section class="card"><h2>Recomendaciones</h2><ul class="steps"><li>Crear usuarios individuales, no compartidos.</li><li>Desactivar usuarios que ya no operan el sistema.</li><li>Cerrar sesion en equipos compartidos.</li><li>Evitar compartir contrasenas o tokens.</li></ul></section></section>
-            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+            <section class="card"><h2>Perfiles disponibles</h2><div class="table-wrap"><table><thead><tr><th>Perfil</th><th>Alcance</th></tr></thead><tbody><tr><td>ADMIN</td><td>Administracion completa de catalogos, usuarios, articulos, ordenes, autorizaciones y reportes.</td></tr><tr><td>ALMACEN</td><td>Operacion de compras, entradas y salidas. Sin administracion de usuarios o areas, sin alta o edicion de articulos y sin autorizaciones reservadas al administrador.</td></tr><tr><td>CONSUMIDOR</td><td>Captura de ordenes de salida para solicitar materiales. No administra catalogos ni otras operaciones.</td></tr></tbody></table></div></section>
+            <section class="grid"><section class="card"><h2>Gestion de usuarios</h2><ul class="steps"><li>Alta y edicion de usuarios con perfil definido.</li><li>Activacion o desactivacion segun corresponda.</li><li>Los menus se adaptan a las funciones permitidas para cada perfil.</li><li>Las pantallas y APIs validan la sesion y el permiso requerido.</li><li>La administracion de usuarios corresponde al perfil ADMIN.</li></ul></section><section class="card"><h2>Reglas de autorizacion</h2><ul class="steps"><li>ADMIN puede autorizar compras, recepciones y salidas.</li><li>ADMIN puede aprobar entradas o salidas sin escaneo cuando la operacion lo requiera.</li><li>ALMACEN debe completar el escaneo de todas las piezas para recibir o entregar.</li><li>ALMACEN no puede autorizar compras ni administrar usuarios, areas o articulos.</li><li>CONSUMIDOR inicia en la captura rapida de una orden de salida.</li></ul></section></section><section class="card"><h2>Uso responsable</h2><ul class="steps"><li>Crear cuentas individuales para conservar la trazabilidad.</li><li>Seleccionar el perfil que corresponda a las funciones reales del usuario.</li><li>Desactivar usuarios que ya no operan el sistema.</li><li>Cerrar sesion al terminar turno o al usar equipos compartidos.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

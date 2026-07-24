@@ -20,6 +20,7 @@
 <div class="nav-title">Operacion</div>
 <a class="nav-link" href="articulos.html">Articulos e inventario</a>
 <a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="compras-sugeridas.html">Compras sugeridas</a>
 <a class="nav-link" href="reportes.html">Reportes</a>
 <a class="nav-link" href="catalogos.html">Catalogos</a>
 <a class="nav-link" href="usuarios.html">Usuarios</a>
@@ -51,8 +52,8 @@ Header: X-CRORAM-Mobile-Token: croram-mobile-dev-2026-cambiar</pre></section><se
   "accion": "buscarOrden",
   "tipo_orden": "entrada",
   "id_orden": 35
-}</pre></section><section class="card"><h2>Finalizar orden</h2><ul class="steps"><li>Entrada: requiere orden AUTORIZADA, validacion completa y que no tenga lotes ya registrados.</li><li>Salida: requiere validacion completa y que la orden no este CONFIRMADA.</li><li>Los escaneos pueden usar SKU o ID de producto.</li><li>El flujo movil usa las mismas reglas de inventario y PEPS del sistema web.</li></ul></section>
-            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+}</pre></section><section class="card"><h2>Validacion y cierre</h2><ul class="steps"><li>Cada pieza requerida debe contar con un escaneo antes de finalizar.</li><li>El operador utiliza el QR o SKU; no necesita capturar manualmente el ID del articulo.</li><li>Entrada: requiere orden AUTORIZADA y que no tenga lotes ya registrados.</li><li>Si un precio final de recepcion supera al autorizado, la API conserva la recepcion como PENDIENTE_AUTORIZACION_RECEPCION.</li><li>Salida: requiere validacion completa y que la orden se encuentre pendiente de confirmar.</li><li>El flujo movil utiliza las mismas reglas de estados, inventario y PEPS del sistema web.</li></ul></section><section class="card"><h2>Respuesta de validacion</h2><ul class="steps"><li><code>validarEscaneos</code> informa cantidades esperadas, escaneadas, faltantes y excedentes.</li><li><code>finalizarOrden</code> rechaza la operacion cuando falta al menos una unidad por validar.</li><li>Una recepcion con diferencia de precio responde <code>requiere_autorizacion: true</code>.</li><li>Las ordenes ya concluidas se protegen contra una segunda aplicacion.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

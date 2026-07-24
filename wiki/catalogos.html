@@ -20,6 +20,7 @@
 <div class="nav-title">Operacion</div>
 <a class="nav-link" href="articulos.html">Articulos e inventario</a>
 <a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="compras-sugeridas.html">Compras sugeridas</a>
 <a class="nav-link" href="reportes.html">Reportes</a>
 <a class="nav-link active" href="catalogos.html">Catalogos</a>
 <a class="nav-link" href="usuarios.html">Usuarios</a>
@@ -40,8 +41,8 @@
                 <h1>Catalogos operativos</h1>
                 <p class="muted">Los catalogos organizan la informacion base del sistema y deben mantenerse actualizados para que reportes y ordenes sean correctos.</p>
             </section>
-            <section class="grid"><section class="card"><h2>Familias</h2><ul class="steps"><li>Agrupan articulos por tipo o uso.</li><li>Se usan en reportes de inventario y consumos.</li><li>Pueden estar activas o inactivas.</li></ul></section><section class="card"><h2>Proveedores</h2><ul class="steps"><li>Se usan en ordenes de compra.</li><li>Permiten reportes de compras por proveedor.</li><li>La ultima compra muestra proveedor, fecha y precio.</li></ul></section></section><section class="grid"><section class="card"><h2>Areas</h2><ul class="steps"><li>Son obligatorias en salidas.</li><li>Permiten registrar el gasto o consumo por area.</li><li>Alimentan reportes de consumos por area, familia y periodo.</li></ul></section><section class="card"><h2>Subfamilias</h2><ul class="steps"><li>El menu de subfamilias fue retirado de la navegacion principal.</li><li>El sistema conserva subfamilias como dato de clasificacion cuando existen.</li><li>En reportes puede mostrarse 'Sin familia' cuando no hay subfamilia asignada.</li></ul></section></section>
-            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+            <section class="grid"><section class="card"><h2>Familias</h2><ul class="steps"><li>Agrupan articulos por tipo o uso.</li><li>Se utilizan en reportes de inventario y consumos.</li><li>Pueden estar activas o inactivas.</li><li>Su administracion corresponde al perfil ADMIN.</li></ul></section><section class="card"><h2>Proveedores</h2><ul class="steps"><li>Se seleccionan al crear ordenes de compra.</li><li>Permiten consultar y descargar compras por proveedor y periodo.</li><li>La recepcion conserva proveedor, fecha y precio.</li><li>El tiempo de surtido participa en el calculo de compras sugeridas.</li></ul></section></section><section class="grid"><section class="card"><h2>Areas</h2><ul class="steps"><li>Son obligatorias en todas las ordenes de salida.</li><li>Identifican donde se registra el gasto o consumo.</li><li>Alimentan reportes de consumos por area, familia y periodo.</li><li>Solamente el perfil ADMIN puede administrar el catalogo de areas.</li></ul></section><section class="card"><h2>Subfamilias</h2><ul class="steps"><li>El sistema conserva subfamilias como dato de clasificacion.</li><li>Se utilizan como filtro y agrupacion en reportes.</li><li>Cuando no existe asignacion, los reportes utilizan la referencia correspondiente sin clasificacion.</li></ul></section></section><section class="card"><h2>Estados de catalogo</h2><ul class="steps"><li>Los articulos muestran su estado ACTIVO o INACTIVO en compras sugeridas.</li><li>Un articulo INACTIVO no puede seleccionarse para crear una nueva compra.</li><li>La desactivacion conserva el historial de movimientos y reportes.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

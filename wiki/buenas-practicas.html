@@ -20,6 +20,7 @@
 <div class="nav-title">Operacion</div>
 <a class="nav-link" href="articulos.html">Articulos e inventario</a>
 <a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="compras-sugeridas.html">Compras sugeridas</a>
 <a class="nav-link" href="reportes.html">Reportes</a>
 <a class="nav-link" href="catalogos.html">Catalogos</a>
 <a class="nav-link" href="usuarios.html">Usuarios</a>
@@ -40,8 +41,8 @@
                 <h1>Buenas practicas de captura</h1>
                 <p class="muted">Recomendaciones para mantener inventario, costos y reportes confiables.</p>
             </section>
-            <section class="grid"><section class="card"><h2>Antes de capturar</h2><ul class="steps"><li>Buscar articulo por SKU, nombre, descripcion y ubicacion antes de crearlo.</li><li>Verificar proveedor y area.</li><li>Confirmar unidades fisicas antes de guardar.</li><li>Usar descripcion clara para que el QR y la busqueda sean utiles.</li></ul></section><section class="card"><h2>Durante movimientos</h2><ul class="steps"><li>Escanear o validar SKU/ID de cada producto.</li><li>Revisar precio real de compra al ingresar una entrada.</li><li>No aprobar salidas si falta area u observacion.</li><li>No repetir una orden si ya esta RECIBIDA o CONFIRMADA.</li></ul></section></section><section class="card"><h2>Revision periodica</h2><ul class="steps"><li>Revisar reporte de inventario contra conteos fisicos.</li><li>Revisar salidas sin costo cuando no exista compra previa.</li><li>Mantener costos de reposicion actualizados para articulos sin historial de compra.</li><li>Usar reportes de consumos por area para detectar patrones o desviaciones.</li><li>Desactivar articulos obsoletos cuando ya no deban usarse.</li></ul></section>
-            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+            <section class="grid"><section class="card"><h2>Antes de capturar</h2><ul class="steps"><li>Buscar el articulo por SKU, nombre, descripcion o ubicacion antes de solicitar su alta.</li><li>Verificar proveedor y area segun el tipo de orden.</li><li>Confirmar unidades fisicas y costo por pieza.</li><li>Usar nombre y descripcion claros para facilitar la busqueda y lectura de etiquetas.</li><li>Verificar que el articulo se encuentre ACTIVO antes de incluirlo en una nueva compra.</li></ul></section><section class="card"><h2>Durante movimientos</h2><ul class="steps"><li>El perfil ALMACEN debe escanear el QR de cada unidad recibida o entregada.</li><li>Revisar el precio final de cada producto durante la recepcion.</li><li>Enviar a autorizacion administrativa las recepciones cuyo precio supere al aprobado.</li><li>Seleccionar siempre el area responsable en una orden de salida.</li><li>No repetir una orden que ya se encuentre RECIBIDA o CONFIRMADA.</li></ul></section></section><section class="card"><h2>Revision periodica</h2><ul class="steps"><li>Comparar el reporte de inventario y sus ubicaciones contra conteos fisicos.</li><li>Consultar el Log de Inventario para identificar fecha, producto, cantidad y usuario de cada movimiento.</li><li>Revisar consumos por area para detectar patrones o desviaciones.</li><li>Validar compras sugeridas antes de transferirlas a una orden de compra.</li><li>Desactivar articulos que ya no deban utilizarse, conservando su historial.</li></ul></section><div class="callout info"><strong>Trazabilidad:</strong> cada usuario debe trabajar con su propia cuenta para que el Log de Inventario muestre correctamente al responsable de cada movimiento.</div>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>

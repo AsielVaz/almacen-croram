@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras sugeridas - Wiki Croram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+<div class="brand">Wiki Croram</div>
+<div class="brand-sub">Sistema de almacen e inventario</div>
+<div class="nav-group">
+<div class="nav-title">Inicio</div>
+<a class="nav-link" href="index.html">Resumen general</a>
+<a class="nav-link" href="inicio-sesion.html">Acceso al sistema</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Operacion</div>
+<a class="nav-link" href="articulos.html">Articulos e inventario</a>
+<a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link active" href="compras-sugeridas.html">Compras sugeridas</a>
+<a class="nav-link" href="reportes.html">Reportes</a>
+<a class="nav-link" href="catalogos.html">Catalogos</a>
+<a class="nav-link" href="usuarios.html">Usuarios</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Tecnico</div>
+<a class="nav-link" href="api-movil.html">API movil</a>
+<a class="nav-link" href="cambios.html">Cambios aplicados</a>
+</div>
+<div class="nav-group">
+<div class="nav-title">Apoyo</div>
+<a class="nav-link" href="buenas-practicas.html">Buenas practicas</a>
+</div>
+</aside>
+        <main class="content">
+            <section class="hero">
+                <div class="eyebrow">Planeacion</div>
+                <h1>Compras sugeridas</h1>
+                <p class="muted">El reporte calcula la cantidad recomendada para cubrir el consumo esperado durante los dias de stock y el tiempo de surtido del proveedor.</p>
+            </section>
+            <section class="grid"><section class="card"><h2>Parametros</h2><ul class="steps"><li>Fecha de inicio para analizar consumos.</li><li>Dias de stock requeridos por la operacion.</li><li>Tiempo de surtido registrado para cada proveedor o articulo.</li><li>Consumo mensual promedio del periodo analizado.</li><li>Existencia disponible al momento de generar el reporte.</li></ul></section><section class="card"><h2>Columnas de control</h2><ul class="steps"><li>El estado ACTIVO o INACTIVO aparece despues del SKU.</li><li>Los articulos INACTIVOS se muestran como referencia y no pueden seleccionarse para compra.</li><li>Stock sugerido indica la cobertura total calculada.</li><li>Compra sugerida muestra el stock sugerido menos la existencia.</li><li>Cantidad confirmada permite aumentar o disminuir las piezas antes de continuar.</li></ul></section></section>
+            <section class="card"><h2>Formula aplicada</h2><pre>stock_sugerido = REDONDEAR(
+    (consumo_mensual_promedio / 30.4)
+    * (dias_stock_requeridos + dias_surtido_proveedor)
+)
+
+compra_sugerida = MAX(stock_sugerido - existencia_actual, 0)</pre></section>
+            <section class="card"><h2>Ejemplo</h2><div class="table-wrap"><table><thead><tr><th>Dato</th><th>Valor</th></tr></thead><tbody><tr><td>Consumo mensual promedio</td><td>32 piezas</td></tr><tr><td>Dias de stock requeridos</td><td>15 dias</td></tr><tr><td>Tiempo de surtido</td><td>10 dias</td></tr><tr><td>Existencia actual</td><td>12 piezas</td></tr><tr><td>Stock sugerido</td><td>REDONDEAR((32 / 30.4) x 25) = 26 piezas</td></tr><tr><td>Compra sugerida</td><td>26 - 12 = 14 piezas</td></tr></tbody></table></div></section>
+            <section class="card"><h2>Crear la orden de compra</h2><ol class="steps"><li>Definir la fecha de analisis y los dias de stock.</li><li>Revisar el stock sugerido, la existencia y la compra sugerida.</li><li>Seleccionar los articulos activos que se desean comprar.</li><li>Ajustar la cantidad confirmada por pieza cuando sea necesario.</li><li>Continuar a la orden de compra.</li><li>El sistema transfiere productos, cantidades, costos y la nota de origen.</li><li>Seleccionar el proveedor y completar los datos restantes antes de guardar.</li></ol></section>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
+        </main>
+    </div>
+</body>
+</html>

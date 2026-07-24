@@ -20,6 +20,7 @@
 <div class="nav-title">Operacion</div>
 <a class="nav-link" href="articulos.html">Articulos e inventario</a>
 <a class="nav-link" href="ordenes.html">Ordenes</a>
+<a class="nav-link" href="compras-sugeridas.html">Compras sugeridas</a>
 <a class="nav-link" href="reportes.html">Reportes</a>
 <a class="nav-link" href="catalogos.html">Catalogos</a>
 <a class="nav-link" href="usuarios.html">Usuarios</a>
@@ -40,8 +41,8 @@
                 <h1>Acceso al sistema</h1>
                 <p class="muted">El sistema requiere autenticacion para operar modulos internos y APIs de gestion web.</p>
             </section>
-            <section class="grid"><section class="card"><h2>Inicio de sesion</h2><ol class="steps"><li>Abrir la URL del sistema.</li><li>Capturar usuario y contrasena asignados.</li><li>Entrar al panel principal.</li><li>Validar que el menu corresponda a las tareas del usuario.</li></ol></section><section class="card"><h2>Cierre de sesion</h2><ul class="steps"><li>Cerrar sesion al terminar turno o al usar equipos compartidos.</li><li>No compartir credenciales.</li><li>Solicitar alta o baja de usuarios al administrador.</li></ul></section></section><section class="card"><h2>Permisos y seguridad</h2><ul class="steps"><li>Los endpoints web protegidos usan sesion activa.</li><li>El API movil usa token por encabezado <code>X-CRORAM-Mobile-Token</code>.</li><li>Las acciones criticas de ordenes usan validaciones de estado para evitar recepciones o aprobaciones repetidas.</li></ul></section>
-            <p class="footer-note">Ultima actualizacion: 04 de julio de 2026. Documentacion interna para Croram.</p>
+            <section class="grid"><section class="card"><h2>Inicio de sesion</h2><ol class="steps"><li>Abrir la URL del sistema.</li><li>Capturar usuario y contrasena asignados.</li><li>El sistema identifica el perfil ADMIN, ALMACEN o CONSUMIDOR.</li><li>El menu muestra solamente las opciones disponibles para ese perfil.</li><li>El perfil CONSUMIDOR ingresa directamente a la captura rapida de salida.</li></ol></section><section class="card"><h2>Cierre de sesion</h2><ul class="steps"><li>Cerrar sesion al terminar turno o al usar equipos compartidos.</li><li>No compartir credenciales.</li><li>Solicitar altas, bajas o cambios de perfil al administrador.</li></ul></section></section><section class="card"><h2>Permisos y seguridad</h2><ul class="steps"><li>Los endpoints web protegidos requieren una sesion activa.</li><li>Las pantallas y acciones administrativas verifican el perfil del usuario.</li><li>El API movil usa token por encabezado <code>X-CRORAM-Mobile-Token</code>.</li><li>Las acciones de ordenes validan perfil, estado y cantidades escaneadas.</li><li>Las operaciones concluidas no pueden aplicarse por segunda vez.</li></ul></section>
+            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>
