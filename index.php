@@ -35,7 +35,7 @@ $totalStock = (float)($resumenArticulos['total_stock'] ?? 0);
 $sinStock = (int)($resumenArticulos['sin_stock'] ?? 0);
 $totalProveedores = $adminProveedores->contarProveedores(true);
 $pendientesEntrada = $adminOrdenes->contarOrdenesCompraPorEstatus(['PENDIENTE', 'AUTORIZADA']);
-$pendientesSalida = $adminOrdenes->contarOrdenesSalidaPorEstatus(['BORRADOR']);
+$pendientesSalida = $adminOrdenes->contarOrdenesSalidaPorEstatus(['BORRADOR', 'CAPTURADA']);
 
 $ultimasEntradas = json_decode($adminOrdenes->listarOrdenesCompra(5), true) ?: [];
 $ultimasSalidas = json_decode($adminOrdenes->listarOrdenesSalida(5), true) ?: [];

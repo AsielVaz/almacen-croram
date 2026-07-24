@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 requerir_autenticacion();
+$puedeAdministrarArticulos = usuario_tiene_permiso('articulos_administrar');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -380,9 +381,11 @@ requerir_autenticacion();
                                     </div>
 
                                     <div class="toolbar-section">
+                                        <?php if ($puedeAdministrarArticulos): ?>
                                         <a href="articulos-form.php" class="btn btn-modern btn-add">
                                             <i class="ri-add-circle-line me-1"></i> Agregar Artículo
                                         </a>
+                                        <?php endif; ?>
 
                                         <div class="qr-control-group">
                                             <select id="tipoImpresion" class="select-modern">
@@ -501,6 +504,7 @@ requerir_autenticacion();
     <script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
     
     <script>
+        const PUEDE_ADMINISTRAR_ARTICULOS = <?= $puedeAdministrarArticulos ? 'true' : 'false' ?>;
         const estadoArticulos = {
             pagina: 1,
             porPagina: 25,
@@ -559,9 +563,11 @@ requerir_autenticacion();
                         <td><span class="family-text">${escaparHtml(articulo.ubicacion || '')}</span></td>
                         <td class="text-center">
                             <div class="action-stack">
-                                <a href="articulos-form.php?id=${id}" class="btn btn-action">
-                                    <i class="ri-edit-line me-1"></i> Editar
-                                </a>
+                                ${PUEDE_ADMINISTRAR_ARTICULOS ? `
+                                    <a href="articulos-form.php?id=${id}" class="btn btn-action">
+                                        <i class="ri-edit-line me-1"></i> Editar
+                                    </a>
+                                ` : ''}
                                 <a href="articulo-historial.php?id=${id}" class="btn btn-action btn-history">
                                     <i class="ri-time-line me-1"></i> Historial
                                 </a>

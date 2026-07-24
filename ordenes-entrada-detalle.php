@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/auth.php';
 requerir_autenticacion();
+$puedeAutorizarCompra = usuario_tiene_permiso('ordenes_compra_autorizar');
+$puedeRecibirSinQr = usuario_tiene_permiso('ordenes_compra_recibir_sin_qr');
+$returnToSolicitado = (string)($_GET['return_to'] ?? 'ordenes-entrada.php');
+$returnTo = basename(parse_url($returnToSolicitado, PHP_URL_PATH) ?: '');
+if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-autorizar.php'], true)) {
+    $returnTo = 'ordenes-entrada.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,6 +89,12 @@ requerir_autenticacion();
             background-color: #e9ecef;
             color: #495057;
             border-color: #adb5bd;
+        }
+
+        .status-PENDIENTE_AUTORIZACION_RECEPCION {
+            background-color: #f8d7da;
+            color: #842029;
+            border-color: #f1aeb5;
         }
 
         .status-CANCELADA {
@@ -464,9 +477,10 @@ requerir_autenticacion();
                                                 <?php echo $ordenes[0]->estatus ?? 'PENDIENTE'; ?>
                                             </span>
                                             <?php if ($ordenes[0]->estatus == "RECIBIDA"){ $activo = true;} ?>
-                                            <select name="estatus" id="estatus" class="form-select w-auto bg-white">
+                                            <select name="estatus" id="estatus" class="form-select w-auto bg-white" disabled>
                                                 <option value="PENDIENTE" <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE') echo 'selected'; ?>>PENDIENTE</option>
                                                 <option value="AUTORIZADA" <?php if (($ordenes[0]->estatus ?? '') === 'AUTORIZADA') echo 'selected'; ?>>AUTORIZADA</option>
+                                                <option value="PENDIENTE_AUTORIZACION_RECEPCION" <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE_AUTORIZACION_RECEPCION') echo 'selected'; ?>>PENDIENTE AUTORIZACIÓN RECEPCIÓN</option>
                                                 <option value="CANCELADA" <?php if (($ordenes[0]->estatus ?? '') === 'CANCELADA') echo 'selected'; ?>>CANCELADA</option>
                                                 <option value="RECIBIDA" <?php if (($ordenes[0]->estatus ?? '') === 'RECIBIDA') echo 'selected'; ?>>RECIBIDA</option>
                                             </select>
@@ -533,6 +547,12 @@ requerir_autenticacion();
                                                                 $<?= number_format((float)($detalle->ultima_compra_precio ?? 0), 2) ?>
                                                             </small>
                                                         <?php endif; ?>
+                                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE_AUTORIZACION_RECEPCION'): ?>
+                                                            <br><small class="<?= ((float)($detalle->precio_recepcion ?? 0) > (float)($detalle->precio_autorizado ?? $detalle->precio_unitario ?? 0)) ? 'text-danger' : 'text-muted' ?>">
+                                                                Autorizado: $<?= number_format((float)($detalle->precio_autorizado ?? $detalle->precio_unitario ?? 0), 2) ?>
+                                                                | Recepción: $<?= number_format((float)($detalle->precio_recepcion ?? $detalle->precio_unitario ?? 0), 2) ?>
+                                                            </small>
+                                                        <?php endif; ?>
                                                     </td>
                                                     <td class="text-center">
                                                         <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?></span>
@@ -558,14 +578,28 @@ requerir_autenticacion();
                                 <!-- Botón Ingresar Orden -->
                                 <div class="row mt-4">
                                     <div class="col-12 text-center">
-                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE'): ?>
+                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE' && $puedeAutorizarCompra): ?>
                                             <button type="button" class="btn btn-primary-modern btn-modern" id="btnAutorizarOrdenCompra">
                                                 <i class="ri-check-line me-2"></i>Autorizar Orden
                                             </button>
                                         <?php endif; ?>
+                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE_AUTORIZACION_RECEPCION' && $puedeAutorizarCompra): ?>
+                                            <button type="button" class="btn btn-primary-modern btn-modern" id="btnAutorizarRecepcion">
+                                                <i class="ri-shield-check-line me-2"></i>Autorizar Recepción
+                                            </button>
+                                        <?php endif; ?>
+                                        <?php if ($puedeRecibirSinQr): ?>
                                         <button type="button" class="btn btn-primary-modern btn-modern" data-bs-toggle="modal" data-bs-target="#modalIngresarOrden" <?= (($ordenes[0]->estatus ?? '') === 'AUTORIZADA') ? '' : 'disabled' ?>>
                                             <i class="ri-download-cloud-line me-2"></i>Ingresar Orden
                                         </button>
+                                        <?php elseif (($ordenes[0]->estatus ?? '') === 'AUTORIZADA'): ?>
+                                            <div class="alert alert-info mt-3 mb-0">
+                                                La recepción debe confirmarse escaneando los QR de todas las unidades.
+                                            </div>
+                                        <?php endif; ?>
+                                        <a href="<?= htmlspecialchars($returnTo) ?>" class="btn btn-outline-secondary btn-modern">
+                                            <i class="ri-arrow-left-line me-2"></i>Volver
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -642,6 +676,7 @@ requerir_autenticacion();
 
     <script>
         const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
+        const RETURN_TO = <?= json_encode($returnTo, JSON_UNESCAPED_SLASHES) ?>;
         const ULTIMAS_COMPRAS = <?= json_encode(array_map(function ($detalle) {
             return [
                 'producto' => $detalle->nombre_producto ?? '',
@@ -710,7 +745,9 @@ requerir_autenticacion();
                                     title: 'Orden autorizada',
                                     text: data.message || 'Orden de compra autorizada correctamente',
                                     confirmButtonColor: '#495057'
-                                }).then(() => location.reload());
+                                }).then(() => {
+                                    window.location.href = RETURN_TO;
+                                });
                             } else {
                                 btnAutorizarOrden.disabled = false;
                                 Swal.fire('Error', data.message || 'No se pudo autorizar la orden', 'error');
@@ -721,6 +758,48 @@ requerir_autenticacion();
                             console.error('Error:', error);
                             Swal.fire('Error', 'Ocurrio un error al autorizar la orden', 'error');
                         });
+                    });
+                });
+            }
+            const btnAutorizarRecepcion = document.getElementById('btnAutorizarRecepcion');
+            if (btnAutorizarRecepcion) {
+                btnAutorizarRecepcion.addEventListener('click', function() {
+                    if (btnAutorizarRecepcion.disabled) return;
+
+                    Swal.fire({
+                        title: 'Autorizar recepción',
+                        text: 'Se aplicarán los precios finales y la entrada se reflejará en inventario.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Autorizar recepción',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#495057'
+                    }).then(async result => {
+                        if (!result.isConfirmed) return;
+                        btnAutorizarRecepcion.disabled = true;
+                        const formData = new FormData();
+                        formData.append('accion', 'autorizarRecepcionOrdenCompra');
+                        formData.append('id', <?= (int)($_GET['id'] ?? 0) ?>);
+                        formData.append('request_token', REQUEST_TOKEN + ':recepcion');
+
+                        try {
+                            const response = await fetch('api/apiOrdenes.php', { method: 'POST', body: formData });
+                            const data = await response.json();
+                            if (data.status !== 'success') {
+                                throw new Error(data.message || 'No se pudo autorizar la recepción');
+                            }
+
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Recepción autorizada',
+                                text: data.message,
+                                confirmButtonColor: '#495057'
+                            });
+                            window.location.href = RETURN_TO;
+                        } catch (error) {
+                            btnAutorizarRecepcion.disabled = false;
+                            Swal.fire('Error', error.message || 'No se pudo autorizar la recepción', 'error');
+                        }
                     });
                 });
             }

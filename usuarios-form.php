@@ -42,7 +42,22 @@ if ($esEdicion) {
                         <div class="mb-3"><label class="form-label" for="usuario">Usuario</label><input type="text" class="form-control" id="usuario" name="usuario" value="<?= htmlspecialchars($usuarioEdit['usuario'] ?? '') ?>" required></div>
                         <div class="mb-3"><label class="form-label" for="password">Password</label><input type="text" class="form-control" id="password" name="password" value="<?= htmlspecialchars($usuarioEdit['password'] ?? '') ?>" required></div>
                         <div class="mb-3"><label class="form-label" for="email">Email</label><input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($usuarioEdit['email'] ?? '') ?>"></div>
-                        <div class="mb-3"><label class="form-label" for="rol">Rol</label><input type="text" class="form-control" id="rol" name="rol" value="<?= htmlspecialchars($usuarioEdit['rol'] ?? '') ?>"></div>
+                        <div class="mb-3">
+                            <label class="form-label" for="rol">Tipo de usuario</label>
+                            <select class="form-select" id="rol" name="rol" required>
+                                <?php
+                                $rolActual = strtoupper((string)($usuarioEdit['rol'] ?? 'ALMACEN'));
+                                if ($rolActual === 'COMPRAS' || $rolActual === 'LECTOR') {
+                                    $rolActual = 'ALMACEN';
+                                } elseif ($rolActual === 'VENTAS') {
+                                    $rolActual = 'CONSUMIDOR';
+                                }
+                                ?>
+                                <option value="ADMIN" <?= $rolActual === 'ADMIN' ? 'selected' : '' ?>>Administrador</option>
+                                <option value="ALMACEN" <?= $rolActual === 'ALMACEN' ? 'selected' : '' ?>>Almacén</option>
+                                <option value="CONSUMIDOR" <?= $rolActual === 'CONSUMIDOR' ? 'selected' : '' ?>>Consumidor</option>
+                            </select>
+                        </div>
                         <div class="mb-4"><label class="form-label" for="activo">Estado</label><select class="form-select" id="activo" name="activo"><option value="1" <?= ((int)($usuarioEdit['activo'] ?? 1) === 1) ? 'selected' : '' ?>>Activo</option><option value="0" <?= ((int)($usuarioEdit['activo'] ?? 1) === 0) ? 'selected' : '' ?>>Inactivo</option></select></div>
                         <div class="d-flex justify-content-between">
                             <a href="usuarios.php" class="btn btn-secondary">Cancelar</a>

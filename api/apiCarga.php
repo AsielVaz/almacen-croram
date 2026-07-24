@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../auth.php';
 requerir_autenticacion_json();
+requerir_permiso_json('articulos_administrar');
 
 header('Content-Type: application/json; charset=utf-8');
 

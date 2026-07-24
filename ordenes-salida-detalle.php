@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 requerir_autenticacion();
+$puedeConfirmarSinQr = usuario_tiene_permiso('ordenes_salida_confirmar_sin_qr');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -338,7 +339,7 @@ requerir_autenticacion();
                                             <span class="status-badge status-<?php echo $ordenes[0]->estatus ?? 'BORRADOR'; ?>">
                                                 <?php echo $ordenes[0]->estatus ?? 'BORRADOR'; ?>
                                             </span>
-                                            <select name="estatus" id="estatus" class="form-select w-auto bg-white">
+                                            <select name="estatus" id="estatus" class="form-select w-auto bg-white" disabled>
                                                 <option value="BORRADOR" <?php if (($ordenes[0]->estatus ?? '') === 'BORRADOR') echo 'selected'; ?>>BORRADOR</option>
                                                 <option value="CAPTURADA" <?php if (($ordenes[0]->estatus ?? '') === 'CAPTURADA') echo 'selected'; ?>>CAPTURADA</option>
                                                 <option value="CONFIRMADA" <?php if (($ordenes[0]->estatus ?? '') === 'CONFIRMADA') echo 'selected'; ?>>CONFIRMADA</option>
@@ -404,7 +405,11 @@ requerir_autenticacion();
                                                 <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
                                                     </td>
                                                     <td class="text-end fw-bold">
-                                                        $<?= number_format((float)($detalle->costo_promedio ?? 0), 2) ?>
+                                                        <?php if (($ordenes[0]->estatus ?? '') === 'CONFIRMADA'): ?>
+                                                            $<?= number_format((float)($detalle->costo_promedio ?? 0), 2) ?>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">Pendiente de confirmación</span>
+                                                        <?php endif; ?>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -417,7 +422,9 @@ requerir_autenticacion();
                                                         <?= $total ?> unidades
                                                     </span>
                                                 </td>
-                                                <td class="text-end fw-bold">$<?= number_format($totalCostoPeps, 2) ?></td>
+                                                <td class="text-end fw-bold">
+                                                    <?= (($ordenes[0]->estatus ?? '') === 'CONFIRMADA') ? '$' . number_format($totalCostoPeps, 2) : 'Pendiente' ?>
+                                                </td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -425,9 +432,15 @@ requerir_autenticacion();
 
                                 <!-- Botones de acción -->
                                 <div class="action-buttons">
+                                    <?php if ($puedeConfirmarSinQr): ?>
                                     <button type="button" class="btn btn-modern btn-approve" id="btnAprobar" <?= in_array(($ordenes[0]->estatus ?? ''), ['CONFIRMADA', 'CANCELADA'], true) ? 'disabled' : '' ?>>
                                         <i class="ri-check-line me-2"></i>Aprobar Orden
                                     </button>
+                                    <?php elseif (!in_array(($ordenes[0]->estatus ?? ''), ['CONFIRMADA', 'CANCELADA'], true)): ?>
+                                    <div class="alert alert-info mb-0">
+                                        La entrega debe confirmarse escaneando los QR de todas las unidades.
+                                    </div>
+                                    <?php endif; ?>
                                     <button type="button" class="btn btn-modern btn-cancel" onclick="history.back()">
                                         <i class="ri-arrow-left-line me-2"></i>Regresar
                                     </button>

@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/../auth.php';
+requerir_autenticacion_json();
+requerir_permiso_json('ordenes_salida_ver');
+
 require('fpdf/fpdf.php');
 require_once 'phpqrcode/qrlib.php';
 
@@ -124,6 +128,7 @@ $orden = array(
     'area'      => $ordenes[0]->nombre_area ?? '',
     'nota'      => $ordenes[0]->nota ?? '',
 );
+$mostrarCostos = $orden['estatus'] === 'CONFIRMADA';
 
 $items = array();
 foreach ($detallesOrden as $detalle) {
@@ -131,8 +136,10 @@ foreach ($detallesOrden as $detalle) {
         'producto' => $detalle->nombre_producto,
         'ubicacion' => $detalle->ubicacion ?? '',
         'cantidad' => (int)round((float)$detalle->cantidad),
-        'costo_promedio' => (float)($detalle->costo_promedio ?? 0),
-        'subtotal' => ((int)round((float)$detalle->cantidad)) * (float)($detalle->costo_promedio ?? 0),
+        'costo_promedio' => $mostrarCostos ? (float)($detalle->costo_promedio ?? 0) : null,
+        'subtotal' => $mostrarCostos
+            ? ((int)round((float)$detalle->cantidad)) * (float)($detalle->costo_promedio ?? 0)
+            : null,
     );
 }
 
@@ -204,7 +211,7 @@ $pdf->Cell(15, 9, '#', 1, 0, 'C', true);
 $pdf->Cell(68, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
 $pdf->Cell(22, 9, pdf_text('UBIC.'), 1, 0, 'C', true);
 $pdf->Cell(28, 9, 'CANTIDAD', 1, 0, 'C', true);
-$pdf->Cell(32, 9, pdf_text('PRECIO PROM.'), 1, 0, 'C', true);
+$pdf->Cell(32, 9, pdf_text('COSTO PEPS'), 1, 0, 'C', true);
 $pdf->Cell(25, 9, 'TOTAL', 1, 1, 'C', true);
 
 // Items de la tabla
@@ -219,7 +226,7 @@ $fill = false;
 
 foreach ($items as $item) {
     $totalUnidades += $item['cantidad'];
-    $totalCosto += $item['subtotal'];
+    $totalCosto += (float)($item['subtotal'] ?? 0);
     
     // Alternar color de fondo
     if ($fill) {
@@ -234,8 +241,8 @@ foreach ($items as $item) {
     
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(28, 8, $item['cantidad'] . ' unidades', 'LR', 0, 'C', true);
-    $pdf->Cell(32, 8, '$' . number_format($item['costo_promedio'], 2), 'LR', 0, 'R', true);
-    $pdf->Cell(25, 8, '$' . number_format($item['subtotal'], 2), 'LR', 1, 'R', true);
+    $pdf->Cell(32, 8, $mostrarCostos ? '$' . number_format((float)$item['costo_promedio'], 2) : 'PENDIENTE', 'LR', 0, 'R', true);
+    $pdf->Cell(25, 8, $mostrarCostos ? '$' . number_format((float)$item['subtotal'], 2) : 'PENDIENTE', 'LR', 1, 'R', true);
     
     $pdf->SetFont('Arial', '', 9);
     $fill = !$fill;
@@ -287,7 +294,7 @@ $pdf->SetX(100);
 $pdf->Cell(50, 9, 'TOTAL COSTO:', 1, 0, 'L', true);
 
 $pdf->SetFont('Arial', 'B', 13);
-$pdf->Cell(40, 9, '$' . number_format($totalCosto, 2), 1, 1, 'C', true);
+$pdf->Cell(40, 9, $mostrarCostos ? '$' . number_format($totalCosto, 2) : 'PENDIENTE', 1, 1, 'C', true);
 
 $pdf->Ln(15);
 

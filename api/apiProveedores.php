@@ -10,6 +10,7 @@ $accion = $_POST['accion'] ?? '';
 $admin = new AdministradorProveedores();
 
 try {
+    requerir_permiso_json('catalogos_operativos');
 
     switch ($accion) {
 
@@ -120,4 +121,3 @@ try {
 } catch (Exception $e) {
     echo $e->getMessage();
 }
-

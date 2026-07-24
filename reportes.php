@@ -260,7 +260,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                                 <th>Unidad</th>
                                 <th>Condicion</th>
                                 <th>Cantidad</th>
-                                <th>ID usuario</th>
+                                <th>Usuario</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -279,7 +279,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                                 <td><?= htmlspecialchars($movimiento['unidad_medida'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($movimiento['tipo_articulo'] ?? '') ?></td>
                                 <td><?= number_format((float)($movimiento['cantidad'] ?? 0), 0) ?></td>
-                                <td><?= (int)($movimiento['id_usuario'] ?? 0) ?></td>
+                                <td><?= htmlspecialchars($movimiento['nombre_usuario'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

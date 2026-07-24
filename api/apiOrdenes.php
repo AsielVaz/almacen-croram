@@ -10,6 +10,19 @@ $accion = $_POST['accion'] ?? '';
 
 $admin = new AdministradorOrdenes();
 
+$permisosPorAccion = [
+    'altaOrdenCompra' => 'ordenes_compra_crear',
+    'altaOrdenSalida' => 'ordenes_salida_crear',
+    'guardarOrdenEntrada' => 'ordenes_compra_recibir_sin_qr',
+    'autorizarOrdenCompra' => 'ordenes_compra_autorizar',
+    'autorizarRecepcionOrdenCompra' => 'ordenes_compra_autorizar',
+    'aprovarSalida' => 'ordenes_salida_confirmar_sin_qr',
+];
+
+if (isset($permisosPorAccion[$accion])) {
+    requerir_permiso_json($permisosPorAccion[$accion]);
+}
+
 function validar_idempotencia(string $accion): void {
     $token = trim((string)($_POST['request_token'] ?? ''));
     if ($token === '') {
@@ -41,7 +54,7 @@ try {
             $id_proveedor = $_POST['proveedor'] ?? 0;
             $fecha_orden = date('Y-m-d');
             $estatus = 'PENDIENTE';
-            $id_usuario = $_POST['id_usuario'] ?? 0;
+            $id_usuario = usuario_id_actual();
             $nota = $_POST['nota'] ?? '';
             $orden = $_POST['orden'] ?? [];
             $ordenDecode = json_decode($orden, true) ?: [];
@@ -82,7 +95,7 @@ try {
             $folio = 'OS-' . date('YmdHis');
             $fecha_orden = date('Y-m-d');
             $estatus = 'CAPTURADA';
-            $id_usuario = $_POST['id_usuario'] ?? 0;
+            $id_usuario = usuario_id_actual();
             $nota = $_POST['nota'] ?? '';
             $id_area = $_POST['id_area'] ?? 0;
 
@@ -111,7 +124,8 @@ try {
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Orden de salida agregada correctamente'
+                'message' => 'Orden de salida agregada correctamente',
+                'redirect' => ruta_inicio_usuario(),
             ]);
             break;
 
@@ -154,6 +168,7 @@ try {
 
             $detallesOrden = json_decode($admin->listarDetallesOrden($idOrden), true) ?: [];
             $productosOrden = [];
+            $requiereAutorizacionPrecio = false;
             foreach ($detallesOrden as $detalle) {
                 $idProducto = (int)($detalle['id_producto'] ?? 0);
                 if ($idProducto <= 0) {
@@ -163,7 +178,7 @@ try {
                 if (!isset($productosOrden[$idProducto])) {
                     $productosOrden[$idProducto] = [
                         'cantidad' => 0,
-                        'precio_unitario' => (float)($detalle['precio_unitario'] ?? 0),
+                        'precio_autorizado' => (float)($detalle['precio_autorizado'] ?? $detalle['precio_unitario'] ?? 0),
                     ];
                 }
 
@@ -172,14 +187,22 @@ try {
 
             foreach ($productosOrden as $idProducto => $productoOrden) {
                 $cantidad = $productoOrden['cantidad'];
-                $precioReal = $preciosReales[$idProducto] ?? $productoOrden['precio_unitario'];
+                $precioReal = $preciosReales[$idProducto] ?? $productoOrden['precio_autorizado'];
+                if ($precioReal > ($productoOrden['precio_autorizado'] + 0.0001)) {
+                    $requiereAutorizacionPrecio = true;
+                }
 
                 $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
                 // El trigger trg_oc_recibida_entrada suma inventario al cambiar a RECIBIDA.
-                $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, $ordenActual['fecha_orden'] ?? date('Y-m-d'));
+                $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, date('Y-m-d'));
             }
 
-            $admin->actualizarEstatusOrdenCompra($idOrden, 'RECIBIDA');
+            $idUsuarioActual = usuario_id_actual();
+            $admin->marcarOrdenRecibida(
+                $idOrden,
+                $idUsuarioActual,
+                $requiereAutorizacionPrecio ? $idUsuarioActual : 0
+            );
             $admin->confirmarTransaccion();
 
             echo json_encode([
@@ -202,13 +225,57 @@ try {
                 ]));
             }
 
-            $admin->actualizarEstatusOrdenCompra($idOrden, 'AUTORIZADA');
+            $admin->autorizarOrdenCompra($idOrden, usuario_id_actual());
             $admin->confirmarTransaccion();
 
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Orden de compra autorizada correctamente'
             ]);
+            break;
+
+        case 'autorizarRecepcionOrdenCompra':
+            validar_idempotencia('autorizarRecepcionOrdenCompra');
+            $idOrden = $_POST['id'] ?? 0;
+
+            $admin->iniciarTransaccion();
+            $ordenActual = json_decode($admin->bloquearOrdenCompra($idOrden), true)[0] ?? null;
+
+            if (!$ordenActual || ($ordenActual['estatus'] ?? '') !== 'PENDIENTE_AUTORIZACION_RECEPCION') {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden no tiene una recepción pendiente de autorización.',
+                ], JSON_UNESCAPED_UNICODE));
+            }
+
+            if ($admin->ordenCompraTieneLotes($idOrden)) {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'La orden ya tiene lotes registrados y no puede volver a recibirse.',
+                ], JSON_UNESCAPED_UNICODE));
+            }
+
+            $detallesOrden = json_decode($admin->listarDetallesOrden($idOrden), true) ?: [];
+            foreach ($detallesOrden as $detalle) {
+                $idProducto = (int)($detalle['id_producto'] ?? 0);
+                $cantidad = (float)($detalle['cantidad'] ?? 0);
+                $precioRecepcion = (float)($detalle['precio_recepcion'] ?? $detalle['precio_autorizado'] ?? $detalle['precio_unitario'] ?? 0);
+
+                $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioRecepcion);
+                $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioRecepcion, date('Y-m-d'));
+            }
+
+            $idUsuarioRecepcion = (int)($ordenActual['id_usuario_recepcion'] ?? 0);
+            if ($idUsuarioRecepcion <= 0) {
+                $idUsuarioRecepcion = usuario_id_actual();
+            }
+            $admin->marcarOrdenRecibida($idOrden, $idUsuarioRecepcion, usuario_id_actual());
+            $admin->confirmarTransaccion();
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Recepción autorizada e inventario actualizado correctamente.',
+            ], JSON_UNESCAPED_UNICODE);
             break;
 
         case 'aprovarSalida':

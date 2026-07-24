@@ -10,6 +10,16 @@ $accion = $_POST['accion'] ?? '';
 $admin = new AdministradorAreas();
 
 try {
+    if (in_array($accion, ['listarAreas', 'obtenerArea'], true)) {
+        $puedeConsultar = usuario_tiene_permiso('areas_administrar')
+            || usuario_tiene_permiso('ordenes_salida_crear');
+        if (!$puedeConsultar) {
+            requerir_permiso_json('areas_administrar');
+        }
+    } else {
+        requerir_permiso_json('areas_administrar');
+    }
+
     switch ($accion) {
         case 'listarAreas':
             echo $admin->listarAreas();

@@ -11,6 +11,19 @@ $accion = $_POST['accion'] ?? '';
 $admin = new AdministradorArticulos();
 
 try {
+    $accionesConsulta = ['listarArticulos', 'listarArticulosPaginados', 'obtenerArticulo'];
+    if (in_array($accion, $accionesConsulta, true)) {
+        $puedeConsultar = usuario_tiene_permiso('articulos_ver')
+            || usuario_tiene_permiso('ordenes_compra_crear')
+            || usuario_tiene_permiso('ordenes_salida_crear');
+        if (!$puedeConsultar) {
+            requerir_permiso_json('articulos_ver');
+        }
+    } elseif ($accion === 'listarComprasSugeridas') {
+        requerir_permiso_json('reportes_ver');
+    } else {
+        requerir_permiso_json('articulos_administrar');
+    }
 
     switch ($accion) {
 

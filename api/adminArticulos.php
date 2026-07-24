@@ -363,6 +363,7 @@ class AdministradorArticulos extends Con {
                 p.id,
                 p.sku,
                 COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS nombre,
+                p.activo,
                 p.unidad_medida,
                 p.descripcion,
                 p.ubicacion,
@@ -432,8 +433,7 @@ class AdministradorArticulos extends Con {
                   AND os.fecha_salida >= '$fechaInicioAnalisis'
                 GROUP BY osd.id_producto
             ) consumos ON consumos.id_producto = p.id
-            WHERE p.activo = 1
-              AND (
+            WHERE (
                     COALESCE(consumos.consumo_12_meses, 0) > 0
                     OR COALESCE(p.consumo_diario, 0) > 0
                   )
@@ -582,6 +582,7 @@ class AdministradorArticulos extends Con {
                 im.cantidad,
                 im.id_usuario,
                 im.created_at,
+                COALESCE(NULLIF(u.nombre, ''), NULLIF(u.usuario, ''), CONCAT('Usuario #', im.id_usuario)) AS nombre_usuario,
                 p.sku,
                 COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.descripcion,
@@ -590,6 +591,7 @@ class AdministradorArticulos extends Con {
                 p.tipo_articulo
             FROM inventario_movimientos im
             INNER JOIN productos p ON p.id = im.id_producto
+            LEFT JOIN usuarios u ON u.id = im.id_usuario
             $where
             ORDER BY im.created_at DESC, im.id DESC
         ";

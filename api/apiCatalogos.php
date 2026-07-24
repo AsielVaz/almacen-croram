@@ -11,6 +11,16 @@ $accion = $_POST['accion'] ?? '';
 $admin = new AdministradorCatalogos();
 
 try {
+    if (in_array($accion, ['listarFamilias', 'listarSubFamilias'], true)) {
+        $puedeConsultar = usuario_tiene_permiso('catalogos_operativos')
+            || usuario_tiene_permiso('ordenes_compra_crear')
+            || usuario_tiene_permiso('ordenes_salida_crear');
+        if (!$puedeConsultar) {
+            requerir_permiso_json('catalogos_operativos');
+        }
+    } else {
+        requerir_permiso_json('catalogos_operativos');
+    }
 
     switch ($accion) {
 
@@ -148,4 +158,3 @@ try {
 } catch (Exception $e) {
     echo $e->getMessage();
 }
-

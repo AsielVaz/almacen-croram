@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/../auth.php';
+requerir_autenticacion_json();
+requerir_permiso_json('reportes_ver');
+
 require('fpdf/fpdf.php');
 
 function pdf_text($value)
@@ -190,11 +194,12 @@ $pdf->SetDrawColor(73, 80, 87);
 $pdf->SetLineWidth(0.3);
 
 $pdf->Cell(10, 9, 'ID', 1, 0, 'C', true);
-$pdf->Cell(70, 9, pdf_text('ARTÍCULO'), 1, 0, 'C', true);
-$pdf->Cell(25, 9, 'SKU', 1, 0, 'C', true);
-$pdf->Cell(20, 9, 'SISTEMA', 1, 0, 'C', true);
-$pdf->Cell(20, 9, 'REAL', 1, 0, 'C', true);
-$pdf->Cell(25, 9, 'DIFERENCIA', 1, 1, 'C', true);
+$pdf->Cell(55, 9, pdf_text('ARTÍCULO'), 1, 0, 'C', true);
+$pdf->Cell(22, 9, 'SKU', 1, 0, 'C', true);
+$pdf->Cell(35, 9, pdf_text('UBICACIÓN'), 1, 0, 'C', true);
+$pdf->Cell(16, 9, 'SIST.', 1, 0, 'C', true);
+$pdf->Cell(16, 9, 'REAL', 1, 0, 'C', true);
+$pdf->Cell(16, 9, 'DIF.', 1, 1, 'C', true);
 
 // Items de la tabla
 $pdf->SetFont('Arial', '', 8);
@@ -214,19 +219,21 @@ foreach ($conciliacion as $item) {
     $pdf->Cell(10, 8, $item['id_articulo'], 'LR', 0, 'C', true);
     
     // Nombre del artículo (puede ser largo)
-    $nombreCorto = substr($item['nombre_articulo'], 0, 50);
-    if (strlen($item['nombre_articulo']) > 50) {
+    $nombreArticulo = (string)($item['nombre_articulo'] ?? '');
+    $nombreCorto = mb_substr($nombreArticulo, 0, 35, 'UTF-8');
+    if (mb_strlen($nombreArticulo, 'UTF-8') > 35) {
         $nombreCorto .= '...';
     }
-    $pdf->Cell(70, 8, pdf_text($nombreCorto), 'LR', 0, 'L', true);
+    $pdf->Cell(55, 8, pdf_text($nombreCorto), 'LR', 0, 'L', true);
     
-    $pdf->Cell(25, 8, $item['sku'], 'LR', 0, 'C', true);
+    $pdf->Cell(22, 8, pdf_text(mb_substr((string)($item['sku'] ?? ''), 0, 16, 'UTF-8')), 'LR', 0, 'C', true);
+    $pdf->Cell(35, 8, pdf_text(mb_substr((string)($item['ubicacion'] ?? ''), 0, 24, 'UTF-8')), 'LR', 0, 'L', true);
     
     $pdf->SetFont('Arial', 'B', 8);
-    $pdf->Cell(20, 8, $item['sistema'], 'LR', 0, 'C', true);
+    $pdf->Cell(16, 8, $item['sistema'], 'LR', 0, 'C', true);
     
     $pdf->SetFont('Arial', '', 8);
-    $pdf->Cell(20, 8, $item['real'], 'LR', 0, 'C', true);
+    $pdf->Cell(16, 8, $item['real'], 'LR', 0, 'C', true);
     
     // Diferencia con color
     $pdf->SetFont('Arial', 'B', 8);
@@ -243,7 +250,7 @@ foreach ($conciliacion as $item) {
         $texto = '0';
     }
     
-    $pdf->Cell(25, 8, $texto, 'LR', 1, 'C', true);
+    $pdf->Cell(16, 8, $texto, 'LR', 1, 'C', true);
     
     $pdf->SetTextColor(33, 37, 41);
     $pdf->SetFont('Arial', '', 8);

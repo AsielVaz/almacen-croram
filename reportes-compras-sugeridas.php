@@ -53,7 +53,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                         <input type="number" min="1" step="1" class="form-control" id="dias_stock" name="dias_stock" value="<?= $diasStock ?>">
                     </div>
                     <div class="col-md-3">
-                        <label for="fecha_inicio" class="form-label">Inicio de anÃ¡lisis</label>
+                        <label for="fecha_inicio" class="form-label">Inicio de análisis</label>
                         <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="<?= htmlspecialchars($fechaInicioAnalisis) ?>">
                     </div>
                     <div class="col-md-auto">
@@ -61,6 +61,14 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                     </div>
                     <div class="col-md-auto">
                         <button type="button" class="btn btn-success" onclick="exportTableToExcel('tablaComprasSugeridas', 'compras_sugeridas_<?= $diasStock ?>_dias_stock')">Exportar Excel</button>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="button" class="btn btn-outline-secondary" id="btnSeleccionarCompras">Seleccionar activos</button>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="button" class="btn btn-dark" id="btnCrearOrdenCompra">
+                            <i class="ri-shopping-cart-line me-1"></i>Crear orden con seleccionados
+                        </button>
                     </div>
                     <div class="col-12">
                         <p class="text-muted mb-0">Stock sugerido = redondear((consumo mensual promedio desde el inicio de análisis / 30.4) * (días de stock requeridos + tiempo de surtido)). Compra sugerida = stock sugerido - existencia actual.</p>
@@ -79,8 +87,10 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                     <table id="tablaComprasSugeridas" class="table table-striped dt-responsive nowrap w-100">
                         <thead>
                             <tr>
+                                <th>Comprar</th>
                                 <th>ID</th>
                                 <th>SKU</th>
+                                <th>Estado</th>
                                 <th>Artículo</th>
                                 <th>Familia</th>
                                 <th>Subfamilia</th>
@@ -93,15 +103,30 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <th>Stock sugerido</th>
                                 <th>Pedido sugerido</th>
                                 <th>Pedido confirmado</th>
-                                <th>Costo promedio</th>
+                                <th>Costo por pieza</th>
                                 <th>Compra sugerida</th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($articulos as $articulo): ?>
-                            <tr>
+                            <?php $estaActivo = (int)($articulo['activo'] ?? 0) === 1; ?>
+                            <tr
+                                data-id="<?= (int)$articulo['id'] ?>"
+                                data-sku="<?= htmlspecialchars($articulo['sku'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                data-nombre="<?= htmlspecialchars($articulo['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                data-unidad="<?= htmlspecialchars($articulo['unidad_medida'] ?? 'pz', ENT_QUOTES, 'UTF-8') ?>"
+                                data-precio="<?= htmlspecialchars((string)($articulo['costo_reposicion'] ?? 0), ENT_QUOTES, 'UTF-8') ?>"
+                            >
+                                <td>
+                                    <input type="checkbox" class="form-check-input seleccionar-compra" <?= $estaActivo ? '' : 'disabled' ?> aria-label="Incluir en orden de compra">
+                                </td>
                                 <td><?= (int)$articulo['id'] ?></td>
                                 <td><?= htmlspecialchars($articulo['sku'] ?? '') ?></td>
+                                <td>
+                                    <span class="badge <?= $estaActivo ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' ?>">
+                                        <?= $estaActivo ? 'ACTIVO' : 'INACTIVO' ?>
+                                    </span>
+                                </td>
                                 <td><?= htmlspecialchars($articulo['nombre'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? 'Sin familia') ?></td>
@@ -114,7 +139,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <td><?= number_format((float)($articulo['stock_objetivo'] ?? 0), 0) ?></td>
                                 <td><?= number_format((float)($articulo['pedido_sugerido'] ?? 0), 0) ?></td>
                                 <td>
-                                    <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['pedido_sugerido'] ?? 0)) ?>">
+                                    <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['compra_sugerida'] ?? $articulo['pedido_sugerido'] ?? 0)) ?>">
                                 </td>
                                 <td>$<?= number_format((float)($articulo['costo_reposicion'] ?? 0), 2) ?></td>
                                 <td><?= number_format((float)($articulo['compra_sugerida'] ?? $articulo['pedido_sugerido'] ?? 0), 0) ?></td>
@@ -139,12 +164,62 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
 <script src="assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
 <script>
+    let tablaComprasSugeridas;
+
     $(document).ready(function () {
-        $('#tablaComprasSugeridas').DataTable({
+        tablaComprasSugeridas = $('#tablaComprasSugeridas').DataTable({
             pageLength: 10,
             responsive: true,
-            order: [[12, 'desc']]
+            order: [[17, 'desc']],
+            columnDefs: [{ targets: 0, orderable: false, searchable: false }]
         });
+    });
+
+    document.getElementById('btnSeleccionarCompras').addEventListener('click', function () {
+        const checks = tablaComprasSugeridas
+            ? tablaComprasSugeridas.rows({ search: 'applied' }).nodes().to$().find('.seleccionar-compra:not(:disabled)')
+            : $('.seleccionar-compra:not(:disabled)');
+        const seleccionar = checks.filter(':checked').length !== checks.length;
+        checks.prop('checked', seleccionar);
+        this.textContent = seleccionar ? 'Quitar selección' : 'Seleccionar activos';
+    });
+
+    document.getElementById('btnCrearOrdenCompra').addEventListener('click', function () {
+        const nodos = tablaComprasSugeridas
+            ? tablaComprasSugeridas.rows().nodes().toArray()
+            : Array.from(document.querySelectorAll('#tablaComprasSugeridas tbody tr'));
+        const items = [];
+
+        nodos.forEach(fila => {
+            const check = fila.querySelector('.seleccionar-compra');
+            if (!check || !check.checked || check.disabled) return;
+
+            const cantidad = Math.max(0, Math.round(Number(fila.querySelector('.pedido-confirmado')?.value || 0)));
+            if (cantidad <= 0) return;
+
+            const precio = Math.max(0, Number(fila.dataset.precio || 0));
+            items.push({
+                id: Number(fila.dataset.id),
+                sku: fila.dataset.sku || '',
+                nombre: fila.dataset.nombre || 'Sin nombre',
+                unidad: fila.dataset.unidad || 'pz',
+                cantidad,
+                precio,
+                total: cantidad * precio
+            });
+        });
+
+        if (items.length === 0) {
+            alert('Selecciona al menos un artículo activo con una cantidad mayor a cero.');
+            return;
+        }
+
+        sessionStorage.setItem('croram_compra_sugerida', JSON.stringify({
+            origen: 'compras_sugeridas',
+            creado_en: new Date().toISOString(),
+            items
+        }));
+        window.location.href = 'ordenes-entrada-form.php?origen=compras-sugeridas';
     });
 
     function exportTableToExcel(tableId, filename) {

@@ -372,11 +372,38 @@ function programarBusqueda() {
     debounceBusqueda = setTimeout(() => buscarArticulos(1), 250);
 }
 
+function cargarCompraSugerida() {
+    const borradorRaw = sessionStorage.getItem('croram_compra_sugerida');
+    if (!borradorRaw) return;
+
+    try {
+        const borrador = JSON.parse(borradorRaw);
+        if (!Array.isArray(borrador.items) || borrador.items.length === 0) return;
+
+        orden = borrador.items.map(item => ({
+            id: Number(item.id),
+            sku: item.sku || '',
+            nombre: item.nombre || 'Sin nombre',
+            cantidad: Math.max(1, Math.round(Number(item.cantidad || 1))),
+            unidad: item.unidad || 'pz',
+            precio: Math.max(0, Number(item.precio || 0)),
+            total: Math.max(1, Math.round(Number(item.cantidad || 1))) * Math.max(0, Number(item.precio || 0))
+        }));
+        document.getElementById('notaEntrada').value = 'Orden generada desde el reporte de compras sugeridas.';
+        renderOrden();
+        updateCounts();
+        sessionStorage.removeItem('croram_compra_sugerida');
+    } catch (error) {
+        sessionStorage.removeItem('croram_compra_sugerida');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     cargarFamilias();
     estadoVacioCatalogo();
     estadoVacioOrden();
     updateCounts();
+    cargarCompraSugerida();
     await buscarArticulos(1);
 });
 
@@ -432,4 +459,3 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
 </script>
 </body>
 </html>
-

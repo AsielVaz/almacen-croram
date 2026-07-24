@@ -7,9 +7,24 @@ include_once 'adminUsuarios.php';
 $accion = $_POST['accion'] ?? '';
 $admin = new AdministradorUsuarios();
 
+function validar_rol_usuario($rol): string {
+    $rol = strtoupper(trim((string)$rol));
+    if (!in_array($rol, ['ADMIN', 'ALMACEN', 'CONSUMIDOR'], true)) {
+        throw new Exception(json_encode([
+            'status' => 'error',
+            'message' => 'Selecciona un tipo de usuario válido.',
+        ], JSON_UNESCAPED_UNICODE));
+    }
+
+    return $rol;
+}
+
 try {
     if ($accion !== 'login') {
         requerir_autenticacion_json();
+        if ($accion !== 'logout') {
+            requerir_permiso_json('usuarios_administrar');
+        }
     }
 
     switch ($accion) {
@@ -51,6 +66,7 @@ try {
         case 'altaUsuario':
             $usuario = $_POST['usuario'] ?? '';
             $email = $_POST['email'] ?? '';
+            $rol = validar_rol_usuario($_POST['rol'] ?? '');
 
             if (trim($_POST['nombre'] ?? '') === '' || trim($usuario) === '' || trim($_POST['password'] ?? '') === '') {
                 echo json_encode(['status' => 'error', 'message' => 'Nombre, usuario y password son obligatorios']);
@@ -72,7 +88,7 @@ try {
                 $usuario,
                 $_POST['password'] ?? '',
                 $email,
-                $_POST['rol'] ?? '',
+                $rol,
                 $_POST['activo'] ?? 1
             );
 
@@ -83,6 +99,7 @@ try {
             $id = $_POST['id'] ?? 0;
             $usuario = $_POST['usuario'] ?? '';
             $email = $_POST['email'] ?? '';
+            $rol = validar_rol_usuario($_POST['rol'] ?? '');
 
             if (trim($_POST['nombre'] ?? '') === '' || trim($usuario) === '' || trim($_POST['password'] ?? '') === '') {
                 echo json_encode(['status' => 'error', 'message' => 'Nombre, usuario y password son obligatorios']);
@@ -105,7 +122,7 @@ try {
                 $usuario,
                 $_POST['password'] ?? '',
                 $email,
-                $_POST['rol'] ?? '',
+                $rol,
                 $_POST['activo'] ?? 1
             );
 

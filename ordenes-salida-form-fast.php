@@ -862,7 +862,7 @@ function registrarSalida() {
             text: 'La orden de salida ha sido registrada correctamente',
             confirmButtonColor: '#495057'
         }).then(() => {
-            window.location.href = 'ordenes-salida.php';
+            window.location.href = resultado.redirect || 'ordenes-salida.php';
         });
     })
     .catch(error => {

@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/../auth.php';
+requerir_autenticacion_json();
+requerir_permiso_json('articulos_ver');
+
 require('fpdf/fpdf.php');
 require_once 'phpqrcode/qrlib.php';
 

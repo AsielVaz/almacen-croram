@@ -415,7 +415,7 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
         const resultado = await registrarSalida();
         if (resultado.status === 'success') {
             await Swal.fire({ icon: 'success', title: 'Salida registrada', text: 'La orden de salida ha sido registrada correctamente', confirmButtonColor: '#495057' });
-            window.location.href = 'ordenes-salida.php';
+            window.location.href = resultado.redirect || 'ordenes-salida.php';
         } else {
             throw new Error(resultado.message || 'No fue posible registrar la salida');
         }

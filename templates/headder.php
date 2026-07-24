@@ -58,8 +58,10 @@ $usuarioSesion = usuario_actual();
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                         <div class="dropdown-header noti-title"><h6 class="text-overflow m-0">Bienvenido</h6></div>
+                        <?php if (usuario_tiene_permiso('usuarios_administrar')): ?>
                         <a href="usuarios.php" class="dropdown-item"><i class="ri-account-circle-line me-1 fs-16 align-middle"></i><span class="align-middle">Usuarios</span></a>
                         <div class="dropdown-divider"></div>
+                        <?php endif; ?>
                         <a href="logout.php" class="dropdown-item fw-semibold text-danger"><i class="ri-logout-box-line me-1 fs-16 align-middle"></i><span class="align-middle">Salir</span></a>
                     </div>
                 </div>

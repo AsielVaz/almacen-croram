@@ -47,6 +47,34 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function listarOrdenesCompraSinAutorizar()
+    {
+        return $this->ejecutar("
+            SELECT
+                oc.id,
+                oc.folio,
+                oc.fecha_orden,
+                oc.estatus,
+                oc.requiere_autorizacion_precio,
+                oc.created_at,
+                pr.nombre AS nombre_proveedor,
+                COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario,
+                COUNT(ocd.id) AS total_partidas,
+                COALESCE(SUM(ocd.cantidad), 0) AS total_unidades,
+                COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_autorizado, ocd.precio_unitario)), 0) AS total_autorizado,
+                COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_recepcion, ocd.precio_unitario)), 0) AS total_recepcion
+            FROM ordenes_compra oc
+            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN usuarios u ON u.id = oc.id_usuario
+            LEFT JOIN orden_compra_detalle ocd ON ocd.id_orden_compra = oc.id
+            WHERE oc.estatus IN ('PENDIENTE', 'PENDIENTE_AUTORIZACION_RECEPCION')
+            GROUP BY oc.id
+            ORDER BY
+                FIELD(oc.estatus, 'PENDIENTE_AUTORIZACION_RECEPCION', 'PENDIENTE'),
+                oc.created_at DESC
+        ");
+    }
+
     public function bloquearOrdenCompra($id)
     {
         $id = (int)$id;
@@ -101,8 +129,10 @@ class AdministradorOrdenes extends Con
         $subtotal = $cantidad * $precio_unitario;
 
         $sql = "
-            INSERT INTO orden_compra_detalle (id_orden_compra, id_producto, cantidad, precio_unitario, subtotal)
-            VALUES ($id_orden_compra, $id_producto, $cantidad, $precio_unitario, $subtotal)
+            INSERT INTO orden_compra_detalle
+                (id_orden_compra, id_producto, cantidad, precio_unitario, precio_autorizado, subtotal)
+            VALUES
+                ($id_orden_compra, $id_producto, $cantidad, $precio_unitario, $precio_unitario, $subtotal)
         ";
 
         return $this->ejecutar($sql);
@@ -224,39 +254,28 @@ class AdministradorOrdenes extends Con
                 COALESCE(NULLIF(productos.nombre, ''), productos.descripcion, 'Sin nombre') AS nombre_producto,
                 productos.sku,
                 productos.ubicacion,
-                COALESCE(
-                    NULLIF(orden_salida_detalle.costo_peps, 0),
-                    NULLIF(orden_salida_detalle.costo_unitario, 0),
-                    NULLIF(productos.costo_reposicion, 0),
-                    ultima_compra.precio_unitario,
-                    0
-                ) AS costo_promedio,
-                COALESCE(
-                    NULLIF(orden_salida_detalle.subtotal, 0),
-                    orden_salida_detalle.cantidad * COALESCE(
+                CASE
+                    WHEN os.estatus = 'CONFIRMADA' THEN COALESCE(
                         NULLIF(orden_salida_detalle.costo_peps, 0),
                         NULLIF(orden_salida_detalle.costo_unitario, 0),
-                        NULLIF(productos.costo_reposicion, 0),
-                        ultima_compra.precio_unitario,
                         0
                     )
-                ) AS subtotal
+                    ELSE NULL
+                END AS costo_promedio,
+                CASE
+                    WHEN os.estatus = 'CONFIRMADA' THEN COALESCE(
+                        NULLIF(orden_salida_detalle.subtotal, 0),
+                        orden_salida_detalle.cantidad * COALESCE(
+                            NULLIF(orden_salida_detalle.costo_peps, 0),
+                            NULLIF(orden_salida_detalle.costo_unitario, 0),
+                            0
+                        )
+                    )
+                    ELSE NULL
+                END AS subtotal
             FROM orden_salida_detalle
             INNER JOIN productos ON productos.id = orden_salida_detalle.id_producto
-            LEFT JOIN (
-                SELECT
-                    ocd.id_producto,
-                    ocd.precio_unitario
-                FROM orden_compra_detalle ocd
-                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-                INNER JOIN (
-                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
-                    FROM orden_compra_detalle ocd2
-                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
-                    WHERE oc2.estatus = 'RECIBIDA'
-                    GROUP BY ocd2.id_producto
-                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
-            ) ultima_compra ON ultima_compra.id_producto = productos.id
+            INNER JOIN ordenes_salida os ON os.id = orden_salida_detalle.id_orden_salida
             WHERE id_orden_salida = $id_orden_salida
         ";
 
@@ -354,43 +373,31 @@ class AdministradorOrdenes extends Con
                 p.descripcion,
                 p.ubicacion,
                 osd.cantidad,
-                COALESCE(
-                    NULLIF(osd.costo_peps, 0),
-                    NULLIF(osd.costo_unitario, 0),
-                    NULLIF(p.costo_reposicion, 0),
-                    ultima_compra.precio_unitario,
-                    0
-                ) AS costo_peps,
-                COALESCE(
-                    NULLIF(osd.subtotal, 0),
-                    osd.cantidad * COALESCE(
+                CASE
+                    WHEN os.estatus = 'CONFIRMADA' THEN COALESCE(
                         NULLIF(osd.costo_peps, 0),
                         NULLIF(osd.costo_unitario, 0),
-                        NULLIF(p.costo_reposicion, 0),
-                        ultima_compra.precio_unitario,
                         0
                     )
-                ) AS subtotal,
+                    ELSE NULL
+                END AS costo_peps,
+                CASE
+                    WHEN os.estatus = 'CONFIRMADA' THEN COALESCE(
+                        NULLIF(osd.subtotal, 0),
+                        osd.cantidad * COALESCE(
+                            NULLIF(osd.costo_peps, 0),
+                            NULLIF(osd.costo_unitario, 0),
+                            0
+                        )
+                    )
+                    ELSE NULL
+                END AS subtotal,
                 COALESCE(u.nombre, CONCAT('Usuario #', os.id_usuario)) AS nombre_usuario
             FROM orden_salida_detalle osd
             INNER JOIN ordenes_salida os ON os.id = osd.id_orden_salida
             INNER JOIN productos p ON p.id = osd.id_producto
             LEFT JOIN areas a ON a.id = os.id_area
             LEFT JOIN usuarios u ON u.id = os.id_usuario
-            LEFT JOIN (
-                SELECT
-                    ocd.id_producto,
-                    ocd.precio_unitario
-                FROM orden_compra_detalle ocd
-                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-                INNER JOIN (
-                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
-                    FROM orden_compra_detalle ocd2
-                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
-                    WHERE oc2.estatus = 'RECIBIDA'
-                    GROUP BY ocd2.id_producto
-                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
-            ) ultima_compra ON ultima_compra.id_producto = p.id
             $whereSql
             ORDER BY os.fecha_salida DESC, os.id DESC, articulo ASC
         ");
@@ -425,6 +432,73 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function autorizarOrdenCompra($id, $idUsuario)
+    {
+        $id = (int)$id;
+        $idUsuario = (int)$idUsuario;
+
+        return $this->ejecutar("
+            UPDATE ordenes_compra
+            SET estatus = 'AUTORIZADA',
+                id_usuario_autoriza_compra = $idUsuario,
+                fecha_autorizacion_compra = NOW()
+            WHERE id = $id
+        ");
+    }
+
+    public function guardarPrecioRecepcion($idOrden, $idProducto, $precioRecepcion)
+    {
+        $idOrden = (int)$idOrden;
+        $idProducto = (int)$idProducto;
+        $precioRecepcion = max(0, (float)$precioRecepcion);
+
+        return $this->ejecutar("
+            UPDATE orden_compra_detalle
+            SET precio_recepcion = $precioRecepcion
+            WHERE id_orden_compra = $idOrden
+              AND id_producto = $idProducto
+        ");
+    }
+
+    public function marcarRecepcionPendienteAutorizacion($idOrden, $idUsuario)
+    {
+        $idOrden = (int)$idOrden;
+        $idUsuario = (int)$idUsuario;
+
+        return $this->ejecutar("
+            UPDATE ordenes_compra
+            SET estatus = 'PENDIENTE_AUTORIZACION_RECEPCION',
+                requiere_autorizacion_precio = 1,
+                id_usuario_recepcion = $idUsuario,
+                fecha_recepcion = NOW()
+            WHERE id = $idOrden
+        ");
+    }
+
+    public function marcarOrdenRecibida($idOrden, $idUsuarioRecepcion, $idUsuarioAutorizaRecepcion = 0)
+    {
+        $idOrden = (int)$idOrden;
+        $idUsuarioRecepcion = (int)$idUsuarioRecepcion;
+        $idUsuarioAutorizaRecepcion = (int)$idUsuarioAutorizaRecepcion;
+        $campos = [
+            "estatus = 'RECIBIDA'",
+            "requiere_autorizacion_precio = 0",
+            "id_usuario_recepcion = $idUsuarioRecepcion",
+            "fecha_recepcion = COALESCE(fecha_recepcion, NOW())",
+        ];
+
+        if ($idUsuarioAutorizaRecepcion > 0) {
+            $campos[] = "id_usuario_autoriza_recepcion = $idUsuarioAutorizaRecepcion";
+            $campos[] = "fecha_autorizacion_recepcion = NOW()";
+        }
+
+        return $this->ejecutar("
+            UPDATE ordenes_compra
+            SET " . implode(",\n                ", $campos) . "
+            WHERE id = $idOrden
+        ");
+    }
+
     public function actualizarEstatusOrdenSalida($id, $estatus)
     {
         $id = (int)$id;
@@ -449,6 +523,7 @@ class AdministradorOrdenes extends Con
             UPDATE orden_compra_detalle
             SET
                 precio_unitario = $precioUnitario,
+                precio_recepcion = $precioUnitario,
                 subtotal = cantidad * $precioUnitario
             WHERE id_orden_compra = $idOrden
               AND id_producto = $idProducto
@@ -536,16 +611,14 @@ class AdministradorOrdenes extends Con
 
         $lotesResumen = json_decode($this->ejecutar("
             SELECT
-                COALESCE(SUM(cantidad_disponible), 0) AS disponible,
-                COUNT(*) AS total_lotes
+                COALESCE(SUM(cantidad_disponible), 0) AS disponible
             FROM inventario_lotes
             WHERE id_producto = $idProducto
-        "), true)[0] ?? ['disponible' => 0, 'total_lotes' => 0];
+        "), true)[0] ?? ['disponible' => 0];
 
         $loteDisponible = (float)($lotesResumen['disponible'] ?? 0);
-        $totalLotes = (int)($lotesResumen['total_lotes'] ?? 0);
         $stockSinLote = (float)$stockActual['stock'] - $loteDisponible;
-        if ($totalLotes === 0 && $stockSinLote > 0.0001) {
+        if ($stockSinLote > 0.0001) {
             $costoLegacy = (float)$stockActual['costo'];
             $this->ejecutar("
                 INSERT INTO inventario_lotes

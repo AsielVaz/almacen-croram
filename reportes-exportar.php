@@ -282,14 +282,14 @@ switch ($tipo) {
                 $movimiento['unidad_medida'] ?? '',
                 $movimiento['tipo_articulo'] ?? '',
                 number_format((float)($movimiento['cantidad'] ?? 0), 0, '.', ''),
-                $movimiento['id_usuario'] ?? '',
+                $movimiento['nombre_usuario'] ?? '',
             ];
         }
 
         exportarExcelHtml(
             'log_inventario_' . ($movimientoInicio ?: 'inicio') . '_' . ($movimientoFin ?: 'fin'),
             'Log de Inventario',
-            ['ID', 'Fecha', 'Tipo', 'Origen', 'ID referencia', 'ID producto', 'SKU', 'Articulo', 'Descripcion', 'Ubicacion', 'Unidad', 'Condicion', 'Cantidad', 'ID usuario'],
+            ['ID', 'Fecha', 'Tipo', 'Origen', 'ID referencia', 'ID producto', 'SKU', 'Articulo', 'Descripcion', 'Ubicacion', 'Unidad', 'Condicion', 'Cantidad', 'Usuario'],
             $filas
         );
         break;

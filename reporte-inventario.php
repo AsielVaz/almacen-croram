@@ -71,6 +71,7 @@ $articulos = json_decode($adminArticulos->listarArticulos(false), true);
             <th>ID</th>
             <th>Artículo</th>
             <th>SKU</th>
+            <th>Ubicación</th>
             <th>Existencias sistema</th>
             <th>Existencias reales</th>
             <th>Diferencia</th>
@@ -84,6 +85,7 @@ $articulos = json_decode($adminArticulos->listarArticulos(false), true);
             <td><?php echo $articulo['id']; ?></td>
             <td><?php echo htmlspecialchars($articulo['nombre']); ?></td>
             <td><?php echo htmlspecialchars($articulo['sku']); ?></td>
+            <td><?php echo htmlspecialchars($articulo['ubicacion'] ?? ''); ?></td>
             <td class="cantidad-sistema"><?php echo $cantidad; ?></td>
             <td>
                 <input type="number"

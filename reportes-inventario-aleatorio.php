@@ -299,12 +299,13 @@ if ($cantidadMostrar > 0) {
         <table id="tablaConciliacion" class="table table-modern table-striped dt-responsive nowrap w-100">
             <thead>
                 <tr>
-                    <th width="8%">ID</th>
-                    <th width="35%">Artículo</th>
-                    <th width="15%">SKU</th>
-                    <th width="12%" class="text-center">Sistema</th>
-                    <th width="15%" class="text-center">Real</th>
-                    <th width="15%" class="text-center">Diferencia</th>
+                    <th width="7%">ID</th>
+                    <th width="28%">Artículo</th>
+                    <th width="12%">SKU</th>
+                    <th width="18%">Ubicación</th>
+                    <th width="10%" class="text-center">Sistema</th>
+                    <th width="12%" class="text-center">Real</th>
+                    <th width="13%" class="text-center">Diferencia</th>
                 </tr>
             </thead>
             <tbody>
@@ -315,6 +316,7 @@ if ($cantidadMostrar > 0) {
                     <td>
                         <span class="badge bg-secondary"><?php echo htmlspecialchars($articulo['sku']); ?></span>
                     </td>
+                    <td><?php echo htmlspecialchars($articulo['ubicacion'] ?? ''); ?></td>
                     <td class="text-center cantidad-sistema fw-bold"><?php echo $articulo['cantidad_sistema']; ?></td>
                     <td class="text-center">
                         <input type="number"
@@ -410,6 +412,7 @@ function terminarConciliacion() {
             id_articulo: row.dataset.id,
             nombre_articulo: nombreCell.textContent.trim(),
             sku: skuBadge.textContent.trim(),
+            ubicacion: row.querySelector('td:nth-child(4)').textContent.trim(),
             sistema: parseFloat(row.querySelector('.cantidad-sistema').textContent),
             real: parseFloat(row.querySelector('.cantidad-real').value || 0),
             diferencia: parseFloat(row.querySelector('.diferencia').textContent)

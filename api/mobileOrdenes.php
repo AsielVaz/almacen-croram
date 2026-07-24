@@ -163,6 +163,7 @@ function agrupar_esperados(array $detalles): array {
                 'cantidad_requerida' => 0,
                 'cantidad_validada' => 0,
                 'precio_unitario' => (float)($detalle['precio_unitario'] ?? $detalle['costo_promedio'] ?? 0),
+                'precio_autorizado' => (float)($detalle['precio_autorizado'] ?? $detalle['precio_unitario'] ?? 0),
             ];
         }
 
@@ -408,18 +409,16 @@ try {
                 ], 400);
             }
 
+            if (count($escaneos) === 0) {
+                responder([
+                    'status' => 'error',
+                    'message' => 'Debes escanear el QR de cada unidad antes de finalizar la orden.',
+                ], 422);
+            }
+
             $detalles = detalles_orden($admin, $tipo, $idOrden);
-            $validacion = count($escaneos) > 0
-                ? validar_escaneos($detalles, $escaneos)
-                : [
-                    'status' => 'success',
-                    'valida' => true,
-                    'esperados' => array_values(agrupar_esperados($detalles)),
-                    'completos' => array_values(agrupar_esperados($detalles)),
-                    'faltantes' => [],
-                    'extras' => [],
-                ];
-            if (count($escaneos) > 0 && !$validacion['valida']) {
+            $validacion = validar_escaneos($detalles, $escaneos);
+            if (!$validacion['valida']) {
                 responder([
                     'status' => 'error',
                     'message' => 'La orden no esta completamente validada',
@@ -452,19 +451,47 @@ try {
                     ]));
                 }
 
+                $requiereAutorizacionPrecio = false;
+                $preciosRecepcion = [];
                 foreach ($validacion['esperados'] as $producto) {
                     $idProducto = (int)$producto['id_producto'];
-                    $cantidad = (float)$producto['cantidad_requerida'];
                     $precioReal = isset($preciosReales[$idProducto])
                         ? (float)$preciosReales[$idProducto]
                         : (float)$producto['precio_unitario'];
+                    $precioAutorizado = (float)($producto['precio_autorizado'] ?? $producto['precio_unitario'] ?? 0);
+                    $preciosRecepcion[$idProducto] = $precioReal;
+                    $admin->guardarPrecioRecepcion($idOrden, $idProducto, $precioReal);
+
+                    if ($precioReal > ($precioAutorizado + 0.0001)) {
+                        $requiereAutorizacionPrecio = true;
+                    }
+                }
+
+                $idUsuarioRecepcion = (int)($ordenActual['id_usuario'] ?? 0);
+                if ($requiereAutorizacionPrecio) {
+                    $admin->marcarRecepcionPendienteAutorizacion($idOrden, $idUsuarioRecepcion);
+                    $admin->confirmarTransaccion();
+
+                    responder([
+                        'status' => 'success',
+                        'message' => 'La recepción quedó pendiente de autorización porque el precio final supera al autorizado.',
+                        'tipo_orden' => 'entrada',
+                        'id_orden' => $idOrden,
+                        'requiere_autorizacion' => true,
+                    ]);
+                }
+
+                foreach ($validacion['esperados'] as $producto) {
+                    $idProducto = (int)$producto['id_producto'];
+                    $cantidad = (float)$producto['cantidad_requerida'];
+                    $precioReal = $preciosRecepcion[$idProducto] ?? (float)$producto['precio_unitario'];
 
                     $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
                     // El trigger trg_oc_recibida_entrada suma inventario al cambiar a RECIBIDA.
-                    $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, $ordenActual['fecha_orden'] ?? date('Y-m-d'));
+                    $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, date('Y-m-d'));
                 }
 
-                $admin->actualizarEstatusOrdenCompra($idOrden, 'RECIBIDA');
+                $admin->marcarOrdenRecibida($idOrden, $idUsuarioRecepcion);
                 $admin->confirmarTransaccion();
 
                 responder([
