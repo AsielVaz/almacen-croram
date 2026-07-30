@@ -71,7 +71,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                         </button>
                     </div>
                     <div class="col-12">
-                        <p class="text-muted mb-0">Stock sugerido = redondear((consumo mensual promedio desde el inicio de análisis / 30.4) * (días de stock requeridos + tiempo de surtido)). Compra sugerida = stock sugerido - existencia actual.</p>
+                        <p class="text-muted mb-0">Consumo diario = consumo mensual promedio / 30.4. Existencia en días = redondear(existencia / consumo diario). Pedido sugerido = redondear((días de stock requeridos + tiempo de surtido - existencia en días) * consumo diario).</p>
                     </div>
                 </form>
             </div>
@@ -92,6 +92,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <th>SKU</th>
                                 <th>Estado</th>
                                 <th>Artículo</th>
+                                <th>Ubicación</th>
                                 <th>Familia</th>
                                 <th>Subfamilia</th>
                                 <th>Existencia</th>
@@ -99,12 +100,11 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <th>Inicio análisis</th>
                                 <th>Días stock req.</th>
                                 <th>Tiempo surtido</th>
-                                <th>Días restantes</th>
+                                <th>Existencia en días</th>
                                 <th>Stock sugerido</th>
-                                <th>Pedido sugerido</th>
                                 <th>Pedido confirmado</th>
                                 <th>Costo por pieza</th>
-                                <th>Compra sugerida</th>
+                                <th>Pedido sugerido</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,7 +115,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 data-sku="<?= htmlspecialchars($articulo['sku'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                 data-nombre="<?= htmlspecialchars($articulo['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                 data-unidad="<?= htmlspecialchars($articulo['unidad_medida'] ?? 'pz', ENT_QUOTES, 'UTF-8') ?>"
-                                data-precio="<?= htmlspecialchars((string)($articulo['costo_reposicion'] ?? 0), ENT_QUOTES, 'UTF-8') ?>"
+                                data-precio="<?= htmlspecialchars((string)($articulo['costo_por_pieza'] ?? 0), ENT_QUOTES, 'UTF-8') ?>"
                             >
                                 <td>
                                     <input type="checkbox" class="form-check-input seleccionar-compra" <?= $estaActivo ? '' : 'disabled' ?> aria-label="Incluir en orden de compra">
@@ -128,6 +128,7 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                     </span>
                                 </td>
                                 <td><?= htmlspecialchars($articulo['nombre'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($articulo['ubicacion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['familia'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($articulo['subfamilia'] ?? 'Sin familia') ?></td>
                                 <td><?= number_format((float)($articulo['cantidad'] ?? 0), 0) ?></td>
@@ -135,14 +136,13 @@ $articulos = json_decode($adminArticulos->listarComprasSugeridas($diasStock, $fe
                                 <td><?= htmlspecialchars($articulo['fecha_inicio_analisis'] ?? '') ?></td>
                                 <td><?= (int)($articulo['dias_stock_requeridos'] ?? $diasStock) ?></td>
                                 <td><?= (int)($articulo['tiempo_reposicion'] ?? 0) ?></td>
-                                <td><?= number_format((float)($articulo['dias_restantes'] ?? 0), 2) ?></td>
+                                <td><?= number_format((float)($articulo['existencia_en_dias'] ?? 0), 0) ?></td>
                                 <td><?= number_format((float)($articulo['stock_objetivo'] ?? 0), 0) ?></td>
-                                <td><?= number_format((float)($articulo['pedido_sugerido'] ?? 0), 0) ?></td>
                                 <td>
-                                    <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['compra_sugerida'] ?? $articulo['pedido_sugerido'] ?? 0)) ?>">
+                                    <input type="number" min="0" step="1" class="form-control form-control-sm pedido-confirmado" value="<?= (int)round((float)($articulo['pedido_sugerido'] ?? 0)) ?>">
                                 </td>
-                                <td>$<?= number_format((float)($articulo['costo_reposicion'] ?? 0), 2) ?></td>
-                                <td><?= number_format((float)($articulo['compra_sugerida'] ?? $articulo['pedido_sugerido'] ?? 0), 0) ?></td>
+                                <td>$<?= number_format((float)($articulo['costo_por_pieza'] ?? 0), 2) ?></td>
+                                <td><?= number_format((float)($articulo['pedido_sugerido'] ?? 0), 0) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

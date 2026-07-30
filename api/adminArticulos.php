@@ -155,6 +155,7 @@ class AdministradorArticulos extends Con {
                 p.sku,
                 p.nombre,
                 p.unidad_medida,
+                p.tipo_articulo,
                 p.activo,
                 p.descripcion,
                 p.ubicacion,
@@ -357,6 +358,24 @@ class AdministradorArticulos extends Con {
         }
 
         $mesesAnalisis = "GREATEST(DATEDIFF(CURDATE(), '$fechaInicioAnalisis') / 30.4, 1)";
+        $consumoMensualSql = "(
+            CASE
+                WHEN COALESCE(consumos.consumo_12_meses, 0) > 0
+                    THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
+                ELSE COALESCE(p.consumo_diario, 0) * 30.4
+            END
+        )";
+        $consumoDiarioSql = "($consumoMensualSql / 30.4)";
+        $diasTotalesStockSql = "($diasStockRequeridos + COALESCE(p.tiempo_reposicion, 0))";
+        $existenciaEnDiasSql = "(
+            CASE
+                WHEN $consumoDiarioSql > 0
+                    THEN ROUND(COALESCE(inv.stock, 0) / $consumoDiarioSql, 0)
+                ELSE 0
+            END
+        )";
+        $diasPorComprarSql = "GREATEST($diasTotalesStockSql - $existenciaEnDiasSql, 0)";
+        $pedidoSugeridoSql = "ROUND($diasPorComprarSql * $consumoDiarioSql, 0)";
 
         $sql = "
             SELECT
@@ -367,7 +386,16 @@ class AdministradorArticulos extends Con {
                 p.unidad_medida,
                 p.descripcion,
                 p.ubicacion,
-                p.costo_reposicion,
+                COALESCE(
+                    NULLIF(p.costo_reposicion, 0),
+                    ultima_compra.precio_unitario,
+                    0
+                ) AS costo_por_pieza,
+                COALESCE(
+                    NULLIF(p.costo_reposicion, 0),
+                    ultima_compra.precio_unitario,
+                    0
+                ) AS costo_reposicion,
                 p.consumo_diario,
                 p.tiempo_reposicion,
                 COALESCE(inv.stock, 0) AS cantidad,
@@ -375,50 +403,16 @@ class AdministradorArticulos extends Con {
                 s.nombre AS subfamilia,
                 '$fechaInicioAnalisis' AS fecha_inicio_analisis,
                 COALESCE(consumos.consumo_12_meses, 0) AS consumo_12_meses,
-                CASE
-                    WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                    ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                END AS consumo_mensual_promedio,
+                $consumoMensualSql AS consumo_mensual_promedio,
+                $consumoDiarioSql AS consumo_diario_calculado,
                 $diasStockRequeridos AS dias_stock_requeridos,
-                ROUND((
-                    CASE
-                        WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                        ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                    END / 30.4
-                ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) AS stock_objetivo,
-                GREATEST(
-                    ROUND((
-                        CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                        END / 30.4
-                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
-                    0
-                ) AS pedido_sugerido,
-                GREATEST(
-                    ROUND((
-                        CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                        END / 30.4
-                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
-                    0
-                ) AS compra_sugerida,
-                CASE
-                    WHEN (
-                        CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                        END / 30.4
-                    ) > 0
-                        THEN ROUND(COALESCE(inv.stock, 0) / (
-                            CASE
-                                WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                                ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                            END / 30.4
-                        ), 2)
-                    ELSE NULL
-                END AS dias_restantes
+                $diasTotalesStockSql AS dias_totales_stock,
+                ROUND($consumoDiarioSql * $diasTotalesStockSql, 0) AS stock_objetivo,
+                $existenciaEnDiasSql AS existencia_en_dias,
+                $existenciaEnDiasSql AS dias_restantes,
+                $diasPorComprarSql AS dias_por_comprar,
+                $pedidoSugeridoSql AS pedido_sugerido,
+                $pedidoSugeridoSql AS compra_sugerida
             FROM productos p
             JOIN familias f ON f.id = p.id_familia
             LEFT JOIN subfamilias s ON s.id = p.id_subfamilia
@@ -433,19 +427,22 @@ class AdministradorArticulos extends Con {
                   AND os.fecha_salida >= '$fechaInicioAnalisis'
                 GROUP BY osd.id_producto
             ) consumos ON consumos.id_producto = p.id
-            WHERE (
-                    COALESCE(consumos.consumo_12_meses, 0) > 0
-                    OR COALESCE(p.consumo_diario, 0) > 0
-                  )
-              AND GREATEST(
-                    ROUND((
-                        CASE
-                            WHEN COALESCE(consumos.consumo_12_meses, 0) > 0 THEN COALESCE(consumos.consumo_12_meses, 0) / $mesesAnalisis
-                            ELSE COALESCE(p.consumo_diario, 0) * 30.4
-                        END / 30.4
-                    ) * ($diasStockRequeridos + p.tiempo_reposicion), 0) - COALESCE(inv.stock, 0),
-                    0
-                  ) > 0
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
+            WHERE $consumoDiarioSql > 0
+              AND $pedidoSugeridoSql > 0
             ORDER BY pedido_sugerido DESC, p.tiempo_reposicion DESC, nombre ASC
         ";
 
@@ -685,12 +682,56 @@ class AdministradorArticulos extends Con {
                 p.descripcion,
                 p.ubicacion,
                 p.activo,
-                p.costo_reposicion,
+                CASE
+                    WHEN COALESCE(inv.stock, 0) > 0 THEN (
+                        COALESCE(valor_lotes.valor_inventario, 0)
+                        + GREATEST(COALESCE(inv.stock, 0) - COALESCE(valor_lotes.cantidad_lotes, 0), 0)
+                          * COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                    ) / COALESCE(inv.stock, 0)
+                    ELSE COALESCE(NULLIF(p.costo_reposicion, 0), ultima_compra.precio_unitario, 0)
+                END AS costo_reposicion,
                 p.consumo_diario,
                 p.tiempo_reposicion,
                 COALESCE(inv.stock, 0) AS inventario_inicial
             FROM productos p
             LEFT JOIN inventario inv ON inv.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    il.id_producto,
+                    SUM(il.cantidad_disponible * COALESCE(NULLIF(il.costo_unitario, 0), ultima_compra.precio_unitario, 0)) AS valor_inventario,
+                    SUM(il.cantidad_disponible) AS cantidad_lotes
+                FROM inventario_lotes il
+                LEFT JOIN (
+                    SELECT
+                        ocd.id_producto,
+                        ocd.precio_unitario
+                    FROM orden_compra_detalle ocd
+                    INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                    INNER JOIN (
+                        SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                        FROM orden_compra_detalle ocd2
+                        INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                        WHERE oc2.estatus = 'RECIBIDA'
+                        GROUP BY ocd2.id_producto
+                    ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+                ) ultima_compra ON ultima_compra.id_producto = il.id_producto
+                WHERE il.cantidad_disponible > 0
+                GROUP BY il.id_producto
+            ) valor_lotes ON valor_lotes.id_producto = p.id
+            LEFT JOIN (
+                SELECT
+                    ocd.id_producto,
+                    ocd.precio_unitario
+                FROM orden_compra_detalle ocd
+                INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
+                INNER JOIN (
+                    SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
+                    FROM orden_compra_detalle ocd2
+                    INNER JOIN ordenes_compra oc2 ON oc2.id = ocd2.id_orden_compra
+                    WHERE oc2.estatus = 'RECIBIDA'
+                    GROUP BY ocd2.id_producto
+                ) ult ON ult.id_producto = ocd.id_producto AND ult.id_detalle = ocd.id
+            ) ultima_compra ON ultima_compra.id_producto = p.id
             WHERE p.id = $id
             LIMIT 1
         ";
@@ -850,28 +891,6 @@ class AdministradorArticulos extends Con {
     }
 
     public function dameArticulo($id) {
-        $id = (int)$id;
-        $sql = "
-            SELECT
-                p.id,
-                p.sku,
-                p.nombre,
-                p.id_familia,
-                p.id_subfamilia,
-                p.unidad_medida,
-                p.tipo_articulo,
-                p.descripcion,
-                p.ubicacion,
-                p.activo,
-                p.costo_reposicion,
-                p.consumo_diario,
-                p.tiempo_reposicion,
-                COALESCE(inv.stock, 0) AS inventario_inicial
-            FROM productos p
-            LEFT JOIN inventario inv ON inv.id_producto = p.id
-            WHERE p.id = $id
-            LIMIT 1
-        ";
-        return $this->ejecutar($sql);
+        return $this->obtenerArticulo($id);
     }
 }

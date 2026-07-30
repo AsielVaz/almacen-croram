@@ -41,16 +41,19 @@
                 <h1>Compras sugeridas</h1>
                 <p class="muted">El reporte calcula la cantidad recomendada para cubrir el consumo esperado durante los dias de stock y el tiempo de surtido del proveedor.</p>
             </section>
-            <section class="grid"><section class="card"><h2>Parametros</h2><ul class="steps"><li>Fecha de inicio para analizar consumos.</li><li>Dias de stock requeridos por la operacion.</li><li>Tiempo de surtido registrado para cada proveedor o articulo.</li><li>Consumo mensual promedio del periodo analizado.</li><li>Existencia disponible al momento de generar el reporte.</li></ul></section><section class="card"><h2>Columnas de control</h2><ul class="steps"><li>El estado ACTIVO o INACTIVO aparece despues del SKU.</li><li>Los articulos INACTIVOS se muestran como referencia y no pueden seleccionarse para compra.</li><li>Stock sugerido indica la cobertura total calculada.</li><li>Compra sugerida muestra el stock sugerido menos la existencia.</li><li>Cantidad confirmada permite aumentar o disminuir las piezas antes de continuar.</li></ul></section></section>
-            <section class="card"><h2>Formula aplicada</h2><pre>stock_sugerido = REDONDEAR(
-    (consumo_mensual_promedio / 30.4)
-    * (dias_stock_requeridos + dias_surtido_proveedor)
-)
+            <section class="grid"><section class="card"><h2>Parametros</h2><ul class="steps"><li>Fecha de inicio para analizar consumos.</li><li>Dias de stock requeridos por la operacion.</li><li>Tiempo de surtido registrado para cada proveedor o articulo.</li><li>Consumo mensual promedio del periodo analizado.</li><li>Existencia disponible al momento de generar el reporte.</li></ul></section><section class="card"><h2>Columnas de control</h2><ul class="steps"><li>El estado ACTIVO o INACTIVO aparece despues del SKU.</li><li>La ubicacion facilita localizar fisicamente el articulo.</li><li>Existencia en dias se presenta redondeada, sin decimales.</li><li>Stock sugerido indica la cobertura total calculada.</li><li>Pedido sugerido aparece al extremo derecho del reporte.</li><li>Pedido confirmado permite aumentar o disminuir las piezas antes de continuar.</li></ul></section></section>
+            <section class="card"><h2>Formula aplicada</h2><pre>consumo_diario = consumo_mensual_promedio / 30.4
 
-compra_sugerida = MAX(stock_sugerido - existencia_actual, 0)</pre></section>
-            <section class="card"><h2>Ejemplo</h2><div class="table-wrap"><table><thead><tr><th>Dato</th><th>Valor</th></tr></thead><tbody><tr><td>Consumo mensual promedio</td><td>32 piezas</td></tr><tr><td>Dias de stock requeridos</td><td>15 dias</td></tr><tr><td>Tiempo de surtido</td><td>10 dias</td></tr><tr><td>Existencia actual</td><td>12 piezas</td></tr><tr><td>Stock sugerido</td><td>REDONDEAR((32 / 30.4) x 25) = 26 piezas</td></tr><tr><td>Compra sugerida</td><td>26 - 12 = 14 piezas</td></tr></tbody></table></div></section>
-            <section class="card"><h2>Crear la orden de compra</h2><ol class="steps"><li>Definir la fecha de analisis y los dias de stock.</li><li>Revisar el stock sugerido, la existencia y la compra sugerida.</li><li>Seleccionar los articulos activos que se desean comprar.</li><li>Ajustar la cantidad confirmada por pieza cuando sea necesario.</li><li>Continuar a la orden de compra.</li><li>El sistema transfiere productos, cantidades, costos y la nota de origen.</li><li>Seleccionar el proveedor y completar los datos restantes antes de guardar.</li></ol></section>
-            <p class="footer-note">Ultima actualizacion: 24 de julio de 2026. Documentacion interna para Croram.</p>
+existencia_en_dias = REDONDEAR(existencia_actual / consumo_diario)
+
+dias_totales_stock = dias_stock_requeridos + dias_surtido_proveedor
+
+dias_por_comprar = MAX(dias_totales_stock - existencia_en_dias, 0)
+
+pedido_sugerido = REDONDEAR(dias_por_comprar * consumo_diario)</pre></section>
+            <section class="card"><h2>Ejemplo</h2><div class="table-wrap"><table><thead><tr><th>Dato</th><th>Valor</th></tr></thead><tbody><tr><td>Consumo mensual promedio</td><td>9 piezas</td></tr><tr><td>Consumo diario</td><td>9 / 30.4 = 0.2960 piezas</td></tr><tr><td>Dias de stock requeridos</td><td>60 dias</td></tr><tr><td>Tiempo de surtido</td><td>10 dias</td></tr><tr><td>Dias totales de stock</td><td>60 + 10 = 70 dias</td></tr><tr><td>Existencia en dias</td><td>54 dias</td></tr><tr><td>Dias por comprar</td><td>70 - 54 = 16 dias</td></tr><tr><td>Pedido sugerido</td><td>REDONDEAR(16 x 0.2960) = 5 piezas</td></tr></tbody></table></div></section>
+            <section class="card"><h2>Crear la orden de compra</h2><ol class="steps"><li>Definir la fecha de analisis y los dias de stock.</li><li>Revisar el stock sugerido, la existencia y el pedido sugerido.</li><li>Seleccionar los articulos activos que se desean comprar.</li><li>Ajustar la cantidad confirmada por pieza cuando sea necesario.</li><li>Continuar a la orden de compra.</li><li>El sistema transfiere productos, cantidades, costos y la nota de origen.</li><li>Seleccionar el proveedor y completar los datos restantes antes de guardar.</li></ol></section>
+            <p class="footer-note">Ultima actualizacion: 30 de julio de 2026. Documentacion interna para Croram.</p>
         </main>
     </div>
 </body>
