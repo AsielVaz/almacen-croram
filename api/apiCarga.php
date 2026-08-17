@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/texto.php';
 requerir_autenticacion_json();
 requerir_permiso_json('articulos_administrar');
 
@@ -20,7 +21,7 @@ function responder($data, $codigo_http) {
 }
 
 function limpiar_texto($texto) {
-    $texto = trim($texto);
+    $texto = normalizar_texto_bd($texto);
     $texto = preg_replace('/\s+/', ' ', $texto);
     return $texto;
 }

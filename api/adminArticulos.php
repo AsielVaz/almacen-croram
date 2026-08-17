@@ -1,5 +1,6 @@
 <?php
 include_once 'conector.php';
+include_once __DIR__ . '/texto.php';
 
 class AdministradorArticulos extends Con {
 
@@ -813,7 +814,7 @@ class AdministradorArticulos extends Con {
     ========================= */
 
     private function limpiar($valor) {
-        return htmlspecialchars(trim($valor), ENT_QUOTES, 'UTF-8');
+        return $this->escapar(normalizar_texto_bd($valor));
     }
 
     private function normalizarTipoArticulo($tipo) {

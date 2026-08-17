@@ -1,0 +1,1472 @@
+{
+    "fecha": "2026-08-17T08:41:23+00:00",
+    "tabla": "productos",
+    "motivo": "Normalizacion de entidades HTML almacenadas como texto",
+    "total_registros": 183,
+    "registros": [
+        {
+            "id": "30978",
+            "sku": "ART-030978",
+            "nombre": "RUEDA DE ESMERIL GRANO 100 150MM 6&quot;",
+            "descripcion": "150MM 6&quot;",
+            "ubicacion": "C1-4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "30979",
+            "sku": "ART-030979",
+            "nombre": "RUEDA DE ESMERIL GRANO 60 150MM 6&quot;",
+            "descripcion": "RUEDA DE ESMERIL GRANO 60 150MM 6&quot;",
+            "ubicacion": "C1-4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "30993",
+            "sku": "ART-030993",
+            "nombre": "CINTA MASKING 2&quot;",
+            "descripcion": "",
+            "ubicacion": "C1-4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "30994",
+            "sku": "ART-030994",
+            "nombre": "CINTA PARA DUCTOS DE 2&quot;",
+            "descripcion": "GRIS",
+            "ubicacion": "C1-4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "30995",
+            "sku": "ART-030995",
+            "nombre": "CINTA TRANSPARENTE DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": "C1-4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "30998",
+            "sku": "ART-030998",
+            "nombre": "CINTA ANTIDERRAPANTE DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31006",
+            "sku": "ART-031006",
+            "nombre": "ABRAZADERA CON PEDESTAL PARA BUJE COLGANTE 1 1/2&quot;",
+            "descripcion": "CAJON 8",
+            "ubicacion": "G2 -P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31007",
+            "sku": "ART-031007",
+            "nombre": "ABRAZADERA OMEGA DE 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "E2 PISO 2 COLGANTES",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31008",
+            "sku": "ART-031008",
+            "nombre": "ABRAZADERA SIN FIN 1/2&quot;  X 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "B1 CAJON 8",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31011",
+            "sku": "ART-031011",
+            "nombre": "ADAPTADOR  PARA MATRACA CUADRO DE 1/2&quot; A 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D1 PISO 2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31012",
+            "sku": "ART-031012",
+            "nombre": "ADAPTADOR PARA MATRACA 1/2&quot; HEMBRA A A 3/4&quot; MACHO",
+            "descripcion": "",
+            "ubicacion": "TALLER MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31013",
+            "sku": "ART-031013",
+            "nombre": "ADAPTADOR PARA MATRACA 3/4&quot; HEMBRA  A 1/2&quot; MACHO",
+            "descripcion": "",
+            "ubicacion": "D1 PISO 2",
+            "unidad_medida": ""
+        },
+        {
+            "id": "31015",
+            "sku": "ART-031015",
+            "nombre": "ADAPTADOR PARA MATRACA 3/8&quot; HEMBRA X1/2 MACHO",
+            "descripcion": "",
+            "ubicacion": "SIN EXISTENCIA",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31089",
+            "sku": "ART-031089",
+            "nombre": "CABLE GALVANIZADO 5/16&quot; 7X19 WARRIOR",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "M"
+        },
+        {
+            "id": "31100",
+            "sku": "ART-031100",
+            "nombre": "CAMPANA 1/4&quot;  A  1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31101",
+            "sku": "ART-031101",
+            "nombre": "CAMPANA DE 1&quot; A  1/2 &quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31114",
+            "sku": "ART-031114",
+            "nombre": "CHUMACERA DE PARED 1 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31115",
+            "sku": "ART-031115",
+            "nombre": "CHUMACERA DE PARED 1  1/4 &quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31116",
+            "sku": "ART-031116",
+            "nombre": "CHUMACERA DE PARED 1 11/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P2",
+            "unidad_medida": ""
+        },
+        {
+            "id": "31117",
+            "sku": "ART-031117",
+            "nombre": "CHUMACERA DE PARED 1 3/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31118",
+            "sku": "ART-031118",
+            "nombre": "CHUMACERA DE PARED 1 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31119",
+            "sku": "ART-031119",
+            "nombre": "CHUMACERA DE PARED 1 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": ""
+        },
+        {
+            "id": "31120",
+            "sku": "ART-031120",
+            "nombre": "CHUMACERA DE PARED 1 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31121",
+            "sku": "ART-031121",
+            "nombre": "CHUMACERA DE PARED 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31122",
+            "sku": "ART-031122",
+            "nombre": "CHUMACERA DE PARED 2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31123",
+            "sku": "ART-031123",
+            "nombre": "CHUMACERA DE PARED 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31124",
+            "sku": "ART-031124",
+            "nombre": "CHUMACERA DE PARED 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31125",
+            "sku": "ART-031125",
+            "nombre": "CHUMACERA DE PARED 7/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31127",
+            "sku": "ART-031127",
+            "nombre": "CHUMACERA DE PISO 1&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31128",
+            "sku": "ART-031128",
+            "nombre": "CHUMACERA DE PISO 1 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31129",
+            "sku": "ART-031129",
+            "nombre": "CHUMACERA DE PISO 1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31130",
+            "sku": "ART-031130",
+            "nombre": "CHUMACERA DE PISO 1 11/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31131",
+            "sku": "ART-031131",
+            "nombre": "CHUMACERA DE PISO 1 15/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31132",
+            "sku": "ART-031132",
+            "nombre": "CHUMACERA DE PISO 1 3/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31133",
+            "sku": "ART-031133",
+            "nombre": "CHUMACERA DE PISO 1 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31134",
+            "sku": "ART-031134",
+            "nombre": "CHUMACERA DE PISO 1 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31135",
+            "sku": "ART-031135",
+            "nombre": "CHUMACERA DE PISO 1 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31136",
+            "sku": "ART-031136",
+            "nombre": "CHUMACERA DE PISO 1 7/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31137",
+            "sku": "ART-031137",
+            "nombre": "CHUMACERA DE PISO 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31138",
+            "sku": "ART-031138",
+            "nombre": "CHUMACERA DE PISO 15/16&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31139",
+            "sku": "ART-031139",
+            "nombre": "CHUMACERA DE PISO 2&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31140",
+            "sku": "ART-031140",
+            "nombre": "CHUMACERA DE PISO 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31141",
+            "sku": "ART-031141",
+            "nombre": "CHUMACERA DE PISO 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31142",
+            "sku": "ART-031142",
+            "nombre": "CHUMACERA DE PISO 7/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H5-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31143",
+            "sku": "ART-031143",
+            "nombre": "CHUMACERA FY  1 15/16&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31144",
+            "sku": "ART-031144",
+            "nombre": "CHUMACERAS DE 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31146",
+            "sku": "ART-031146",
+            "nombre": "CINCHO NATURAL DE 12&quot;  100 PZ",
+            "descripcion": "",
+            "ubicacion": "D1-P3",
+            "unidad_medida": "BOLSA"
+        },
+        {
+            "id": "31147",
+            "sku": "ART-031147",
+            "nombre": "CINCHO NATURAL DE 8&quot;  200 PZ",
+            "descripcion": "",
+            "ubicacion": "D1-P3",
+            "unidad_medida": "BOLSA"
+        },
+        {
+            "id": "31148",
+            "sku": "ART-031148",
+            "nombre": "CINCHO NATURALES DE 6&quot;  200 PZ",
+            "descripcion": "",
+            "ubicacion": "D1-P3",
+            "unidad_medida": "BOLSA"
+        },
+        {
+            "id": "31154",
+            "sku": "ART-031154",
+            "nombre": "CLAVO  2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31157",
+            "sku": "ART-031157",
+            "nombre": "CODO GALVANIZADO 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31158",
+            "sku": "ART-031158",
+            "nombre": "CODO GALVANIZADO DE 1 1/2 &quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "L"
+        },
+        {
+            "id": "31159",
+            "sku": "ART-031159",
+            "nombre": "CODO GALVANIZADO DE 1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31160",
+            "sku": "ART-031160",
+            "nombre": "CODO GALVANIZADO DE 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31161",
+            "sku": "ART-031161",
+            "nombre": "CODO GALVANIZADO DE 1/2&quot;  X  45°",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31162",
+            "sku": "ART-031162",
+            "nombre": "CODO GALVANIZADO DE 1/2&quot;  X  90°",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31163",
+            "sku": "ART-031163",
+            "nombre": "CODO GALVANIZADO DE 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31164",
+            "sku": "ART-031164",
+            "nombre": "CODO GALVANIZADO DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31165",
+            "sku": "ART-031165",
+            "nombre": "CODO PVC CEDULA 40 2&quot; X  90°",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31166",
+            "sku": "ART-031166",
+            "nombre": "CODO PVC CEDULA 40 2&quot; X 45°",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31167",
+            "sku": "ART-031167",
+            "nombre": "CODO PVC DE 1&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31168",
+            "sku": "ART-031168",
+            "nombre": "CODO PVC DE 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31169",
+            "sku": "ART-031169",
+            "nombre": "CODO PVC DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31170",
+            "sku": "ART-031170",
+            "nombre": "CODO PVC DE 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31171",
+            "sku": "ART-031171",
+            "nombre": "CODO PVC DE 45° DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31172",
+            "sku": "ART-031172",
+            "nombre": "CODOS DE 1 1/2&quot; X 90°  GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D3-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31173",
+            "sku": "ART-031173",
+            "nombre": "CODOS DE 1&quot;X 90°  GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D3-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31178",
+            "sku": "ART-031178",
+            "nombre": "CONECTOR DE AIRE 1/4&quot; 8MM CURVO",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31179",
+            "sku": "ART-031179",
+            "nombre": "CONECTOR DE AJUSTE 1&quot; (GLANDULA)",
+            "descripcion": "",
+            "ubicacion": "E2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31180",
+            "sku": "ART-031180",
+            "nombre": "CONECTOR DE AJUSTE 1/2&quot; (GLANDULA)",
+            "descripcion": "",
+            "ubicacion": "E2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31181",
+            "sku": "ART-031181",
+            "nombre": "CONECTOR DE AJUSTE CURVO 1/2&quot; (GLANDULA)",
+            "descripcion": "",
+            "ubicacion": "E2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31182",
+            "sku": "ART-031182",
+            "nombre": "CONECTOR LICUATITE RECTOS DE 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "E2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31183",
+            "sku": "ART-031183",
+            "nombre": "CONECTOR RAPIDO PARA AIRE MACHO DE 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H1-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31184",
+            "sku": "ART-031184",
+            "nombre": "CONECTOR RAPIDO RECTO 12 MM - 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "H1-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31185",
+            "sku": "ART-031185",
+            "nombre": "CONECTOR RECTO 1/4&quot; - 10 MM",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31186",
+            "sku": "ART-031186",
+            "nombre": "CONECTOR RECTO DE AIRE 1/4&quot; - 8 MM",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31187",
+            "sku": "ART-031187",
+            "nombre": "CONECTOR RECTO HEMBRA 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31188",
+            "sku": "ART-031188",
+            "nombre": "CONECTOR RECTO MACHO 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31189",
+            "sku": "ART-031189",
+            "nombre": "CONECTORES RAPIDO PARA AIRE HEMBRA DE 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31190",
+            "sku": "ART-031190",
+            "nombre": "CONEXIÓN CODO 3/8&quot; - 10 MM",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31191",
+            "sku": "ART-031191",
+            "nombre": "CONEXIÓN RAPIDA 1&quot;",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31192",
+            "sku": "ART-031192",
+            "nombre": "CONEXIÓN RECTA 3/8&quot; - 10 MM",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31193",
+            "sku": "ART-031193",
+            "nombre": "CONEXIÓN T 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "B1-C4-7",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31197",
+            "sku": "ART-031197",
+            "nombre": "COPLE 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31198",
+            "sku": "ART-031198",
+            "nombre": "COPLE GALVANIZADO 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31199",
+            "sku": "ART-031199",
+            "nombre": "COPLE GALVANIZADO 1 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31200",
+            "sku": "ART-031200",
+            "nombre": "COPLE GALVANIZADO 1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31201",
+            "sku": "ART-031201",
+            "nombre": "COPLE PVC CED 40 2&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31202",
+            "sku": "ART-031202",
+            "nombre": "COPLE SOLDABLE 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31203",
+            "sku": "ART-031203",
+            "nombre": "COPLES DE 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31213",
+            "sku": "ART-031213",
+            "nombre": "DADO 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "TALLER DE JUAN",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31214",
+            "sku": "ART-031214",
+            "nombre": "DADO 3/8&quot; LARGO 6 PUNTA 10MM",
+            "descripcion": "",
+            "ubicacion": "TALLER DE JUAN",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31215",
+            "sku": "ART-031215",
+            "nombre": "DADO DE 1&quot; ESTANDAR",
+            "descripcion": "",
+            "ubicacion": "TALLER DE MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31217",
+            "sku": "ART-031217",
+            "nombre": "DADO HEXAGONAL 1/2&quot; CUADRO DE 1/2&quot; LARGO",
+            "descripcion": "",
+            "ubicacion": "TALLER DE MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31218",
+            "sku": "ART-031218",
+            "nombre": "DADO LARGO CUADRADO DE 1/2&quot;  X 6/16",
+            "descripcion": "",
+            "ubicacion": "TALLER DE MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31219",
+            "sku": "ART-031219",
+            "nombre": "DADO LARGO CUADRADO DE 3/8&quot; 12MM",
+            "descripcion": "",
+            "ubicacion": "TALLER DE MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31221",
+            "sku": "ART-031221",
+            "nombre": "DISCO CORTE METAL 14&quot; X 1/8X1&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31223",
+            "sku": "ART-031223",
+            "nombre": "DISCO DE DESBASTE 4 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31224",
+            "sku": "ART-031224",
+            "nombre": "DISCO DE DIAMANTE 4 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31228",
+            "sku": "ART-031228",
+            "nombre": "DISCO PARA CORTE DE METAL DE 14&quot;",
+            "descripcion": "",
+            "ubicacion": "H6-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31236",
+            "sku": "ART-031236",
+            "nombre": "ELEMENTO FILTRO DE AIRE KRSB&amp;KRSD20/25/30",
+            "descripcion": "",
+            "ubicacion": "H3-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31238",
+            "sku": "ART-031238",
+            "nombre": "EMPAQUE ADESIVO 1&quot; X 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "H6-P2",
+            "unidad_medida": "M"
+        },
+        {
+            "id": "31239",
+            "sku": "ART-031239",
+            "nombre": "EMPAQUE ADESIVO 1&quot; X 1/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H6-P2",
+            "unidad_medida": "M"
+        },
+        {
+            "id": "31250",
+            "sku": "ART-031250",
+            "nombre": "ESPARRAGO 1&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31251",
+            "sku": "ART-031251",
+            "nombre": "ESPARRAGO 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": "H4-P4",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31269",
+            "sku": "ART-031268",
+            "nombre": "PIJA 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31271",
+            "sku": "ART-031269",
+            "nombre": "GRASERA 1/4&quot; 28 RECTA",
+            "descripcion": "",
+            "ubicacion": "C1-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31272",
+            "sku": "ART-031272",
+            "nombre": "GRASERA 1/4&quot;-18 90 GRADOS",
+            "descripcion": "",
+            "ubicacion": "D1-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31273",
+            "sku": "ART-031273",
+            "nombre": "GRASERA 1/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P3",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31274",
+            "sku": "ART-031274",
+            "nombre": "PIJA BROCA 1/4&quot; X 1 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31276",
+            "sku": "ART-031276",
+            "nombre": "PIJA BROCA 1/4&quot; X 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31281",
+            "sku": "ART-031278",
+            "nombre": "PIJA HEMBRA BROCA 1/4&quot; X 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31295",
+            "sku": "ART-031293",
+            "nombre": "PIJA PUNTA BROCA CABEZA PLANA DE CRUZ DE 3/16&quot; X 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31296",
+            "sku": "ART-031296",
+            "nombre": "PIJA PUNTA BROCA CABEZA PLANA DE CRUZ DE 3/16&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31300",
+            "sku": "ART-031298",
+            "nombre": "PIJA PUNTA DE BROCA 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31303",
+            "sku": "ART-031301",
+            "nombre": "PIJA PUNTA DE BROCA 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31306",
+            "sku": "ART-031304",
+            "nombre": "PIJA PUNTA DE BROCA CABEZA DE CRUZ 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31311",
+            "sku": "ART-031309",
+            "nombre": "PIJAS PUNTA BROCA DE 1/4&quot; X 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D1-P2",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31321",
+            "sku": "ART-031319",
+            "nombre": "LLAVE A JUSTABLE 10&quot;X1-1/8&quot;",
+            "descripcion": "",
+            "ubicacion": "TALLER MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31324",
+            "sku": "ART-031324",
+            "nombre": "LLAVE PARA AGUA DE 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D4-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31327",
+            "sku": "ART-031325",
+            "nombre": "LLAVE STILSON 8&quot;",
+            "descripcion": "",
+            "ubicacion": "TALLER MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31331",
+            "sku": "ART-031328",
+            "nombre": "MACHETE 26&quot;",
+            "descripcion": "",
+            "ubicacion": "ALMACEN MP NUEVO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31352",
+            "sku": "ART-031352",
+            "nombre": "MANOMETROS CARATULA 2 1/2&quot; DE OA200 PSI CON GLISERINA",
+            "descripcion": "",
+            "ubicacion": "B1-C1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31375",
+            "sku": "ART-031373",
+            "nombre": "MATRACA 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "TALLLER MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31376",
+            "sku": "ART-031376",
+            "nombre": "MATRACA 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "TALLER MANTENIMIENTO",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31385",
+            "sku": "ART-031382",
+            "nombre": "NIPLE CUERDA CORRIDA 1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31386",
+            "sku": "ART-031386",
+            "nombre": "NIPLE CUERDA CORRIDA 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31387",
+            "sku": "ART-031387",
+            "nombre": "NIPLE CUERDA CORRIDA 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31388",
+            "sku": "ART-031388",
+            "nombre": "NIPLE CUERDA CORRIDA 1/4&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": ""
+        },
+        {
+            "id": "31389",
+            "sku": "ART-031389",
+            "nombre": "NIPLE DE BOTELLA DE 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31390",
+            "sku": "ART-031390",
+            "nombre": "NIPLE GALVANIZADO  1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31391",
+            "sku": "ART-031391",
+            "nombre": "NIPLE GALVANIZADO 1 X 4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31392",
+            "sku": "ART-031392",
+            "nombre": "NIPLE GALVANIZADO 1&quot;  X 5&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31393",
+            "sku": "ART-031393",
+            "nombre": "NIPLE GALVANIZADO 1&quot; CUERDA CORRIDA",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31394",
+            "sku": "ART-031394",
+            "nombre": "NIPLE GALVANIZADO 1&quot; X 6&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31395",
+            "sku": "ART-031395",
+            "nombre": "NIPLE GALVANIZADO 1&quot;X3&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31396",
+            "sku": "ART-031396",
+            "nombre": "NIPLE GALVANIZADO 1/2 X 3&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31397",
+            "sku": "ART-031397",
+            "nombre": "NIPLE GALVANIZADO 1/4 X 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31399",
+            "sku": "ART-031399",
+            "nombre": "NIPLE GALVANIZADO 1/4 X 3&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31401",
+            "sku": "ART-031400",
+            "nombre": "NIPLE GALVANIZADO 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31404",
+            "sku": "ART-031402",
+            "nombre": "NIPLE GALVANIZADO 2&quot; CUERDA CORRIDA",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31405",
+            "sku": "ART-031405",
+            "nombre": "NIPLE GALVANIZADO DE 1 1/2&quot; X 3&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31406",
+            "sku": "ART-031404",
+            "nombre": "REDUCCION 3/8&quot; A 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31407",
+            "sku": "ART-031406",
+            "nombre": "NIPLE GALVANIZADO DE 1&quot;1/2 POR CUERDA CORRIDA",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31408",
+            "sku": "ART-031408",
+            "nombre": "NIPLE GALVANIZADO DE 1/2&quot; X 8&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31409",
+            "sku": "ART-031407",
+            "nombre": "REDUCCION BUSHING  1 1/2&quot; A 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31410",
+            "sku": "ART-031409",
+            "nombre": "NIPLE ROSCADO 1 1/4&quot;  X 2&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31411",
+            "sku": "ART-031411",
+            "nombre": "NIPLES 1&quot; X 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31412",
+            "sku": "ART-031412",
+            "nombre": "NIPLES DE 1&quot;  CUERDA CORRIDA GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31413",
+            "sku": "ART-031413",
+            "nombre": "NIPLES CUERDA CORRIDA DE 2&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P2",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31416",
+            "sku": "ART-031414",
+            "nombre": "REDUCCION BUSHING  DE 2&quot; A 11/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31417",
+            "sku": "ART-031417",
+            "nombre": "REDUCCION BUSHING 1 1/2&quot; A 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31419",
+            "sku": "ART-031418",
+            "nombre": "REDUCCION BUSHING 1 1/4&quot; A  1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31422",
+            "sku": "ART-031420",
+            "nombre": "REDUCCION BUSHING 1&quot; A  1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31423",
+            "sku": "ART-031422",
+            "nombre": "NUDO 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31424",
+            "sku": "ART-031424",
+            "nombre": "NUDO DE 11/4&quot;  GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31425",
+            "sku": "ART-031423",
+            "nombre": "REDUCCION BUSHING 1&quot; A  3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31426",
+            "sku": "ART-031425",
+            "nombre": "NUDO DE 3/4&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31427",
+            "sku": "ART-031427",
+            "nombre": "NUDOS DE 1/2&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31428",
+            "sku": "ART-031426",
+            "nombre": "REDUCCION BUSHING 3/4&quot; A  1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31429",
+            "sku": "ART-031428",
+            "nombre": "NUDOS DE 1/4&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31430",
+            "sku": "ART-031429",
+            "nombre": "REDUCCION BUSHING 3/4&quot; A 3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31431",
+            "sku": "ART-031430",
+            "nombre": "NUDOS DE 2&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31432",
+            "sku": "ART-031432",
+            "nombre": "NUDOS DE 3/8&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31433",
+            "sku": "ART-031433",
+            "nombre": "NUDOS O CONTRATUERCA GALVANIZADO  1&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31434",
+            "sku": "ART-031434",
+            "nombre": "OPRESOR  3/8&quot; X 3/4&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31436",
+            "sku": "ART-031436",
+            "nombre": "OPRESOR  5/16&quot; X 5/8&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31437",
+            "sku": "ART-031437",
+            "nombre": "OPRESOR  7/16&quot; X 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31438",
+            "sku": "ART-031438",
+            "nombre": "OPRESOR 1 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31439",
+            "sku": "ART-031439",
+            "nombre": "OPRESOR 1/2&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31440",
+            "sku": "ART-031440",
+            "nombre": "OPRESOR 1/4&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31441",
+            "sku": "ART-031441",
+            "nombre": "OPRESOR 1/4&quot; X 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31442",
+            "sku": "ART-031442",
+            "nombre": "OPRESOR 3/16&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31443",
+            "sku": "ART-031443",
+            "nombre": "OPRESOR 3/8&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31444",
+            "sku": "ART-031444",
+            "nombre": "OPRESOR 3/8&quot; X 1/2&quot;",
+            "descripcion": "",
+            "ubicacion": null,
+            "unidad_medida": "PZA"
+        },
+        {
+            "id": "31448",
+            "sku": "ART-031448",
+            "nombre": "REDUCCION BUSHING DE 1&quot; A 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31449",
+            "sku": "ART-031449",
+            "nombre": "REDUCCION BUSHING GALVANIZADO 1/2&quot; A  1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D3-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31450",
+            "sku": "ART-031450",
+            "nombre": "REDUCCION CAMPANA  2&quot; A  1&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31451",
+            "sku": "ART-031451",
+            "nombre": "REDUCCION CAMPANA 1 1/2&quot; A 1&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31452",
+            "sku": "ART-031452",
+            "nombre": "REDUCCION CAMPANA 1&quot; A  1/2&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31453",
+            "sku": "ART-031453",
+            "nombre": "REDUCCION CAMPANA GALVANIZADO 1/2&quot; A 1/4&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31454",
+            "sku": "ART-031454",
+            "nombre": "REDUCCION PARA MATRACA 1/2&quot; A  3/8&quot;",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        },
+        {
+            "id": "31455",
+            "sku": "ART-031455",
+            "nombre": "REDUCCIONES BUSHING DE 3/8&quot;  A  1/4&quot; GALVANIZADO",
+            "descripcion": "",
+            "ubicacion": "D2-P1",
+            "unidad_medida": "PIEZA"
+        }
+    ]
+}
