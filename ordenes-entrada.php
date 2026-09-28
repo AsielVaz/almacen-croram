@@ -149,7 +149,7 @@ requerir_autenticacion();
                                             <tr>
                                                 <td><?= $orden->id ?></td>
                                                 <td><?= $orden->folio ?></td>
-                                                <td><?= htmlspecialchars($orden->nombre_proveedor) ?></td>
+                                                <td><?= htmlspecialchars($orden->nombre_proveedor ?? 'Sin proveedor') ?></td>
                                                 <td><?= $orden->fecha_orden ?></td>
                                                 <td><?= $orden->estatus ?></td>
                                                 <td><?= htmlspecialchars($orden->nombre_usuario) ?></td>
@@ -276,4 +276,3 @@ requerir_autenticacion();
 </body>
 
 </html>
-

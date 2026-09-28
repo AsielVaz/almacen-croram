@@ -610,11 +610,11 @@ class AdministradorArticulos extends Con {
                 ocd.cantidad,
                 ocd.precio_unitario,
                 ocd.subtotal,
-                p.nombre AS proveedor,
+                COALESCE(p.nombre, 'Sin proveedor') AS proveedor,
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS usuario
             FROM orden_compra_detalle ocd
             INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-            INNER JOIN proveedores p ON p.id = oc.id_proveedor
+            LEFT JOIN proveedores p ON p.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             WHERE ocd.id_producto = $idArticulo
             ORDER BY oc.fecha_orden DESC, oc.id DESC
@@ -872,11 +872,11 @@ class AdministradorArticulos extends Con {
                 SELECT
                     ocd.id_producto,
                     oc.fecha_orden,
-                    pr.nombre AS nombre_proveedor,
+                    COALESCE(pr.nombre, 'Sin proveedor') AS nombre_proveedor,
                     ocd.precio_unitario
                 FROM orden_compra_detalle ocd
                 INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-                INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+                LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
                 INNER JOIN (
                     SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
                     FROM orden_compra_detalle ocd2

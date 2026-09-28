@@ -100,10 +100,10 @@ function obtener_orden(AdministradorOrdenes $admin, string $tipo, string $codigo
         $orden = json_decode($admin->ejecutar("
             SELECT
                 oc.*,
-                pr.nombre AS nombre_proveedor,
+                COALESCE(pr.nombre, 'Sin proveedor') AS nombre_proveedor,
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario
             FROM ordenes_compra oc
-            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             WHERE $where
             LIMIT 1
@@ -261,7 +261,7 @@ function listar_ordenes_pendientes(AdministradorOrdenes $admin, array $payload):
         )";
 
         if ($textoSql !== '') {
-            $whereEntrada[] = "(oc.folio LIKE '%$textoSql%' OR pr.nombre LIKE '%$textoSql%')";
+            $whereEntrada[] = "(oc.folio LIKE '%$textoSql%' OR COALESCE(pr.nombre, 'Sin proveedor') LIKE '%$textoSql%')";
         }
 
         $entradas = json_decode($admin->ejecutar("
@@ -272,14 +272,14 @@ function listar_ordenes_pendientes(AdministradorOrdenes $admin, array $payload):
                 oc.fecha_orden AS fecha,
                 oc.estatus,
                 oc.created_at,
-                pr.nombre AS contraparte,
-                pr.nombre AS nombre_proveedor,
+                COALESCE(pr.nombre, 'Sin proveedor') AS contraparte,
+                COALESCE(pr.nombre, 'Sin proveedor') AS nombre_proveedor,
                 '' AS nombre_area,
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario,
                 COUNT(ocd.id) AS total_partidas,
                 COALESCE(SUM(ocd.cantidad), 0) AS total_unidades
             FROM ordenes_compra oc
-            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             LEFT JOIN orden_compra_detalle ocd ON ocd.id_orden_compra = oc.id
             WHERE " . implode(' AND ', $whereEntrada) . "

@@ -128,7 +128,7 @@ $pendientesRecepcion = array_filter(
                                             <i class="ri-search-eye-line me-1"></i>Revisar
                                         </a>
                                     </td>
-                                    <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? 'Sin proveedor') ?></td>
                                     <td class="dato-nowrap"><?= htmlspecialchars($orden['fecha_orden'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($orden['nombre_usuario'] ?? '') ?></td>
                                     <td class="text-center"><?= (int)($orden['total_partidas'] ?? 0) ?></td>

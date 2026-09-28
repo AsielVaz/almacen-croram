@@ -497,7 +497,7 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                             <div>
                                                 <div class="info-label">Proveedor</div>
                                                 <div class="info-value text-dark">
-                                                    <i class="ri-building-line me-1"></i><?php echo $ordenes[0]->nombre_proveedor ?? 'N/A'; ?>
+                                                    <i class="ri-building-line me-1"></i><?= htmlspecialchars($ordenes[0]->nombre_proveedor ?? 'Sin proveedor') ?>
                                                 </div>
                                             </div>
                                         </div>

@@ -7,6 +7,7 @@ class AdministradorOrdenes extends Con
     {
         $folio = $this->limpiar($folio);
         $id_proveedor = (int)$id_proveedor;
+        $idProveedorSql = $id_proveedor > 0 ? (string)$id_proveedor : 'NULL';
         $fecha_orden = $this->limpiar($fecha_orden);
         $estatus = $this->limpiar($estatus);
         $id_usuario = (int)$id_usuario;
@@ -14,10 +15,26 @@ class AdministradorOrdenes extends Con
 
         $sql = "
             INSERT INTO ordenes_compra (folio, id_proveedor, fecha_orden, estatus, id_usuario, nota)
-            VALUES ('$folio', $id_proveedor, '$fecha_orden', '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
+            VALUES ('$folio', $idProveedorSql, '$fecha_orden', '$estatus', $id_usuario, " . ($nota !== '' ? "'$nota'" : 'NULL') . ")
         ";
 
         return $this->ejecutar($sql);
+    }
+
+    public function proveedorExiste($idProveedor): bool
+    {
+        $idProveedor = (int)$idProveedor;
+        if ($idProveedor <= 0) {
+            return false;
+        }
+
+        $resultado = json_decode($this->ejecutar("
+            SELECT COUNT(*) AS total
+            FROM proveedores
+            WHERE id = $idProveedor
+        "), true)[0] ?? ['total' => 0];
+
+        return (int)$resultado['total'] > 0;
     }
 
     public function listarOrdenesCompra($limit = null, $fechaInicio = '', $fechaFin = '')
@@ -34,10 +51,10 @@ class AdministradorOrdenes extends Con
                 oc.estatus,
                 oc.id_usuario,
                 oc.created_at,
-                p.nombre AS nombre_proveedor,
+                COALESCE(p.nombre, 'Sin proveedor') AS nombre_proveedor,
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario
             FROM ordenes_compra oc
-            INNER JOIN proveedores p ON p.id = oc.id_proveedor
+            LEFT JOIN proveedores p ON p.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             $whereSql
             ORDER BY oc.created_at DESC
@@ -57,14 +74,14 @@ class AdministradorOrdenes extends Con
                 oc.estatus,
                 oc.requiere_autorizacion_precio,
                 oc.created_at,
-                pr.nombre AS nombre_proveedor,
+                COALESCE(pr.nombre, 'Sin proveedor') AS nombre_proveedor,
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario,
                 COUNT(ocd.id) AS total_partidas,
                 COALESCE(SUM(ocd.cantidad), 0) AS total_unidades,
                 COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_autorizado, ocd.precio_unitario)), 0) AS total_autorizado,
                 COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_recepcion, ocd.precio_unitario)), 0) AS total_recepcion
             FROM ordenes_compra oc
-            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             LEFT JOIN orden_compra_detalle ocd ON ocd.id_orden_compra = oc.id
             WHERE oc.estatus IN ('PENDIENTE', 'PENDIENTE_AUTORIZACION_RECEPCION')
@@ -108,10 +125,10 @@ class AdministradorOrdenes extends Con
         $sql = "
             SELECT
                 ordenes_compra.*,
-                proveedores.nombre AS nombre_proveedor,
+                COALESCE(proveedores.nombre, 'Sin proveedor') AS nombre_proveedor,
                 COALESCE(usuarios.nombre, CONCAT('Usuario #', ordenes_compra.id_usuario)) AS nombre_usuario
             FROM ordenes_compra
-            INNER JOIN proveedores ON proveedores.id = ordenes_compra.id_proveedor
+            LEFT JOIN proveedores ON proveedores.id = ordenes_compra.id_proveedor
             LEFT JOIN usuarios ON usuarios.id = ordenes_compra.id_usuario
             WHERE ordenes_compra.id = $id
             LIMIT 1
@@ -157,11 +174,11 @@ class AdministradorOrdenes extends Con
                 SELECT
                     ocd.id_producto,
                     oc.fecha_orden,
-                    pr.nombre AS nombre_proveedor,
+                    COALESCE(pr.nombre, 'Sin proveedor') AS nombre_proveedor,
                     ocd.precio_unitario
                 FROM orden_compra_detalle ocd
                 INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-                INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+                LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
                 INNER JOIN (
                     SELECT ocd2.id_producto, MAX(ocd2.id) AS id_detalle
                     FROM orden_compra_detalle ocd2
@@ -187,7 +204,7 @@ class AdministradorOrdenes extends Con
                 oc.folio,
                 oc.fecha_orden,
                 oc.estatus,
-                pr.nombre AS proveedor,
+                COALESCE(pr.nombre, 'Sin proveedor') AS proveedor,
                 p.sku,
                 COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.descripcion,
@@ -198,7 +215,7 @@ class AdministradorOrdenes extends Con
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario
             FROM orden_compra_detalle ocd
             INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
             INNER JOIN productos p ON p.id = ocd.id_producto
             LEFT JOIN usuarios u ON u.id = oc.id_usuario
             $whereSql
@@ -745,7 +762,7 @@ class AdministradorOrdenes extends Con
                 oc.folio,
                 oc.fecha_orden,
                 oc.estatus,
-                pr.nombre AS proveedor,
+                COALESCE(pr.nombre, 'Sin proveedor') AS proveedor,
                 p.sku,
                 COALESCE(NULLIF(p.nombre, ''), p.descripcion, 'Sin nombre') AS articulo,
                 p.ubicacion,
@@ -754,10 +771,10 @@ class AdministradorOrdenes extends Con
                 ocd.subtotal
             FROM orden_compra_detalle ocd
             INNER JOIN ordenes_compra oc ON oc.id = ocd.id_orden_compra
-            INNER JOIN proveedores pr ON pr.id = oc.id_proveedor
+            LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
             INNER JOIN productos p ON p.id = ocd.id_producto
             $whereSql
-            ORDER BY pr.nombre ASC, oc.fecha_orden DESC, oc.id DESC
+            ORDER BY COALESCE(pr.nombre, 'Sin proveedor') ASC, oc.fecha_orden DESC, oc.id DESC
         ");
     }
 

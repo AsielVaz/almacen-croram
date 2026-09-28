@@ -481,7 +481,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                                     <tr>
                                         <td><?= $orden['id'] ?></td>
                                         <td><?= htmlspecialchars($orden['folio'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? 'Sin proveedor') ?></td>
                                         <td><?= htmlspecialchars($orden['fecha_orden'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['estatus'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($orden['nombre_usuario'] ?? '') ?></td>
@@ -544,7 +544,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                             <tr>
                                 <td><?= htmlspecialchars($entrada['folio'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($entrada['fecha_orden'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($entrada['proveedor'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($entrada['proveedor'] ?? 'Sin proveedor') ?></td>
                                 <td><?= htmlspecialchars($entrada['articulo'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($entrada['descripcion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($entrada['ubicacion'] ?? '') ?></td>

@@ -81,7 +81,7 @@ $usuarioActualId = usuario_id_actual();
         <div class="col-md-3">
             <label><i class="ri-building-line me-1"></i>Proveedor</label>
             <select id="filtroProveedor" class="form-select">
-                <option value="">Seleccione un proveedor</option>
+                <option value="" selected>Sin proveedor</option>
                 <?php foreach ($proveedores as $p): ?>
                     <option value="<?= (int)$p->id ?>"><?= htmlspecialchars($p->nombre) ?></option>
                 <?php endforeach; ?>
@@ -418,10 +418,6 @@ document.getElementById('btnEnviar').addEventListener('click', async () => {
     const btnEnviar = document.getElementById('btnEnviar');
     if (btnEnviar.disabled) return;
     const proveedor = document.getElementById('filtroProveedor').value;
-    if (!proveedor) {
-        Swal.fire({ icon: 'warning', title: 'Proveedor requerido', text: 'Seleccione un proveedor antes de enviar la orden', confirmButtonColor: '#495057' });
-        return;
-    }
     if (orden.length === 0) {
         Swal.fire({ icon: 'warning', title: 'Orden vacia', text: 'Agregue al menos un producto a la orden', confirmButtonColor: '#495057' });
         return;

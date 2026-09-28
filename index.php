@@ -89,7 +89,7 @@ $articulosCriticos = json_decode($adminArticulos->listarArticulosCriticos(5), tr
                                     <?php foreach ($ultimasEntradas as $orden): ?>
                                         <tr>
                                             <td><?= htmlspecialchars($orden['folio'] ?? '') ?></td>
-                                            <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? ('Proveedor #' . ($orden['id_proveedor'] ?? ''))) ?></td>
+                                            <td><?= htmlspecialchars($orden['nombre_proveedor'] ?? 'Sin proveedor') ?></td>
                                             <td><?= htmlspecialchars($orden['fecha_orden'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($orden['estatus'] ?? '') ?></td>
                                         </tr>

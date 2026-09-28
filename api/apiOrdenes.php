@@ -51,7 +51,7 @@ try {
 
         case 'altaOrdenCompra':
             $folio = 'OC-' . date('YmdHis');
-            $id_proveedor = $_POST['proveedor'] ?? 0;
+            $id_proveedor = (int)($_POST['proveedor'] ?? 0);
             $fecha_orden = date('Y-m-d');
             $estatus = 'PENDIENTE';
             $id_usuario = usuario_id_actual();
@@ -59,10 +59,17 @@ try {
             $orden = $_POST['orden'] ?? [];
             $ordenDecode = json_decode($orden, true) ?: [];
 
-            if ((int)$id_proveedor <= 0 || count($ordenDecode) === 0) {
+            if (count($ordenDecode) === 0) {
                 throw new Exception(json_encode([
                     'status' => 'error',
-                    'message' => 'Proveedor y productos son obligatorios',
+                    'message' => 'Debes agregar al menos un producto',
+                ]));
+            }
+
+            if ($id_proveedor > 0 && !$admin->proveedorExiste($id_proveedor)) {
+                throw new Exception(json_encode([
+                    'status' => 'error',
+                    'message' => 'El proveedor seleccionado no existe',
                 ]));
             }
 

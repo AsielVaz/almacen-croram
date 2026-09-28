@@ -191,7 +191,7 @@ switch ($tipo) {
             $filas[] = [
                 $entrada['folio'] ?? '',
                 $entrada['fecha_orden'] ?? '',
-                $entrada['proveedor'] ?? '',
+                $entrada['proveedor'] ?? 'Sin proveedor',
                 $entrada['sku'] ?? '',
                 $entrada['articulo'] ?? '',
                 $entrada['descripcion'] ?? '',
@@ -245,7 +245,7 @@ switch ($tipo) {
                 $compra['id'] ?? '',
                 $compra['folio'] ?? '',
                 $compra['fecha_orden'] ?? '',
-                $compra['proveedor'] ?? '',
+                $compra['proveedor'] ?? 'Sin proveedor',
                 $compra['estatus'] ?? '',
                 $compra['sku'] ?? '',
                 $compra['articulo'] ?? '',
