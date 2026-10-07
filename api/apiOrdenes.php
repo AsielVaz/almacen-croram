@@ -5,6 +5,7 @@ requerir_autenticacion_json();
 header('Content-Type: application/json; charset=utf-8');
 
 include_once 'adminOrdenes.php';
+require_once __DIR__ . '/recepcionCompra.php';
 
 $accion = $_POST['accion'] ?? '';
 
@@ -24,6 +25,7 @@ if (isset($permisosPorAccion[$accion])) {
 }
 
 function validar_idempotencia(string $accion): void {
+    global $tokenReservado;
     $token = trim((string)($_POST['request_token'] ?? ''));
     if ($token === '') {
         return;
@@ -40,6 +42,7 @@ function validar_idempotencia(string $accion): void {
     }
 
     $_SESSION['orden_tokens_procesados'][$clave] = time();
+    $tokenReservado = true;
     if (count($_SESSION['orden_tokens_procesados']) > 50) {
         $_SESSION['orden_tokens_procesados'] = array_slice($_SESSION['orden_tokens_procesados'], -50, null, true);
     }
@@ -139,7 +142,10 @@ try {
         case 'guardarOrdenEntrada':
             validar_idempotencia('guardarOrdenEntrada');
             $idOrden = $_POST['id_orden'] ?? 0;
-            $productos = json_decode($_POST['productos'] ?? '[]', true) ?: [];
+            $productos = json_decode($_POST['productos'] ?? '[]', true);
+            if (!is_array($productos)) {
+                throw new InvalidArgumentException('Las partidas de recepción no son válidas.');
+            }
 
             $admin->iniciarTransaccion();
             $ordenActual = json_decode($admin->bloquearOrdenCompra($idOrden), true)[0] ?? null;
@@ -165,56 +171,36 @@ try {
                 ]));
             }
 
-            $preciosReales = [];
-            foreach ($productos as $producto) {
-                $idProducto = (int)($producto['id_producto'] ?? 0);
-                if ($idProducto > 0) {
-                    $preciosReales[$idProducto] = (float)($producto['precio_real'] ?? 0);
-                }
-            }
-
             $detallesOrden = json_decode($admin->listarDetallesOrden($idOrden), true) ?: [];
-            $productosOrden = [];
+            $partidas = validarRecepcionCompra($detallesOrden, $productos);
             $requiereAutorizacionPrecio = false;
-            foreach ($detallesOrden as $detalle) {
-                $idProducto = (int)($detalle['id_producto'] ?? 0);
-                if ($idProducto <= 0) {
-                    continue;
-                }
-
-                if (!isset($productosOrden[$idProducto])) {
-                    $productosOrden[$idProducto] = [
-                        'cantidad' => 0,
-                        'precio_autorizado' => (float)($detalle['precio_autorizado'] ?? $detalle['precio_unitario'] ?? 0),
-                    ];
-                }
-
-                $productosOrden[$idProducto]['cantidad'] += (float)($detalle['cantidad'] ?? 0);
-            }
-
-            foreach ($productosOrden as $idProducto => $productoOrden) {
-                $cantidad = $productoOrden['cantidad'];
-                $precioReal = $preciosReales[$idProducto] ?? $productoOrden['precio_autorizado'];
-                if ($precioReal > ($productoOrden['precio_autorizado'] + 0.0001)) {
+            foreach ($partidas as $partida) {
+                if ($partida['cantidad_recibida'] > 0 && $partida['precio_real'] > $partida['precio_autorizado'] + 0.0001) {
                     $requiereAutorizacionPrecio = true;
                 }
-
-                $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioReal);
-                // El trigger trg_oc_recibida_entrada suma inventario al cambiar a RECIBIDA.
-                $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioReal, date('Y-m-d'));
+                $admin->guardarPartidaRecepcion($idOrden, $partida);
             }
-
+            $admin->agregarNotaRecepcion($idOrden, $_POST['nota'] ?? '');
             $idUsuarioActual = usuario_id_actual();
-            $admin->marcarOrdenRecibida(
-                $idOrden,
-                $idUsuarioActual,
-                $requiereAutorizacionPrecio ? $idUsuarioActual : 0
-            );
+            $pendiente = $requiereAutorizacionPrecio && !usuario_tiene_permiso('ordenes_compra_autorizar');
+            if ($pendiente) {
+                $admin->marcarRecepcionPendienteAutorizacion($idOrden, $idUsuarioActual);
+            } else {
+                foreach ($partidas as $partida) {
+                    $admin->registrarLoteInventario($partida['id_producto'], $idOrden,
+                        $partida['cantidad_recibida'], $partida['precio_real'], date('Y-m-d'));
+                }
+                // El trigger suma las cantidades efectivamente recibidas, una sola vez.
+                $admin->marcarOrdenRecibida($idOrden, $idUsuarioActual,
+                    $requiereAutorizacionPrecio ? $idUsuarioActual : 0);
+            }
             $admin->confirmarTransaccion();
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Orden de entrada guardada correctamente'
+                'message' => $pendiente
+                    ? 'Recepción pendiente de autorización por incremento de precio. El inventario aún no se ha modificado.'
+                    : 'Orden ingresada con las cantidades recibidas. La diferencia no recibida quedó registrada.'
             ]);
             break;
 
@@ -268,7 +254,12 @@ try {
                 $cantidad = (float)($detalle['cantidad'] ?? 0);
                 $precioRecepcion = (float)($detalle['precio_recepcion'] ?? $detalle['precio_autorizado'] ?? $detalle['precio_unitario'] ?? 0);
 
-                $admin->actualizarDetalleOrdenCompra($idOrden, $idProducto, $precioRecepcion);
+                $admin->guardarPartidaRecepcion($idOrden, [
+                    'id_detalle' => (int)$detalle['id'],
+                    'cantidad_solicitada' => (float)($detalle['cantidad_solicitada'] ?? $cantidad),
+                    'cantidad_recibida' => $cantidad,
+                    'precio_real' => $precioRecepcion,
+                ]);
                 $admin->registrarLoteInventario($idProducto, $idOrden, $cantidad, $precioRecepcion, date('Y-m-d'));
             }
 
@@ -322,6 +313,10 @@ try {
     }
 } catch (Exception $e) {
     $admin->revertirTransaccion();
+    $token = trim((string)($_POST['request_token'] ?? ''));
+    if ($token !== '' && !empty($tokenReservado)) {
+        unset($_SESSION['orden_tokens_procesados'][$accion . ':' . $token]);
+    }
     $payload = json_decode($e->getMessage(), true);
     echo json_encode($payload ?: [
         'status' => 'error',

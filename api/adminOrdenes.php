@@ -78,7 +78,7 @@ class AdministradorOrdenes extends Con
                 COALESCE(u.nombre, CONCAT('Usuario #', oc.id_usuario)) AS nombre_usuario,
                 COUNT(ocd.id) AS total_partidas,
                 COALESCE(SUM(ocd.cantidad), 0) AS total_unidades,
-                COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_autorizado, ocd.precio_unitario)), 0) AS total_autorizado,
+                COALESCE(SUM(COALESCE(ocd.cantidad_solicitada, ocd.cantidad) * COALESCE(ocd.precio_autorizado, ocd.precio_unitario)), 0) AS total_autorizado,
                 COALESCE(SUM(ocd.cantidad * COALESCE(ocd.precio_recepcion, ocd.precio_unitario)), 0) AS total_recepcion
             FROM ordenes_compra oc
             LEFT JOIN proveedores pr ON pr.id = oc.id_proveedor
@@ -549,6 +549,32 @@ class AdministradorOrdenes extends Con
         return $this->ejecutar($sql);
     }
 
+    public function guardarPartidaRecepcion($idOrden, array $partida)
+    {
+        $idOrden = (int)$idOrden;
+        $idDetalle = (int)$partida['id_detalle'];
+        $solicitada = number_format($partida['cantidad_solicitada'], 4, '.', '');
+        $cantidad = number_format($partida['cantidad_recibida'], 4, '.', '');
+        $precio = number_format($partida['precio_real'], 4, '.', '');
+        return $this->ejecutar("
+            UPDATE orden_compra_detalle
+            SET cantidad_solicitada = COALESCE(cantidad_solicitada, $solicitada),
+                cantidad = $cantidad, precio_recepcion = $precio,
+                precio_unitario = $precio, subtotal = $cantidad * $precio
+            WHERE id = $idDetalle AND id_orden_compra = $idOrden
+        ");
+    }
+
+    public function agregarNotaRecepcion($idOrden, $nota)
+    {
+        $idOrden = (int)$idOrden;
+        $nota = $this->escapar(trim((string)$nota));
+        if ($nota === '') return;
+        $this->ejecutar("UPDATE ordenes_compra
+            SET nota = CONCAT_WS('\n', NULLIF(nota, ''), 'Recepción: $nota')
+            WHERE id = $idOrden");
+    }
+
     public function registrarEntradaInventario($idProducto, $cantidad)
     {
         $idProducto = (int)$idProducto;
@@ -567,6 +593,7 @@ class AdministradorOrdenes extends Con
 
     public function registrarLoteInventario($idProducto, $idOrdenCompra, $cantidad, $precioUnitario, $fechaEntrada)
     {
+        if ((float)$cantidad <= 0) return;
         $idProducto = (int)$idProducto;
         $idOrdenCompra = (int)$idOrdenCompra;
         $cantidad = (float)$cantidad;

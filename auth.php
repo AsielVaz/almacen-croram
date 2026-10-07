@@ -45,6 +45,7 @@ function usuario_tiene_permiso(string $permiso): bool {
             'catalogos_operativos',
             'ordenes_compra_ver',
             'ordenes_compra_crear',
+            'ordenes_compra_recibir_sin_qr',
             'ordenes_salida_ver',
             'ordenes_salida_crear',
             'ordenes_validar_qr',

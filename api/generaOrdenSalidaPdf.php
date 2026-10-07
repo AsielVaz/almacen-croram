@@ -3,8 +3,8 @@ require_once __DIR__ . '/../auth.php';
 requerir_autenticacion_json();
 requerir_permiso_json('ordenes_compra_ver');
 
-require('fpdf/fpdf.php');
-require_once 'phpqrcode/qrlib.php';
+require_once __DIR__ . '/fpdf/fpdf.php';
+require_once __DIR__ . '/phpqrcode/qrlib.php';
 
 function pdf_text($value)
 {
@@ -26,18 +26,16 @@ class OrdenCompraPDF extends FPDF
         $this->Rect(0, 0, 210, 40, 'F');
         
         // Logo (esquina superior derecha)
-        $this->Image(
-            'https://grupocroram.com/almacen/dist/assets/images/logo_almacen.png',
-            160,
-            10,
-            35
-        );
+        $logo = __DIR__ . '/../assets/images/logo_almacen.png';
+        if (is_readable($logo)) {
+            $this->Image($logo, 160, 10, 35);
+        }
 
         // Título principal
         $this->SetFont('Arial', 'B', 22);
         $this->SetTextColor(52, 58, 64);
         $this->SetXY(15, 12);
-        $this->Cell(0, 8, pdf_text('ORDEN DE COMPRA'), 0, 1, 'L');
+        $this->Cell(0, 8, pdf_text('ORDEN DE ENTRADA'), 0, 1, 'L');
         
         // Línea decorativa bajo el título
         $this->SetDrawColor(73, 80, 87);
@@ -59,7 +57,60 @@ class OrdenCompraPDF extends FPDF
         $this->SetLineWidth(0.5);
         $this->Line(0, 40, 210, 40);
         
-        $this->Ln(8);
+        $this->Ln(13);
+    }
+
+    function ProductHeader()
+    {
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetFillColor(73, 80, 87);
+        $this->SetTextColor(255, 255, 255);
+        foreach ([[12, '#'], [58, 'DESCRIPCIÓN'], [30, 'UBIC.'], [25, 'SOL. / REC.'], [30, 'PRECIO UNIT.'], [35, 'SUBTOTAL']] as $i => $col) {
+            $this->Cell($col[0], 9, pdf_text($col[1]), 1, $i === 5 ? 1 : 0, 'C', true);
+        }
+    }
+
+    function ProductRow(array $values, bool $fill)
+    {
+        $widths = [12, 58, 30, 25, 30, 35];
+        $aligns = ['C', 'L', 'L', 'C', 'R', 'R'];
+        $this->SetFont('Arial', '', 9);
+        $wrapped = [];
+        $maxLines = 1;
+        foreach ($values as $i => $value) {
+            $lines = []; $line = '';
+            foreach (explode(' ', pdf_text($value)) as $word) {
+                if ($line !== '' && $this->GetStringWidth($line . ' ' . $word) > $widths[$i] - 2) {
+                    $lines[] = $line; $line = '';
+                }
+                foreach (str_split(($line === '' ? '' : ' ') . $word) as $char) {
+                    if ($this->GetStringWidth($line . $char) > $widths[$i] - 2) {
+                        $lines[] = $line; $line = '';
+                    }
+                    $line .= $char;
+                }
+            }
+            $lines[] = $line;
+            $wrapped[] = implode("\n", $lines);
+            $maxLines = max($maxLines, count($lines));
+        }
+        $height = max(8, $maxLines * 5 + 2);
+        if ($this->GetY() + $height > 267) {
+            $this->AddPage();
+            $this->ProductHeader();
+        }
+        $this->SetFont('Arial', '', 9);
+        $this->SetTextColor(33, 37, 41);
+        $this->SetDrawColor(222, 226, 230);
+        $this->SetFillColor($fill ? 248 : 255, $fill ? 249 : 255, $fill ? 250 : 255);
+        $x = 10; $y = $this->GetY();
+        foreach ($wrapped as $i => $value) {
+            $this->Rect($x, $y, $widths[$i], $height, 'DF');
+            $this->SetXY($x, $y + 1);
+            $this->MultiCell($widths[$i], 5, $value, 0, $aligns[$i]);
+            $x += $widths[$i];
+        }
+        $this->SetXY(10, $y + $height);
     }
 
     function Footer()
@@ -116,10 +167,15 @@ class OrdenCompraPDF extends FPDF
    DATOS DE LA ORDEN
 ===================== */
 
-include_once 'adminOrdenes.php';
+include_once __DIR__ . '/adminOrdenes.php';
 $adminOrdenes = new AdministradorOrdenes();
 $ordenes = json_decode($adminOrdenes->obtenerOrdenCompra($_GET['id'] ?? 0));
 $detallesOrden = json_decode($adminOrdenes->listarDetallesOrden($_GET['id'] ?? 0));
+
+if (!$ordenes) {
+    http_response_code(404);
+    exit('La orden de entrada no existe.');
+}
 
 $orden = array(
     'folio'     => $ordenes[0]->folio ?? 'OC-00000',
@@ -133,7 +189,8 @@ foreach ($detallesOrden as $detalle) {
     $items[] = array(
         'producto' => $detalle->nombre_producto,
         'ubicacion' => $detalle->ubicacion ?? '',
-        'cantidad' => (int)round((float)$detalle->cantidad),
+        'cantidad' => (float)$detalle->cantidad,
+        'solicitada' => (float)($detalle->cantidad_solicitada ?? $detalle->cantidad),
         'precio'   => (float)($detalle->precio_unitario ?? 0),
     );
 }
@@ -143,7 +200,9 @@ foreach ($detallesOrden as $detalle) {
 // =====================
 
 $qrData = 'https://grupocroram.com/almacen/dist/ordenes-entrada-detalle.php?id=' . ($_GET['id'] ?? 0);
-$qrFile = sys_get_temp_dir() . '/qr_' . md5($orden['folio']) . '.png';
+$qrFile = tempnam(sys_get_temp_dir(), 'oc_qr_');
+if ($qrFile === false) throw new RuntimeException('No se pudo crear el QR de la orden.');
+register_shutdown_function(static function () use ($qrFile) { if (is_file($qrFile)) unlink($qrFile); });
 
 QRcode::png(
     $qrData,
@@ -186,56 +245,17 @@ $pdf->Ln(8);
 
 $pdf->SectionTitle('DETALLE DE PRODUCTOS');
 
-// Header de tabla con diseño moderno
-$pdf->SetFont('Arial', 'B', 9);
-$pdf->SetFillColor(73, 80, 87);
-$pdf->SetTextColor(255, 255, 255);
-$pdf->SetDrawColor(73, 80, 87);
-$pdf->SetLineWidth(0.3);
-
-$pdf->Cell(12, 9, '#', 1, 0, 'C', true);
-$pdf->Cell(68, 9, pdf_text('DESCRIPCIÓN'), 1, 0, 'C', true);
-$pdf->Cell(20, 9, pdf_text('UBIC.'), 1, 0, 'C', true);
-$pdf->Cell(25, 9, 'CANTIDAD', 1, 0, 'C', true);
-$pdf->Cell(30, 9, 'PRECIO UNIT.', 1, 0, 'C', true);
-$pdf->Cell(35, 9, 'SUBTOTAL', 1, 1, 'C', true);
-
-// Items de la tabla
-$pdf->SetFont('Arial', '', 9);
-$pdf->SetTextColor(33, 37, 41);
-$pdf->SetDrawColor(222, 226, 230);
-
+$pdf->ProductHeader();
 $total = 0;
-$i = 1;
-$fill = false;
-
-foreach ($items as $item) {
+foreach ($items as $index => $item) {
     $sub = $item['cantidad'] * $item['precio'];
     $total += $sub;
-    
-    // Alternar color de fondo
-    if ($fill) {
-        $pdf->SetFillColor(248, 249, 250);
-    } else {
-        $pdf->SetFillColor(255, 255, 255);
-    }
-    
-    $pdf->Cell(12, 8, $i, 'LR', 0, 'C', true);
-    $pdf->Cell(68, 8, pdf_text($item['producto']), 'LR', 0, 'L', true);
-    $pdf->Cell(20, 8, pdf_text($item['ubicacion']), 'LR', 0, 'L', true);
-    
-    $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(25, 8, $item['cantidad'], 'LR', 0, 'C', true);
-    
-    $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(30, 8, '$' . number_format($item['precio'], 2), 'LR', 0, 'R', true);
-    
-    $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(35, 8, '$' . number_format($sub, 2), 'LR', 1, 'R', true);
-    
-    $pdf->SetFont('Arial', '', 9);
-    $fill = !$fill;
-    $i++;
+    $recibida = in_array($orden['estatus'], ['RECIBIDA', 'PENDIENTE_AUTORIZACION_RECEPCION'], true) ? $item['cantidad'] : '-';
+    $pdf->ProductRow([
+        $index + 1, $item['producto'], $item['ubicacion'],
+        $item['solicitada'] . ' / ' . $recibida,
+        '$' . number_format($item['precio'], 2), '$' . number_format($sub, 2),
+    ], $index % 2 !== 0);
 }
 
 // Línea final de la tabla
@@ -247,6 +267,7 @@ $pdf->Ln(8);
 // RESUMEN FINANCIERO
 // =====================
 
+if ($pdf->GetY() > 230) $pdf->AddPage();
 $iva = $total * 0.16;
 $grand = $total + $iva;
 
@@ -292,6 +313,7 @@ $pdf->SetFont('Arial', 'B', 13);
 $pdf->Cell(40, 9, '$' . number_format($grand, 2), 1, 1, 'R', true);
 
 $pdf->Ln(15);
+if ($pdf->GetY() > 165) $pdf->AddPage();
 
 // =====================
 // SECCIÓN DE FIRMAS
@@ -373,7 +395,7 @@ $pdf->Cell($anchoFirma, 4, 'Fecha: ___________________', 0, 1, 'C');
 // =====================
 
 // Posicionar QR en esquina inferior izquierda con marco
-$qrY = 255;
+$qrY = $pdf->GetY() + 8;
 $qrX = 12;
 
 // Marco para el QR
@@ -382,7 +404,7 @@ $pdf->SetLineWidth(0.3);
 $pdf->Rect($qrX - 2, $qrY - 2, 34, 34);
 
 // QR
-$pdf->Image($qrFile, $qrX, $qrY, 30);
+$pdf->Image($qrFile, $qrX, $qrY, 30, 0, 'PNG');
 
 // Texto bajo el QR
 $pdf->SetFont('Arial', 'I', 7);

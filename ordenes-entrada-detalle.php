@@ -134,12 +134,18 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
         }
 
         .table-modern thead th {
+            color: #fff;
+            background-color: #495057;
             border: none;
             padding: 1rem;
             font-weight: 600;
             text-transform: uppercase;
             font-size: 0.875rem;
             letter-spacing: 0.5px;
+        }
+
+        .cantidad-recibida {
+            min-width: 7.5rem;
         }
 
         .table-modern tbody tr {
@@ -328,7 +334,7 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                         <div class="alert alert-light border d-flex align-items-center" role="alert">
                             <i class="ri-information-line fs-20 me-2 text-dark"></i>
                             <div>
-                                Revise y ajuste los precios reales de compra para cada producto. Por defecto se muestran los precios originales de la orden.
+                                Indique la cantidad recibida y el precio real de cada partida. Puede indicar cero si un producto no llegó. Al guardar se cierra la recepción; la diferencia queda registrada y no se suma al inventario.
                             </div>
                         </div>
 
@@ -338,7 +344,8 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                     <tr>
                                         <th width="5%">#</th>
                                         <th width="40%">Producto</th>
-                                        <th width="10%">Cantidad</th>
+                                        <th>Solicitada</th>
+                                        <th>Recibida</th>
                                         <th width="20%">Precio Original</th>
                                         <th width="25%">Precio Real Comprado</th>
                                         <th width="5%"></th>
@@ -348,7 +355,7 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                     <?php
                                     foreach ($detallesOrden as $index => $detalle):
                                     ?>
-                                        <tr class="product-row" data-detalle-id="<?= $detalle->id_detalle ?? $index ?>">
+                                        <tr class="product-row" data-detalle-id="<?= (int)$detalle->id ?>">
                                             <td class="fw-bold text-center"><?= $index + 1 ?></td>
                                             <td>
                                                 <div class="fw-bold"><?= htmlspecialchars($detalle->nombre_producto ?? '') ?></div>
@@ -363,7 +370,13 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-center">
-                                                <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?> unidades</span>
+                                                <span class="badge bg-secondary"><?= (float)($detalle->cantidad_solicitada ?? $detalle->cantidad) ?></span>
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control cantidad-recibida" min="0" step="0.0001" required
+                                                    max="<?= (float)($detalle->cantidad_solicitada ?? $detalle->cantidad) ?>"
+                                                    value="<?= (float)$detalle->cantidad ?>"
+                                                    aria-label="Cantidad recibida de <?= htmlspecialchars($detalle->nombre_producto) ?>">
                                             </td>
                                             <td>
                                                 <div class="fw-bold text-dark">$<?= number_format($detalle->precio_unitario, 2) ?></div>
@@ -374,10 +387,10 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                                     <span class="currency-symbol">$</span>
                                                     <input 
                                                         type="number" 
-                                                        step="0.01" 
+                                                        step="0.0001"
                                                         min="0"
-                                                        class="form-control price-input precio-real" 
-                                                        value="<?= number_format($detalle->precio_unitario, 2, '.', '') ?>"
+                                                        class="form-control price-input precio-real" required
+                                                        value="<?= number_format($detalle->precio_unitario, 4, '.', '') ?>"
                                                         data-precio-original="<?= $detalle->precio_unitario ?>"
                                                         data-id-producto="<?= $detalle->id_producto ?? '' ?>"
                                                         data-nombre-producto="<?= htmlspecialchars($detalle->nombre_producto) ?>"
@@ -524,7 +537,9 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                             <tr>
                                                 <th width="5%">#</th>
                                                 <th width="45%">Producto</th>
-                                                <th width="15%" class="text-center">Cantidad</th>
+                                                <th class="text-center">Solicitada</th>
+                                                <th class="text-center">Recibida</th>
+                                                <th class="text-center">No recibida</th>
                                                 <th width="15%" class="text-end">Precio Unitario</th>
                                                 <th width="20%" class="text-end">Subtotal</th>
                                             </tr>
@@ -555,8 +570,10 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                                         <?php endif; ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="badge bg-secondary"><?= (int)round((float)$detalle->cantidad) ?></span>
+                                                        <span class="badge bg-secondary"><?= (float)($detalle->cantidad_solicitada ?? $detalle->cantidad) ?></span>
                                                     </td>
+                                                    <td class="text-center"><?= in_array($ordenes[0]->estatus, ['RECIBIDA', 'PENDIENTE_AUTORIZACION_RECEPCION'], true) ? (float)$detalle->cantidad : '—' ?></td>
+                                                    <td class="text-center"><?= in_array($ordenes[0]->estatus, ['RECIBIDA', 'PENDIENTE_AUTORIZACION_RECEPCION'], true) ? max(0, (float)($detalle->cantidad_solicitada ?? $detalle->cantidad) - (float)$detalle->cantidad) : '—' ?></td>
                                                     <td class="text-end fw-bold">$<?= number_format($detalle->precio_unitario, 2) ?></td>
                                                     <td class="text-end fw-bold text-dark">$<?= number_format($detalle->subtotal, 2) ?></td>
                                                 </tr>
@@ -609,12 +626,13 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                         <div class="card iframe-card">
                             <div class="card-header">
                                 <h5 class="mb-0 fw-bold">
-                                    <i class="ri-file-pdf-line me-2"></i>Vista Adicional - PDF
+                                    <i class="ri-file-pdf-line me-2"></i>PDF de orden de entrada
                                 </h5>
                             </div>
                             <div class="card-body p-0">
-                                <iframe
-                                    src="api/generaOrdenSalidaPdf.php?id=<?php echo $_GET['id'] ?? 0; ?>"
+                                <a class="btn btn-outline-secondary m-3" target="_blank" rel="noopener" href="api/generaOrdenEntradaPdf.php?id=<?= (int)($_GET['id'] ?? 0) ?>">Abrir PDF</a>
+                                <iframe title="PDF de orden de entrada"
+                                    src="api/generaOrdenEntradaPdf.php?id=<?= (int)($_GET['id'] ?? 0) ?>"
                                     width="100%"
                                     height="600"
                                     frameborder="0"
@@ -651,28 +669,7 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
     <!-- App js -->
     <script src="assets/js/app.js"></script>
 
-    <!-- Apex Chart js -->
-    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-
-    <!-- Projects Analytics Dashboard App js -->
-    <script src="assets/js/pages/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Datatables js -->
-    <script src="assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-    <script src="assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
-    <script src="assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-    <script src="assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-    <script src="assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-    <script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
-    <script src="assets/js/components/table-datatable.js"></script>
 
     <script>
         const REQUEST_TOKEN = (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + Math.random());
@@ -809,6 +806,14 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
             if (btnGuardarOrden) {
                 btnGuardarOrden.addEventListener('click', function() {
                     if (btnGuardarOrden.disabled) return;
+                    const campos = document.querySelectorAll('#tablaProductosModal input');
+                    for (const campo of campos) {
+                        if (!campo.reportValidity()) return;
+                    }
+                    if (![...document.querySelectorAll('.cantidad-recibida')].some(campo => Number(campo.value) > 0)) {
+                        Swal.fire('Revisa las cantidades', 'Debes recibir al menos una unidad o fracción de algún producto.', 'warning');
+                        return;
+                    }
                     btnGuardarOrden.disabled = true;
                     // Obtener el ID de la orden
                     const urlParams = new URLSearchParams(window.location.search);
@@ -829,6 +834,8 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                         const cantidad = parseInt(input.dataset.cantidad, 10) || 0;
                         
                         productos.push({
+                            id_detalle: Number(input.closest('tr').dataset.detalleId),
+                            cantidad_recibida: Number(input.closest('tr').querySelector('.cantidad-recibida').value),
                             id_producto: idProducto,
                             nombre_producto: nombreProducto,
                             cantidad: cantidad,
