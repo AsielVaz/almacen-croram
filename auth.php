@@ -52,7 +52,10 @@ function usuario_tiene_permiso(string $permiso): bool {
             'reportes_ver',
         ],
         'CONSUMIDOR' => [
+            'ordenes_salida_ver',
             'ordenes_salida_crear',
+            'ordenes_salida_confirmar_sin_qr',
+            'ordenes_validar_qr',
         ],
         'LECTOR' => [
             'panel_ver',
