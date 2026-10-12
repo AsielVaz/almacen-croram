@@ -38,6 +38,11 @@ function usuario_tiene_permiso(string $permiso): bool {
         return true;
     }
 
+    if ($rol === 'ALMACEN' && $permiso === 'ordenes_salida_confirmar_sin_qr') {
+        require_once __DIR__ . '/api/adminConfiguraciones.php';
+        return almacen_puede_confirmar_sin_qr();
+    }
+
     $permisosPorRol = [
         'ALMACEN' => [
             'panel_ver',
@@ -119,6 +124,7 @@ function permiso_ruta_actual(): ?string {
         'areas-ver.php' => 'areas_administrar',
         'usuarios.php' => 'usuarios_administrar',
         'usuarios-form.php' => 'usuarios_administrar',
+        'configuraciones.php' => 'configuraciones_administrar',
         'ordenes-entrada.php' => 'ordenes_compra_ver',
         'ordenes-entrada-detalle.php' => 'ordenes_compra_ver',
         'ordenes-entrada-form.php' => 'ordenes_compra_crear',

@@ -163,6 +163,14 @@ $puedeUsuarios = usuario_tiene_permiso('usuarios_administrar');
                       </a>
                   </li>
                   <?php endif; ?>
+                  <?php if (usuario_tiene_permiso('configuraciones_administrar')): ?>
+                  <li class="side-nav-item">
+                      <a href="configuraciones.php" class="side-nav-link">
+                          <span class="menu-icon"><i data-lucide="settings"></i></span>
+                          <span class="menu-text">Configuraciones</span>
+                      </a>
+                  </li>
+                  <?php endif; ?>
                   <li class="side-nav-item">
                       <a href="wiki/index.html" class="side-nav-link" target="_blank" rel="noopener noreferrer">
                           <span class="menu-icon"><i data-lucide="book-open"></i></span>

@@ -281,10 +281,10 @@ try {
             $idOrden = $_POST['id'] ?? 0;
             $admin->iniciarTransaccion();
             $ordenActual = json_decode($admin->bloquearOrdenSalida($idOrden), true)[0] ?? null;
-            if (!$ordenActual || ($ordenActual['estatus'] ?? '') === 'CONFIRMADA') {
+            if (!$ordenActual || in_array(($ordenActual['estatus'] ?? ''), ['CONFIRMADA', 'CANCELADA'], true)) {
                 throw new Exception(json_encode([
                     'status' => 'error',
-                    'message' => 'La orden de salida no existe o ya fue confirmada',
+                    'message' => 'La orden de salida no existe, ya fue confirmada o está cancelada',
                 ]));
             }
             $detalles = json_decode($admin->listarDetallesOrdenSalida($idOrden), true) ?: [];
