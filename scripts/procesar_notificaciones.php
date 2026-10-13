@@ -10,7 +10,13 @@ if ($ejecucionWeb) {
 $archivoBloqueo = sys_get_temp_dir() . '/croram_notificaciones_push.lock';
 $bloqueo = fopen($archivoBloqueo, 'c');
 if ($bloqueo === false) {
-    fwrite(STDERR, "No fue posible crear el bloqueo del proceso de notificaciones.\n");
+    $mensaje = 'No fue posible crear el bloqueo del proceso de notificaciones.';
+    if ($ejecucionWeb) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => $mensaje], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+    } else {
+        fwrite(STDERR, $mensaje . PHP_EOL);
+    }
     exit(1);
 }
 
@@ -31,13 +37,20 @@ register_shutdown_function(static function () use ($bloqueo): void {
     fclose($bloqueo);
 });
 
-require_once dirname(__DIR__) . '/api/adminNotificaciones.php';
-
 try {
+    require_once dirname(__DIR__) . '/api/adminNotificaciones.php';
     $resultado = (new AdministradorNotificaciones())->procesarPendientes(100);
     echo json_encode($resultado, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
     exit(0);
 } catch (Throwable $error) {
-    fwrite(STDERR, $error->getMessage() . PHP_EOL);
+    if ($ejecucionWeb) {
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'error',
+            'message' => $error->getMessage(),
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+    } else {
+        fwrite(STDERR, $error->getMessage() . PHP_EOL);
+    }
     exit(1);
 }
