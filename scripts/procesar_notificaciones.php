@@ -1,8 +1,21 @@
 <?php
 
-if (PHP_SAPI !== 'cli') {
-    http_response_code(404);
-    exit;
+$ejecucionWeb = PHP_SAPI !== 'cli';
+
+if ($ejecucionWeb) {
+    require_once dirname(__DIR__) . '/auth.php';
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    requerir_autenticacion_json();
+
+    if (!usuario_es_admin()) {
+        http_response_code(403);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Solo un administrador puede ejecutar este proceso.',
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+        exit;
+    }
 }
 
 $archivoBloqueo = sys_get_temp_dir() . '/croram_notificaciones_push.lock';
@@ -14,6 +27,13 @@ if ($bloqueo === false) {
 
 if (!flock($bloqueo, LOCK_EX | LOCK_NB)) {
     fclose($bloqueo);
+    if ($ejecucionWeb) {
+        http_response_code(409);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'El proceso de notificaciones ya se encuentra en ejecución.',
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+    }
     exit(0);
 }
 
