@@ -1,0 +1,9 @@
+{
+    "name": "croram/almacen",
+    "description": "Sistema interno de gestión de almacén de Croram",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "minishlink/web-push": "^10.0"
+    }
+}

@@ -11,6 +11,15 @@ $accion = $_POST['accion'] ?? '';
 
 $admin = new AdministradorOrdenes();
 
+function entregar_notificaciones_pendientes(): void {
+    try {
+        require_once __DIR__ . '/adminNotificaciones.php';
+        (new AdministradorNotificaciones())->procesarPendientes(25);
+    } catch (Throwable $error) {
+        error_log('No fue posible entregar las notificaciones push: ' . $error->getMessage());
+    }
+}
+
 $permisosPorAccion = [
     'altaOrdenCompra' => 'ordenes_compra_crear',
     'altaOrdenSalida' => 'ordenes_salida_crear',
@@ -90,7 +99,10 @@ try {
                 );
             }
 
+            $admin->registrarNotificacionesOrdenNueva('ORDEN_COMPRA_NUEVA', $ultimo_id, $folio);
+
             $admin->confirmarTransaccion();
+            entregar_notificaciones_pendientes();
 
             echo json_encode([
                 'status' => 'success',
@@ -130,7 +142,10 @@ try {
                 );
             }
 
+            $admin->registrarNotificacionesOrdenNueva('ORDEN_SALIDA_NUEVA', $ultimo_id, $folio);
+
             $admin->confirmarTransaccion();
+            entregar_notificaciones_pendientes();
 
             echo json_encode([
                 'status' => 'success',

@@ -48,6 +48,10 @@ class Con {
         return (int)$this->conexion->insert_id;
     }
 
+    public function filasAfectadas(): int {
+        return (int)$this->conexion->affected_rows;
+    }
+
     public function iniciarTransaccion(): void {
         $this->conexion->begin_transaction();
     }

@@ -11,6 +11,17 @@ $usuarioSesion = usuario_actual();
     @media (max-width: 576px) { .app-topbar .logo-lg img { max-height: 40px; max-width: 120px; } }
     .app-topbar { display: flex; align-items: center; min-height: 70px; }
     .app-topbar .page-container { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .notificaciones-menu { position: absolute; top: 100%; right: 0; left: auto; z-index: 1050; width: min(390px, calc(100vw - 24px)); padding: 0; overflow: hidden; }
+    .notificaciones-lista { max-height: 390px; overflow-y: auto; }
+    .notificacion-item { display: flex; gap: .75rem; align-items: flex-start; padding: .8rem 1rem; white-space: normal; border-bottom: 1px solid var(--bs-border-color); }
+    .notificacion-item:last-child { border-bottom: 0; }
+    .notificacion-no-leida { background: rgba(var(--bs-primary-rgb), .08); }
+    .notificacion-icono { display: grid; place-items: center; flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--bs-secondary-bg); font-size: 18px; }
+    .notificacion-fecha { margin-top: .25rem; color: var(--bs-secondary-color); font-size: .72rem; }
+    #notificaciones-badge { position: absolute; top: 7px; right: 5px; min-width: 18px; padding: 2px 4px; font-size: 10px; }
+    #centro-notificaciones > summary { list-style: none; cursor: pointer; }
+    #centro-notificaciones > summary::-webkit-details-marker { display: none; }
+    #centro-notificaciones[open] .notificaciones-menu { display: block; }
 </style>
 <header class="app-topbar">
     <div class="page-container topbar-menu">
@@ -40,6 +51,24 @@ $usuarioSesion = usuario_actual();
         </div>
 
         <div class="d-flex align-items-center gap-2">
+            <details class="topbar-item dropdown" id="centro-notificaciones">
+                <summary class="topbar-link position-relative" aria-label="Notificaciones">
+                    <i class="ri-notification-3-line fs-22"></i>
+                    <span id="notificaciones-badge" class="badge bg-danger rounded-pill d-none">0</span>
+                </summary>
+                <div class="dropdown-menu dropdown-menu-end notificaciones-menu">
+                    <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                        <strong>Notificaciones</strong>
+                        <button id="notificaciones-marcar-todas" type="button" class="btn btn-sm btn-link text-decoration-none">Marcar leídas</button>
+                    </div>
+                    <div id="lista-notificaciones" class="notificaciones-lista">
+                        <div class="px-3 py-4 text-center text-muted">Cargando...</div>
+                    </div>
+                    <div class="p-2 border-top">
+                        <button id="notificaciones-push" type="button" class="btn btn-sm btn-outline-secondary w-100">Activar en este dispositivo</button>
+                    </div>
+                </div>
+            </details>
             <div class="topbar-item d-none d-sm-flex">
                 <button class="topbar-link" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" type="button"><i data-lucide="settings" class="fs-22"></i></button>
             </div>
@@ -69,3 +98,4 @@ $usuarioSesion = usuario_actual();
         </div>
     </div>
 </header>
+<script src="assets/js/notificaciones.js?v=20261013-2" defer></script>

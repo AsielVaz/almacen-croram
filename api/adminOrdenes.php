@@ -3,6 +3,23 @@ include_once 'conector.php';
 
 class AdministradorOrdenes extends Con
 {
+    public function registrarNotificacionesOrdenNueva(string $tipoOrden, int $idOrden, string $folio): void
+    {
+        $esCompra = $tipoOrden === 'ORDEN_COMPRA_NUEVA';
+        $tipoSql = $esCompra ? 'ORDEN_COMPRA_NUEVA' : 'ORDEN_SALIDA_NUEVA';
+        $titulo = $this->escapar($esCompra ? 'Nueva orden de entrada' : 'Nueva orden de salida');
+        $mensaje = $this->escapar(($esCompra ? 'Se registró la orden de entrada ' : 'Se registró la orden de salida ') . $folio . '.');
+        $url = $this->escapar(($esCompra ? 'ordenes-entrada-detalle.php?id=' : 'ordenes-salida-detalle.php?id=') . $idOrden);
+
+        $this->ejecutar("
+            INSERT IGNORE INTO notificaciones
+                (id_usuario, tipo, id_referencia, titulo, mensaje, url)
+            SELECT id, '$tipoSql', $idOrden, '$titulo', '$mensaje', '$url'
+            FROM usuarios
+            WHERE activo = 1 AND rol IN ('ADMIN', 'ALMACEN', 'COMPRAS')
+        ");
+    }
+
     public function agregarOrdenCompra($folio, $id_proveedor, $fecha_orden, $estatus, $id_usuario, $nota = '')
     {
         $folio = $this->limpiar($folio);
