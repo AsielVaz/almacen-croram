@@ -79,9 +79,9 @@ switch ($tipo) {
         $filas = [];
         foreach ($articulos as $articulo) {
             $existenciaActual = (float)($articulo['cantidad'] ?? 0);
+            $saldoActual = (float)($articulo['saldo_actual'] ?? $existenciaActual);
             $totalEntradas = (float)($articulo['total_entradas'] ?? 0);
             $totalSalidas = (float)($articulo['total_salidas'] ?? 0);
-            $saldoInicial = $existenciaActual - $totalEntradas + $totalSalidas;
 
             $filas[] = [
                 $articulo['id'] ?? '',
@@ -93,7 +93,7 @@ switch ($tipo) {
                 $articulo['ubicacion'] ?? '',
                 $articulo['tipo_articulo'] ?? 'NUEVO',
                 $articulo['unidad_medida'] ?? '',
-                number_format($saldoInicial, 0, '.', ''),
+                number_format($saldoActual, 0, '.', ''),
                 number_format($totalEntradas, 0, '.', ''),
                 number_format($totalSalidas, 0, '.', ''),
                 number_format($existenciaActual, 0, '.', ''),
@@ -129,7 +129,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_inventario_' . ($idFamilia ?: 'todas') . '_' . ($idSubfamilia ?: 'todas'),
             'Inventario',
-            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Ubicacion', 'Condicion', 'Unidad', 'Saldo inicial', 'Entradas', 'Salidas', 'Existencia', 'Valor inventario', 'Costo por unidad', 'Precio promedio', 'Estado'],
+            ['ID', 'SKU', 'Articulo', 'Familia', 'Subfamilia', 'Descripcion', 'Ubicacion', 'Condicion', 'Unidad', 'Saldo actual', 'Entradas', 'Salidas', 'Existencia', 'Valor inventario', 'Costo por unidad', 'Precio promedio', 'Estado'],
             $filas
         );
         break;

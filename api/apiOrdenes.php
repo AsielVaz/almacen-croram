@@ -25,7 +25,7 @@ $permisosPorAccion = [
     'altaOrdenSalida' => 'ordenes_salida_crear',
     'guardarOrdenEntrada' => 'ordenes_compra_recibir_sin_qr',
     'autorizarOrdenCompra' => 'ordenes_compra_autorizar',
-    'autorizarRecepcionOrdenCompra' => 'ordenes_compra_autorizar',
+    'autorizarRecepcionOrdenCompra' => 'ordenes_compra_autorizar_recepcion',
     'aprovarSalida' => 'ordenes_salida_confirmar_sin_qr',
 ];
 

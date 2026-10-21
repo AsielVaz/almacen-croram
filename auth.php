@@ -51,6 +51,7 @@ function usuario_tiene_permiso(string $permiso): bool {
             'ordenes_compra_ver',
             'ordenes_compra_crear',
             'ordenes_compra_recibir_sin_qr',
+            'ordenes_compra_autorizar_recepcion',
             'ordenes_salida_ver',
             'ordenes_salida_crear',
             'ordenes_validar_qr',

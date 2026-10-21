@@ -161,6 +161,7 @@ class AdministradorArticulos extends Con {
                 p.descripcion,
                 p.ubicacion,
                 COALESCE(inv.stock, 0) AS cantidad,
+                COALESCE(inv.stock, 0) AS saldo_actual,
                 f.nombre AS familia,
                 s.nombre AS subfamilia,
                 COALESCE(entradas.total_entradas, 0) AS total_entradas,

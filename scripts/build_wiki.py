@@ -361,7 +361,7 @@ def build():
         "Los reportes permiten revisar existencias, costos, consumos, compras, movimientos y sugerencias de compra.",
         grid(
             card("Inventario", ul([
-                "Muestra saldo inicial, entradas, salidas y existencia.",
+                "Muestra saldo actual, entradas, salidas y existencia.",
                 "Incluye valor de inventario y costo por unidad.",
                 "Calcula costo promedio usando lotes PEPS, stock sin lote, costo de reposicion y ultima compra.",
                 "Permite filtrar por familia y subfamilia.",
@@ -375,7 +375,7 @@ def build():
         + card("Reportes disponibles", table(
             ["Reporte", "Contenido"],
             [
-                ["Inventario", "Existencias, saldo inicial, entradas, salidas, valor inventario, costo por unidad y precio promedio."],
+                ["Inventario", "Existencias, saldo actual, entradas, salidas, valor inventario, costo por unidad y precio promedio."],
                 ["Proveedor", "Compras por proveedor con articulo, fecha, precio unitario y total."],
                 ["Entradas", "Unidades, descripcion, precio unitario y compra total."],
                 ["Salidas", "Observacion, area, costo PEPS y total en pesos."],
@@ -506,7 +506,7 @@ def build():
             "Ordenes concluidas bloquean acciones para evitar duplicados.",
         ]))
         + card("Reportes", ul([
-            "Inventario muestra saldo inicial, entradas, salidas, existencia, valor inventario, costo por unidad y precio promedio.",
+            "Inventario muestra saldo actual, entradas, salidas, existencia, valor inventario, costo por unidad y precio promedio.",
             "Reportes de entradas muestran unidades, descripcion, precio unitario y total.",
             "Reportes de salidas muestran area, observacion, costo PEPS y total.",
             "Consumos por area incluyen costo PEPS promedio y total por periodo.",

@@ -294,7 +294,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="header-title mb-1">Inventario detallado</h4>
-                    <p class="text-muted mb-0">Catálogo completo con saldo inicial, entradas, salidas, existencia y precio promedio de compra.</p>
+                    <p class="text-muted mb-0">Catálogo completo con saldo actual, entradas, salidas, existencia y precio promedio de compra.</p>
                 </div>
                 <a class="btn btn-success btn-sm" href="reportes-exportar.php?<?= htmlspecialchars($queryInventario) ?>">Exportar Excel</a>
             </div>
@@ -347,7 +347,7 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                                 <th>Ubicación</th>
                                 <th>Condición</th>
                                 <th>Unidad</th>
-                                <th>Saldo inicial</th>
+                                <th>Saldo actual</th>
                                 <th>Entradas</th>
                                 <th>Salidas</th>
                                 <th>Existencia</th>
@@ -371,11 +371,11 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
                                 <td><?= htmlspecialchars($articulo['unidad_medida'] ?? '') ?></td>
                                 <?php
                                 $existenciaActual = (float)($articulo['cantidad'] ?? 0);
+                                $saldoActual = (float)($articulo['saldo_actual'] ?? $existenciaActual);
                                 $totalEntradas = (float)($articulo['total_entradas'] ?? 0);
                                 $totalSalidas = (float)($articulo['total_salidas'] ?? 0);
-                                $saldoInicial = $existenciaActual - $totalEntradas + $totalSalidas;
                                 ?>
-                                <td><?= number_format($saldoInicial, 0) ?></td>
+                                <td><?= number_format($saldoActual, 0) ?></td>
                                 <td><?= number_format($totalEntradas, 0) ?></td>
                                 <td><?= number_format($totalSalidas, 0) ?></td>
                                 <td><?= number_format($existenciaActual, 0) ?></td>

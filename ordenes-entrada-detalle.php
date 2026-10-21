@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 requerir_autenticacion();
 $puedeAutorizarCompra = usuario_tiene_permiso('ordenes_compra_autorizar');
+$puedeAutorizarRecepcion = usuario_tiene_permiso('ordenes_compra_autorizar_recepcion');
 $puedeRecibirSinQr = usuario_tiene_permiso('ordenes_compra_recibir_sin_qr');
 $returnToSolicitado = (string)($_GET['return_to'] ?? 'ordenes-entrada.php');
 $returnTo = basename(parse_url($returnToSolicitado, PHP_URL_PATH) ?: '');
@@ -600,7 +601,7 @@ if (!in_array($returnTo, ['ordenes-entrada.php', 'reportes-ordenes-entrada-sin-a
                                                 <i class="ri-check-line me-2"></i>Autorizar Orden
                                             </button>
                                         <?php endif; ?>
-                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE_AUTORIZACION_RECEPCION' && $puedeAutorizarCompra): ?>
+                                        <?php if (($ordenes[0]->estatus ?? '') === 'PENDIENTE_AUTORIZACION_RECEPCION' && $puedeAutorizarRecepcion): ?>
                                             <button type="button" class="btn btn-primary-modern btn-modern" id="btnAutorizarRecepcion">
                                                 <i class="ri-shield-check-line me-2"></i>Autorizar Recepción
                                             </button>

@@ -80,8 +80,8 @@ try {
     check(stock()===7.5,'Unapproved price increase added inventory');
     check($db->query('SELECT estatus FROM ordenes_compra WHERE id=2')->fetch_row()[0]==='PENDIENTE_AUTORIZACION_RECEPCION','Missing price authorization');
     $approve=['accion'=>'autorizarRecepcionOrdenCompra','id'=>2,'request_token'=>'approve'];
-    check(requestApi('ALMACEN',$approve)['status']==='error','Warehouse approved own price increase');
-    check(requestApi('ADMIN',$approve)['status']==='success','Admin approval failed');
+    check(requestApi('LECTOR',$approve)['status']==='error','Reader approved a reception');
+    check(requestApi('ALMACEN',$approve)['status']==='success','Warehouse reception approval failed');
     check(stock()===9.5,'Approval added wrong quantity');
     check(requestApi('ALMACEN',postReceipt(3,[line(5,4)],'complete'))['status']==='success','Full receipt failed');
     check(stock()===13.5,'Full receipt added wrong quantity');
