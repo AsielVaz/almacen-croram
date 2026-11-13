@@ -11,6 +11,22 @@ function pdf_text($value)
     return mb_convert_encoding((string)$value, 'ISO-8859-1', 'UTF-8');
 }
 
+function pdf_fecha_es($value)
+{
+    $value = trim((string)$value);
+    $fecha = DateTimeImmutable::createFromFormat('!Y-m-d', substr($value, 0, 10));
+    if (!$fecha) {
+        return $value;
+    }
+
+    $meses = [
+        1 => 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+    ];
+
+    return $fecha->format('d') . ' / ' . $meses[(int)$fecha->format('n')] . ' / ' . $fecha->format('Y');
+}
+
 class OrdenCompraPDF extends FPDF
 {
     private $ordenData;
@@ -62,11 +78,11 @@ class OrdenCompraPDF extends FPDF
 
     function ProductHeader()
     {
-        $this->SetFont('Arial', 'B', 9);
+        $this->SetFont('Arial', 'B', 8);
         $this->SetFillColor(73, 80, 87);
         $this->SetTextColor(255, 255, 255);
-        foreach ([[12, '#'], [58, 'DESCRIPCIÓN'], [30, 'UBIC.'], [25, 'SOL. / REC.'], [30, 'PRECIO UNIT.'], [35, 'SUBTOTAL']] as $i => $col) {
-            $this->Cell($col[0], 9, pdf_text($col[1]), 1, $i === 5 ? 1 : 0, 'C', true);
+        foreach ([[12, '#'], [58, 'DESCRIPCIÓN'], [30, 'UBIC.'], [25, 'SOLICITADO'], [30, 'PRECIO UNIT.'], [35, 'SUBTOTAL']] as $i => $col) {
+            $this->Cell($col[0], 7, pdf_text($col[1]), 1, $i === 5 ? 1 : 0, 'C', true);
         }
     }
 
@@ -74,7 +90,7 @@ class OrdenCompraPDF extends FPDF
     {
         $widths = [12, 58, 30, 25, 30, 35];
         $aligns = ['C', 'L', 'L', 'C', 'R', 'R'];
-        $this->SetFont('Arial', '', 9);
+        $this->SetFont('Arial', '', 8);
         $wrapped = [];
         $maxLines = 1;
         foreach ($values as $i => $value) {
@@ -94,20 +110,20 @@ class OrdenCompraPDF extends FPDF
             $wrapped[] = implode("\n", $lines);
             $maxLines = max($maxLines, count($lines));
         }
-        $height = max(8, $maxLines * 5 + 2);
+        $height = max(6, $maxLines * 4 + 1);
         if ($this->GetY() + $height > 267) {
             $this->AddPage();
             $this->ProductHeader();
         }
-        $this->SetFont('Arial', '', 9);
+        $this->SetFont('Arial', '', 8);
         $this->SetTextColor(33, 37, 41);
         $this->SetDrawColor(222, 226, 230);
         $this->SetFillColor($fill ? 248 : 255, $fill ? 249 : 255, $fill ? 250 : 255);
         $x = 10; $y = $this->GetY();
         foreach ($wrapped as $i => $value) {
             $this->Rect($x, $y, $widths[$i], $height, 'DF');
-            $this->SetXY($x, $y + 1);
-            $this->MultiCell($widths[$i], 5, $value, 0, $aligns[$i]);
+            $this->SetXY($x, $y + 0.5);
+            $this->MultiCell($widths[$i], 4, $value, 0, $aligns[$i]);
             $x += $widths[$i];
         }
         $this->SetXY(10, $y + $height);
@@ -151,7 +167,7 @@ class OrdenCompraPDF extends FPDF
         $this->SetTextColor(73, 80, 87);
         $this->SetFillColor(248, 249, 250);
         
-        $this->Cell(0, 8, pdf_text($icon . ' ' . $title), 0, 1, 'L', false);
+        $this->Cell(0, 6, pdf_text($icon . ' ' . $title), 0, 1, 'L', false);
         
         // Línea decorativa
         $this->SetDrawColor(73, 80, 87);
@@ -159,7 +175,7 @@ class OrdenCompraPDF extends FPDF
         $y = $this->GetY();
         $this->Line(10, $y, 50, $y);
         
-        $this->Ln(5);
+        $this->Ln(3);
     }
 
     private function countWrappedLines($width, $text)
@@ -219,31 +235,99 @@ class OrdenCompraPDF extends FPDF
 
     function NotesBoxHeight($text, $width = 90)
     {
-        $this->SetFont('Arial', '', 9);
-        $bodyHeight = max(15, $this->countWrappedLines($width - 4, pdf_text($text)) * 5 + 4);
-        return 7 + $bodyHeight;
+        $this->SetFont('Arial', '', 8);
+        $bodyHeight = max(12, $this->countWrappedLines($width - 4, pdf_text($text)) * 4 + 3);
+        return 6 + $bodyHeight;
     }
 
     function NotesBox($text, $x, $y, $width = 90)
     {
         $height = $this->NotesBoxHeight($text, $width);
-        $bodyHeight = $height - 7;
+        $bodyHeight = $height - 6;
 
         $this->SetXY($x, $y);
-        $this->SetFont('Arial', 'B', 9);
+        $this->SetFont('Arial', 'B', 8);
         $this->SetTextColor(73, 80, 87);
         $this->SetFillColor(248, 249, 250);
         $this->SetDrawColor(222, 226, 230);
-        $this->Cell($width, 7, pdf_text('NOTAS DE LA ORDEN:'), 1, 1, 'L', true);
+        $this->Cell($width, 6, pdf_text('NOTAS DE LA ORDEN:'), 1, 1, 'L', true);
 
-        $this->Rect($x, $y + 7, $width, $bodyHeight);
-        $this->SetXY($x + 2, $y + 9);
-        $this->SetFont('Arial', '', 9);
+        $this->Rect($x, $y + 6, $width, $bodyHeight);
+        $this->SetXY($x + 2, $y + 7.5);
+        $this->SetFont('Arial', '', 8);
         $this->SetTextColor(33, 37, 41);
-        $this->MultiCell($width - 4, 5, pdf_text($text), 0, 'L');
+        $this->MultiCell($width - 4, 4, pdf_text($text), 0, 'L');
         $this->SetXY($x, $y + $height);
 
         return $y + $height;
+    }
+
+    function ValidationBlockHeight()
+    {
+        return 40;
+    }
+
+    function ValidationBlock($qrFile)
+    {
+        $startY = $this->GetY();
+        $signatureWidth = 70;
+        $signatureX1 = 45;
+        $signatureX2 = 125;
+        $boxY = $startY + 7;
+        $boxHeight = 14;
+
+        // El QR comparte la misma franja vertical que las firmas.
+        $qrX = 12;
+        $qrY = $startY + 8;
+        $this->SetDrawColor(222, 226, 230);
+        $this->SetLineWidth(0.3);
+        $this->Rect($qrX - 2, $qrY - 2, 28, 28);
+        $this->Image($qrFile, $qrX, $qrY, 24, 0, 'PNG');
+        $this->SetFont('Arial', 'I', 6);
+        $this->SetTextColor(108, 117, 125);
+        $this->SetXY($qrX - 5, $qrY + 26);
+        $this->Cell(34, 3, pdf_text('Escanea para ver online'), 0, 0, 'C');
+
+        $this->SetXY($signatureX1, $startY);
+        $this->SetFont('Arial', 'B', 8);
+        $this->SetTextColor(73, 80, 87);
+        $this->Cell(150, 5, pdf_text('VALIDACIÓN Y AUTORIZACIÓN'), 0, 1, 'C');
+
+        $this->SetFillColor(248, 249, 250);
+        $this->SetXY($signatureX1, $boxY);
+        $this->Cell($signatureWidth, $boxHeight, '', 1, 0, 'C', true);
+        $this->SetXY($signatureX2, $boxY);
+        $this->Cell($signatureWidth, $boxHeight, '', 1, 1, 'C', true);
+
+        $labelY = $boxY + $boxHeight + 1;
+        $this->SetFont('Arial', 'B', 7.5);
+        $this->SetTextColor(33, 37, 41);
+        $this->SetXY($signatureX1, $labelY);
+        $this->Cell($signatureWidth, 4, pdf_text('RESPONSABLE DE ALMACÉN'), 0, 0, 'C');
+        $this->SetXY($signatureX2, $labelY);
+        $this->Cell($signatureWidth, 4, pdf_text('AUTORIZA COMPRA'), 0, 1, 'C');
+
+        $lineY = $labelY + 5;
+        $this->SetDrawColor(222, 226, 230);
+        $this->SetLineWidth(0.2);
+        $this->Line($signatureX1 + 6, $lineY, $signatureX1 + $signatureWidth - 6, $lineY);
+        $this->Line($signatureX2 + 6, $lineY, $signatureX2 + $signatureWidth - 6, $lineY);
+
+        $this->SetFont('Arial', 'I', 6.5);
+        $this->SetTextColor(108, 117, 125);
+        $this->SetXY($signatureX1, $lineY + 0.5);
+        $this->Cell($signatureWidth, 3, 'Nombre y Firma', 0, 0, 'C');
+        $this->SetXY($signatureX2, $lineY + 0.5);
+        $this->Cell($signatureWidth, 3, 'Nombre y Firma', 0, 1, 'C');
+
+        $this->SetFont('Arial', '', 7.5);
+        $this->SetTextColor(73, 80, 87);
+        $this->SetXY($signatureX1, $lineY + 4);
+        $this->Cell($signatureWidth, 4, 'Fecha: ___________________', 0, 0, 'C');
+        $this->SetXY($signatureX2, $lineY + 4);
+        $this->Cell($signatureWidth, 4, 'Fecha: ___________________', 0, 1, 'C');
+
+        $this->SetY($startY + $this->ValidationBlockHeight());
     }
 }
 
@@ -263,7 +347,7 @@ if (!$ordenes) {
 
 $orden = array(
     'folio'     => $ordenes[0]->folio ?? 'OC-00000',
-    'fecha'     => $ordenes[0]->fecha_orden ?? date('Y-m-d'),
+    'fecha'     => pdf_fecha_es($ordenes[0]->fecha_orden ?? date('Y-m-d')),
     'proveedor' => $ordenes[0]->nombre_proveedor ?? 'SIN PROVEEDOR',
     'estatus'   => $ordenes[0]->estatus ?? 'NO VALIDADA',
     'nota'      => $ordenes[0]->nota ?? '',
@@ -322,7 +406,7 @@ $pdf->InfoBox('ESTATUS:', $orden['estatus'], 95, true);
 
 $pdf->InfoBox('PROVEEDOR:', $orden['proveedor'], 190, true);
 
-$pdf->Ln(8);
+$pdf->Ln(5);
 
 // =====================
 // TABLA DE PRODUCTOS
@@ -335,10 +419,9 @@ $total = 0;
 foreach ($items as $index => $item) {
     $sub = $item['cantidad'] * $item['precio'];
     $total += $sub;
-    $recibida = in_array($orden['estatus'], ['RECIBIDA', 'PENDIENTE_AUTORIZACION_RECEPCION'], true) ? $item['cantidad'] : '-';
     $pdf->ProductRow([
         $index + 1, $item['producto'], $item['ubicacion'],
-        $item['solicitada'] . ' / ' . $recibida,
+        $item['solicitada'],
         '$' . number_format($item['precio'], 2), '$' . number_format($sub, 2),
     ], $index % 2 !== 0);
 }
@@ -346,7 +429,7 @@ foreach ($items as $index => $item) {
 // Línea final de la tabla
 $pdf->Cell(190, 0, '', 'T', 1);
 
-$pdf->Ln(8);
+$pdf->Ln(5);
 
 // =====================
 // RESUMEN FINANCIERO
@@ -356,7 +439,7 @@ $pdf->Ln(8);
 // área libre que queda debajo del detalle de productos.
 $notaOrden = trim((string)$orden['nota']);
 $alturaNotas = $notaOrden !== '' ? $pdf->NotesBoxHeight($notaOrden, 90) : 0;
-$alturaResumen = 23;
+$alturaResumen = 20;
 
 if ($pdf->GetY() + max($alturaNotas, $alturaResumen) > 267) {
     $pdf->AddPage();
@@ -380,140 +463,52 @@ $pdf->SetDrawColor(222, 226, 230);
 $pdf->SetLineWidth(0.3);
 
 // Subtotal
-$pdf->SetFont('Arial', '', 10);
+$pdf->SetFont('Arial', '', 9);
 $pdf->SetFillColor(248, 249, 250);
 $pdf->SetTextColor(73, 80, 87);
 $pdf->SetX(110);
-$pdf->Cell(50, 7, 'Subtotal:', 1, 0, 'L', true);
+$pdf->Cell(50, 6, 'Subtotal:', 1, 0, 'L', true);
 
-$pdf->SetFont('Arial', 'B', 10);
+$pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(33, 37, 41);
 $pdf->SetFillColor(255, 255, 255);
-$pdf->Cell(40, 7, '$' . number_format($total, 2), 1, 1, 'R', true);
+$pdf->Cell(40, 6, '$' . number_format($total, 2), 1, 1, 'R', true);
 
 // IVA
-$pdf->SetFont('Arial', '', 10);
+$pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(73, 80, 87);
 $pdf->SetFillColor(248, 249, 250);
 $pdf->SetX(110);
-$pdf->Cell(50, 7, 'IVA (16%):', 1, 0, 'L', true);
+$pdf->Cell(50, 6, 'IVA (16%):', 1, 0, 'L', true);
 
-$pdf->SetFont('Arial', 'B', 10);
+$pdf->SetFont('Arial', 'B', 9);
 $pdf->SetTextColor(33, 37, 41);
 $pdf->SetFillColor(255, 255, 255);
-$pdf->Cell(40, 7, '$' . number_format($iva, 2), 1, 1, 'R', true);
+$pdf->Cell(40, 6, '$' . number_format($iva, 2), 1, 1, 'R', true);
 
 // Total - Destacado
-$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetFont('Arial', 'B', 10);
 $pdf->SetFillColor(73, 80, 87);
 $pdf->SetTextColor(255, 255, 255);
 $pdf->SetX(110);
-$pdf->Cell(50, 9, 'TOTAL:', 1, 0, 'L', true);
+$pdf->Cell(50, 8, 'TOTAL:', 1, 0, 'L', true);
 
-$pdf->SetFont('Arial', 'B', 13);
-$pdf->Cell(40, 9, '$' . number_format($grand, 2), 1, 1, 'R', true);
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->Cell(40, 8, '$' . number_format($grand, 2), 1, 1, 'R', true);
 
 $finResumenY = $pdf->GetY();
 $pdf->SetY(max($finNotasY, $finResumenY));
-$pdf->Ln(15);
-if ($pdf->GetY() > 175) $pdf->AddPage();
+$pdf->Ln(5);
 
 // =====================
 // SECCIÓN DE FIRMAS
 // =====================
 
-$pdf->SetDrawColor(222, 226, 230);
-$pdf->SetLineWidth(0.3);
-
-// Configuración
-$xInicio = 30;
-$anchoFirma = 70;
-$espacio = 20;
-
-// Título de sección
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->SetTextColor(73, 80, 87);
-$pdf->Cell(0, 6, pdf_text('VALIDACIÓN Y AUTORIZACIÓN'), 0, 1, 'C');
-$pdf->Ln(5);
-
-// Cajas de firma con borde
-$pdf->SetFillColor(248, 249, 250);
-
-// Firma 1 - Responsable de Almacén
-$pdf->SetXY($xInicio, $pdf->GetY());
-$pdf->Cell($anchoFirma, 25, '', 1, 0, 'C', true);
-
-// Firma 2 - Autoriza Compra
-$pdf->SetXY($xInicio + $anchoFirma + $espacio, $pdf->GetY());
-$pdf->Cell($anchoFirma, 25, '', 1, 1, 'C', true);
-
-$pdf->Ln(3);
-
-// Títulos bajo las firmas
-$pdf->SetFont('Arial', 'B', 9);
-$pdf->SetTextColor(33, 37, 41);
-
-$pdf->SetX($xInicio);
-$pdf->Cell($anchoFirma, 5, pdf_text('RESPONSABLE DE ALMACÉN'), 0, 0, 'C');
-
-$pdf->SetX($xInicio + $anchoFirma + $espacio);
-$pdf->Cell($anchoFirma, 5, pdf_text('AUTORIZA COMPRA'), 0, 1, 'C');
-
-$pdf->Ln(2);
-
-// Líneas para nombre
-$pdf->SetDrawColor(222, 226, 230);
-$pdf->SetLineWidth(0.2);
-
-$y = $pdf->GetY();
-$pdf->Line($xInicio + 5, $y, $xInicio + $anchoFirma - 5, $y);
-$pdf->Line($xInicio + $anchoFirma + $espacio + 5, $y, $xInicio + $anchoFirma + $espacio + $anchoFirma - 5, $y);
-
-$pdf->Ln(1);
-
-// Texto "Nombre y Firma"
-$pdf->SetFont('Arial', 'I', 7);
-$pdf->SetTextColor(108, 117, 125);
-
-$pdf->SetX($xInicio);
-$pdf->Cell($anchoFirma, 4, 'Nombre y Firma', 0, 0, 'C');
-
-$pdf->SetX($xInicio + $anchoFirma + $espacio);
-$pdf->Cell($anchoFirma, 4, 'Nombre y Firma', 0, 1, 'C');
-
-$pdf->Ln(4);
-
-// Campos de fecha
-$pdf->SetFont('Arial', '', 8);
-$pdf->SetTextColor(73, 80, 87);
-
-$pdf->SetX($xInicio);
-$pdf->Cell($anchoFirma, 4, 'Fecha: ___________________', 0, 0, 'C');
-
-$pdf->SetX($xInicio + $anchoFirma + $espacio);
-$pdf->Cell($anchoFirma, 4, 'Fecha: ___________________', 0, 1, 'C');
-
-// =====================
-// QR CODE
-// =====================
-
-// Posicionar QR en esquina inferior izquierda con marco
-$qrY = $pdf->GetY() + 8;
-$qrX = 12;
-
-// Marco para el QR
-$pdf->SetDrawColor(222, 226, 230);
-$pdf->SetLineWidth(0.3);
-$pdf->Rect($qrX - 2, $qrY - 2, 34, 34);
-
-// QR
-$pdf->Image($qrFile, $qrX, $qrY, 30, 0, 'PNG');
-
-// Texto bajo el QR
-$pdf->SetFont('Arial', 'I', 7);
-$pdf->SetTextColor(108, 117, 125);
-$pdf->SetXY($qrX - 5, $qrY + 32);
-$pdf->Cell(40, 3, pdf_text('Escanea para ver online'), 0, 0, 'C');
+$alturaValidacion = $pdf->ValidationBlockHeight();
+if ($pdf->GetY() + $alturaValidacion > 267) {
+    $pdf->AddPage();
+}
+$pdf->ValidationBlock($qrFile);
 
 @unlink($qrFile);
 
