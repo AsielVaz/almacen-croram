@@ -39,12 +39,13 @@ requerir_autenticacion();
                         <div><a href="proveedores-alta.php" class="btn btn-primary"><i class="fa fa-plus mr-1"></i> Agregar proveedor</a></div>
                     </div>
                     <table id="alternative-page-datatable" class="table table-striped dt-responsive nowrap w-100">
-                        <thead><tr><th>ID</th><th>Nombre</th><th>Contacto</th><th>Correo</th><th>RFC</th><th>Credito</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Contacto</th><th>Correo</th><th>RFC</th><th>Credito</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
                         <?php foreach ($proveedores as $proveedor): ?>
                             <tr>
                                 <td><?= $proveedor->id ?></td>
                                 <td><?= htmlspecialchars($proveedor->nombre) ?></td>
+                                <td><?= htmlspecialchars($proveedor->descripcion ?: 'Sin descripción') ?></td>
                                 <td><?= htmlspecialchars($proveedor->contacto ?: 'Sin contacto') ?></td>
                                 <td><?= htmlspecialchars($proveedor->mail ?: 'Sin correo') ?></td>
                                 <td><?= htmlspecialchars($proveedor->rfc ?: 'Sin RFC') ?></td>

@@ -30,7 +30,8 @@ try {
                 exit;
             }
             
-            if ($admin->existeRfc($_POST['rfc'] ?? '')) {
+            $rfc = trim((string)($_POST['rfc'] ?? ''));
+            if ($rfc !== '' && $admin->existeRfc($rfc)) {
                 echo json_encode([
                     'status' => 'error',
                     'message' => 'El RFC ya está registrado'
@@ -41,7 +42,8 @@ try {
              $admin->agregarProveedor(
                 $nombre,
                 $_POST['contacto'] ?? '',
-                $_POST['rfc'] ?? '',
+                $_POST['descripcion'] ?? '',
+                $rfc,
                 $_POST['domicilio_completo'] ?? '',
                 $_POST['telefono_contacto'] ?? '',
                 $_POST['movil_contacto'] ?? '',
@@ -70,7 +72,8 @@ try {
 
         case 'actualizarProveedor':
 
-            if ($admin->existeRfc($_POST['rfc'] ?? '', $_POST['id'] ?? 0)) {
+            $rfc = trim((string)($_POST['rfc'] ?? ''));
+            if ($rfc !== '' && $admin->existeRfc($rfc, $_POST['id'] ?? 0)) {
                 echo json_encode([
                     'status' => 'error',
                     'message' => 'El RFC ya está registrado'
@@ -82,7 +85,8 @@ try {
                 $_POST['id'] ?? 0,
                 $_POST['nombre'] ?? '',
                 $_POST['contacto'] ?? '',
-                $_POST['rfc'] ?? '',
+                $_POST['descripcion'] ?? '',
+                $rfc,
                 $_POST['domicilio_completo'] ?? '',
                 $_POST['telefono_contacto'] ?? '',
                 $_POST['movil_contacto'] ?? '',

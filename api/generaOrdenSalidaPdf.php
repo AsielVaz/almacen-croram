@@ -161,6 +161,90 @@ class OrdenCompraPDF extends FPDF
         
         $this->Ln(5);
     }
+
+    private function countWrappedLines($width, $text)
+    {
+        $cw = $this->CurrentFont['cw'];
+        $maxWidth = ($width - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        $text = str_replace("\r", '', (string)$text);
+        $length = strlen($text);
+
+        if ($length > 0 && $text[$length - 1] === "\n") {
+            $length--;
+        }
+
+        $separator = -1;
+        $position = 0;
+        $lineStart = 0;
+        $lineWidth = 0;
+        $lines = 1;
+
+        while ($position < $length) {
+            $character = $text[$position];
+            if ($character === "\n") {
+                $position++;
+                $separator = -1;
+                $lineStart = $position;
+                $lineWidth = 0;
+                $lines++;
+                continue;
+            }
+
+            if ($character === ' ') {
+                $separator = $position;
+            }
+
+            $lineWidth += $cw[$character] ?? 0;
+            if ($lineWidth > $maxWidth) {
+                if ($separator === -1 || $separator < $lineStart) {
+                    if ($position === $lineStart) {
+                        $position++;
+                    }
+                } else {
+                    $position = $separator + 1;
+                }
+
+                $separator = -1;
+                $lineStart = $position;
+                $lineWidth = 0;
+                $lines++;
+                continue;
+            }
+
+            $position++;
+        }
+
+        return $lines;
+    }
+
+    function NotesBoxHeight($text, $width = 90)
+    {
+        $this->SetFont('Arial', '', 9);
+        $bodyHeight = max(15, $this->countWrappedLines($width - 4, pdf_text($text)) * 5 + 4);
+        return 7 + $bodyHeight;
+    }
+
+    function NotesBox($text, $x, $y, $width = 90)
+    {
+        $height = $this->NotesBoxHeight($text, $width);
+        $bodyHeight = $height - 7;
+
+        $this->SetXY($x, $y);
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetTextColor(73, 80, 87);
+        $this->SetFillColor(248, 249, 250);
+        $this->SetDrawColor(222, 226, 230);
+        $this->Cell($width, 7, pdf_text('NOTAS DE LA ORDEN:'), 1, 1, 'L', true);
+
+        $this->Rect($x, $y + 7, $width, $bodyHeight);
+        $this->SetXY($x + 2, $y + 9);
+        $this->SetFont('Arial', '', 9);
+        $this->SetTextColor(33, 37, 41);
+        $this->MultiCell($width - 4, 5, pdf_text($text), 0, 'L');
+        $this->SetXY($x, $y + $height);
+
+        return $y + $height;
+    }
 }
 
 /* =====================
@@ -182,6 +266,7 @@ $orden = array(
     'fecha'     => $ordenes[0]->fecha_orden ?? date('Y-m-d'),
     'proveedor' => $ordenes[0]->nombre_proveedor ?? 'SIN PROVEEDOR',
     'estatus'   => $ordenes[0]->estatus ?? 'NO VALIDADA',
+    'nota'      => $ordenes[0]->nota ?? '',
 );
 
 $items = array();
@@ -267,12 +352,28 @@ $pdf->Ln(8);
 // RESUMEN FINANCIERO
 // =====================
 
-if ($pdf->GetY() > 230) $pdf->AddPage();
+// La nota comparte el espacio horizontal con los totales para aprovechar el
+// área libre que queda debajo del detalle de productos.
+$notaOrden = trim((string)$orden['nota']);
+$alturaNotas = $notaOrden !== '' ? $pdf->NotesBoxHeight($notaOrden, 90) : 0;
+$alturaResumen = 23;
+
+if ($pdf->GetY() + max($alturaNotas, $alturaResumen) > 267) {
+    $pdf->AddPage();
+}
+
+$inicioResumenY = $pdf->GetY();
+$finNotasY = $inicioResumenY;
+
+if ($notaOrden !== '') {
+    $finNotasY = $pdf->NotesBox($notaOrden, 10, $inicioResumenY, 90);
+}
+
 $iva = $total * 0.16;
 $grand = $total + $iva;
 
 // Posicionar a la derecha
-$pdf->SetX(110);
+$pdf->SetXY(110, $inicioResumenY);
 
 // Box contenedor del resumen
 $pdf->SetDrawColor(222, 226, 230);
@@ -312,8 +413,10 @@ $pdf->Cell(50, 9, 'TOTAL:', 1, 0, 'L', true);
 $pdf->SetFont('Arial', 'B', 13);
 $pdf->Cell(40, 9, '$' . number_format($grand, 2), 1, 1, 'R', true);
 
+$finResumenY = $pdf->GetY();
+$pdf->SetY(max($finNotasY, $finResumenY));
 $pdf->Ln(15);
-if ($pdf->GetY() > 165) $pdf->AddPage();
+if ($pdf->GetY() > 175) $pdf->AddPage();
 
 // =====================
 // SECCIÓN DE FIRMAS

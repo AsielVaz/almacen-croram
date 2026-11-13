@@ -141,6 +141,7 @@ switch ($tipo) {
             $filas[] = [
                 $proveedor['id'] ?? '',
                 $proveedor['nombre'] ?? '',
+                $proveedor['descripcion'] ?? '',
                 $proveedor['contacto'] ?? '',
                 $proveedor['mail'] ?? '',
                 $proveedor['rfc'] ?? '',
@@ -153,7 +154,7 @@ switch ($tipo) {
         exportarExcelHtml(
             'reporte_proveedores',
             'Proveedores',
-            ['ID', 'Nombre', 'Contacto', 'Correo', 'RFC', 'Credito', 'Plazo', 'Estado'],
+            ['ID', 'Nombre', 'Descripcion', 'Contacto', 'Correo', 'RFC', 'Credito', 'Plazo', 'Estado'],
             $filas
         );
         break;

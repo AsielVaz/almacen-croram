@@ -11,6 +11,7 @@ class AdministradorProveedores extends Con {
     public function agregarProveedor(
         $nombre,
         $contacto = '',
+        $descripcion = '',
         $rfc = '',
         $domicilio_completo = '',
         $telefono_contacto = '',
@@ -23,6 +24,7 @@ class AdministradorProveedores extends Con {
 
         $nombre = $this->limpiar($nombre);
         $contacto = $this->limpiar($contacto);
+        $descripcion = $this->limpiar($descripcion);
         $rfc = $this->limpiar($rfc);
         $domicilio_completo = $this->limpiar($domicilio_completo);
         $telefono_contacto = $this->limpiar($telefono_contacto);
@@ -32,14 +34,16 @@ class AdministradorProveedores extends Con {
         $credito = (int)$credito;
         $plazo_credito = (int)$plazo_credito;
         $activo = (int)$activo;
+        $rfcSql = $rfc !== '' ? "'$rfc'" : 'NULL';
 
         $sql = "
             INSERT INTO proveedores
-            (nombre, contacto, rfc, domicilio_completo, telefono_contacto, movil_contacto, mail, credito, plazo_credito, activo)
+            (nombre, contacto, descripcion, rfc, domicilio_completo, telefono_contacto, movil_contacto, mail, credito, plazo_credito, activo)
             VALUES (
                 '$nombre',
                 '$contacto',
-                '$rfc',
+                '$descripcion',
+                $rfcSql,
                 '$domicilio_completo',
                 '$telefono_contacto',
                 '$movil_contacto',
@@ -63,6 +67,7 @@ class AdministradorProveedores extends Con {
                 id,
                 nombre,
                 contacto,
+                descripcion,
                 rfc,
                 telefono_contacto,
                 movil_contacto,
@@ -98,6 +103,7 @@ class AdministradorProveedores extends Con {
         $id,
         $nombre,
         $contacto = '',
+        $descripcion = '',
         $rfc = '',
         $domicilio_completo = '',
         $telefono_contacto = '',
@@ -111,6 +117,7 @@ class AdministradorProveedores extends Con {
         $id = (int)$id;
         $nombre = $this->limpiar($nombre);
         $contacto = $this->limpiar($contacto);
+        $descripcion = $this->limpiar($descripcion);
         $rfc = $this->limpiar($rfc);
         $domicilio_completo = $this->limpiar($domicilio_completo);
         $telefono_contacto = $this->limpiar($telefono_contacto);
@@ -120,13 +127,15 @@ class AdministradorProveedores extends Con {
         $credito = (int)$credito;
         $plazo_credito = (int)$plazo_credito;
         $activo = (int)$activo;
+        $rfcSql = $rfc !== '' ? "'$rfc'" : 'NULL';
 
         $sql = "
             UPDATE proveedores
             SET
                 nombre = '$nombre',
                 contacto = '$contacto',
-                rfc = '$rfc',
+                descripcion = '$descripcion',
+                rfc = $rfcSql,
                 domicilio_completo = '$domicilio_completo',
                 telefono_contacto = '$telefono_contacto',
                 movil_contacto = '$movil_contacto',
@@ -177,6 +186,10 @@ class AdministradorProveedores extends Con {
 
     public function existeRfc($rfc, $idExcluido = null) {
         $rfc = $this->limpiar($rfc);
+        if ($rfc === '') {
+            return false;
+        }
+
         $idExcluido = (int)$idExcluido;
         $sql = "
             SELECT COUNT(*) AS total

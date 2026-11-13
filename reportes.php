@@ -440,12 +440,13 @@ $logInventario = $seccion === 'log_inventario' ? (json_decode($adminArticulos->l
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="tablaProveedores" class="table table-striped dt-responsive nowrap w-100 report-table">
-                        <thead><tr><th>ID</th><th>Nombre</th><th>Contacto</th><th>Correo</th><th>RFC</th><th>Crédito</th><th>Plazo</th><th>Estado</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Contacto</th><th>Correo</th><th>RFC</th><th>Crédito</th><th>Plazo</th><th>Estado</th></tr></thead>
                         <tbody>
                         <?php foreach ($proveedores as $proveedor): ?>
                             <tr>
                                 <td><?= $proveedor['id'] ?></td>
                                 <td><?= htmlspecialchars($proveedor['nombre'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($proveedor['descripcion'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($proveedor['contacto'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($proveedor['mail'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($proveedor['rfc'] ?? '') ?></td>
